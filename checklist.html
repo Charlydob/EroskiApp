@@ -6,6 +6,8 @@
   <title>Checklist</title>
   <link rel="stylesheet" href="styles/style.css" />
   <link rel="stylesheet" href="styles/checklist.css" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
   <script>
     window.onload = () => {
       const links = document.querySelectorAll('.sidebar a');
@@ -40,15 +42,13 @@
         </div>
 
         <div class="codigo-config">
-          <input type="number" id="input-codigo" placeholder="Introduce el código de configuración" />
           <div class="codigo-botones">
-            <button onclick="aplicarDesdeInput()">Aplicar código</button>
-            <button onclick="copiarCodigoConfiguracion()">Copiar código actual</button>
-            </div>
-            <div class="generar-codigo">
-            <button onclick="mostrarCodigoConfiguracion()">Generar código actual</button>
-            <div id="codigo-generado" class="codigo-mostrado"></div>
-        </div>
+            <button onclick="mostrarQRConfiguracion()">Generar QR</button>
+            <button onclick="escanearQRConfiguracion()">Aplicar código</button>
+          </div>
+          <div id="codigo-generado" class="codigo-mostrado"></div>
+          <div id="qr-container"></div>
+          <video id="video" width="300" height="200" style="display: none;"></video>
         </div>
       </div>
     </main>

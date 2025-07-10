@@ -44,7 +44,7 @@ const tareas = {
         "Emblistar etiquetas oferta futura en Glasspack (lunes)",
         "Quitar etiquetas ofertas finalizadas (según fecha fin)",
         "Realizar auditorías de precios (viernes un pasillo)",
-        "Glovo",
+        "Glovo"
     ]
 };
 
@@ -115,7 +115,7 @@ function generarCodigoAlfanumerico() {
         numero = numero * base + valor;
     });
 
-    return numero.toString(36).toUpperCase();  // Ej: "1Z8K9R"
+    return numero.toString(36).toUpperCase();
 }
 
 function aplicarCodigoAlfanumerico(codigo) {
@@ -142,27 +142,45 @@ function aplicarCodigoAlfanumerico(codigo) {
     });
 }
 
-function copiarCodigoConfiguracion() {
+// === QR ===
+function mostrarQRConfiguracion() {
     const codigo = generarCodigoAlfanumerico();
-    navigator.clipboard.writeText(codigo)
-        .then(() => alert(`Código copiado: ${codigo}`))
-        .catch(() => alert("No se pudo copiar el código."));
+    const contenedor = document.getElementById("qr-container");
+    contenedor.innerHTML = "";
+    const qr = qrcode(0, 'L');
+    qr.addData(codigo);
+    qr.make();
+    contenedor.innerHTML = qr.createImgTag(6);
 }
 
-function mostrarCodigoConfiguracion() {
-    const codigo = generarCodigoAlfanumerico();
-    const output = document.getElementById("codigo-generado");
-    output.textContent = `Código actual: ${codigo}`;
-}
+function escanearQRConfiguracion() {
+    const video = document.getElementById("video");
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
 
-function aplicarDesdeInput() {
-    const input = document.getElementById("input-codigo");
-    const valor = input.value.trim().toUpperCase();
-    if (valor) {
-        aplicarCodigoAlfanumerico(valor);
-    } else {
-        alert("Introduce un código válido.");
-    }
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
+        video.srcObject = stream;
+        video.play();
+        video.style.display = "block";
+
+        const intervalo = setInterval(() => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            const codigo = jsQR(imageData.data, imageData.width, imageData.height);
+
+            if (codigo) {
+                clearInterval(intervalo);
+                video.pause();
+                video.srcObject.getTracks().forEach(track => track.stop());
+                video.style.display = "none";
+                aplicarCodigoAlfanumerico(codigo.data.trim().toUpperCase());
+            }
+        }, 500);
+    }).catch(() => {
+        alert("No se pudo acceder a la cámara.");
+    });
 }
 
 window.onload = renderizarTareas;
