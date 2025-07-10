@@ -158,29 +158,49 @@ function escanearQRConfiguracion() {
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
 
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
-        video.srcObject = stream;
-        video.play();
-        video.style.display = "block";
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } } })
+        .then(stream => {
+            video.srcObject = stream;
+            video.setAttribute("playsinline", true); // evita pantalla completa en móviles
+            video.style.display = "block";
+            video.play();
 
-        const intervalo = setInterval(() => {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-            const codigo = jsQR(imageData.data, imageData.width, imageData.height);
+            let cerrado = false;
 
-            if (codigo) {
+            const detenerCamara = () => {
+                if (cerrado) return;
+                cerrado = true;
                 clearInterval(intervalo);
                 video.pause();
-                video.srcObject.getTracks().forEach(track => track.stop());
+                if (video.srcObject) {
+                    video.srcObject.getTracks().forEach(track => track.stop());
+                    video.srcObject = null;
+                }
                 video.style.display = "none";
-                aplicarCodigoAlfanumerico(codigo.data.trim().toUpperCase());
-            }
-        }, 500);
-    }).catch(() => {
-        alert("No se pudo acceder a la cámara.");
-    });
-}
+            };
 
+            const intervalo = setInterval(() => {
+                if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
+
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const codigo = jsQR(imageData.data, imageData.width, imageData.height);
+
+                if (codigo) {
+                    detenerCamara();
+                    aplicarCodigoAlfanumerico(codigo.data.trim().toUpperCase());
+                }
+            }, 500);
+
+            // Por si el usuario cierra manualmente la cámara
+            setTimeout(() => {
+                if (!cerrado) detenerCamara();
+            }, 30000); // 30 segundos de timeout
+        })
+        .catch(() => {
+            alert("No se pudo acceder a la cámara.");
+        });
+}
 window.onload = renderizarTareas;
