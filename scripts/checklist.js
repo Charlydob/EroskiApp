@@ -124,7 +124,7 @@ function aplicarCodigoAlfanumerico(codigo) {
     let numero;
 
     try {
-        numero = BigInt(`0x${BigInt(`0x${codigo}`, 36).toString(16)}`);
+        numero = BigInt(codigo, 36);
     } catch {
         alert("Código inválido");
         return;
@@ -155,6 +155,7 @@ function mostrarQRConfiguracion() {
 
 function escanearQRConfiguracion() {
     const video = document.getElementById("video");
+    const botonCancelar = document.getElementById("cancelar-qr");
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
 
@@ -163,6 +164,7 @@ function escanearQRConfiguracion() {
             video.srcObject = stream;
             video.setAttribute("playsinline", true); // evita pantalla completa en móviles
             video.style.display = "block";
+            botonCancelar.style.display = "inline-block";
             video.play();
 
             let cerrado = false;
@@ -177,6 +179,7 @@ function escanearQRConfiguracion() {
                     video.srcObject = null;
                 }
                 video.style.display = "none";
+                botonCancelar.style.display = "none";
             };
 
             const intervalo = setInterval(() => {
@@ -194,13 +197,26 @@ function escanearQRConfiguracion() {
                 }
             }, 500);
 
-            // Por si el usuario cierra manualmente la cámara
+            // Timeout de seguridad
             setTimeout(() => {
                 if (!cerrado) detenerCamara();
-            }, 30000); // 30 segundos de timeout
+            }, 30000); // 30 segundos
         })
         .catch(() => {
             alert("No se pudo acceder a la cámara.");
         });
 }
+
+function detenerEscaneoQR() {
+    const video = document.getElementById("video");
+    const botonCancelar = document.getElementById("cancelar-qr");
+    clearInterval(intervalo);
+    if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+        video.srcObject = null;
+    }
+    video.style.display = "none";
+    botonCancelar.style.display = "none";
+}
+
 window.onload = renderizarTareas;
