@@ -115,10 +115,28 @@ function generarCodigoAlfanumerico() {
         numero = numero * base + valor;
     });
 
-    return numero.toString(36).toUpperCase();
+    const codigoBase36 = numero.toString(36).toUpperCase();
+    return `${turnoActual}|${codigoBase36}`;
 }
 
-function aplicarCodigoAlfanumerico(codigo) {
+function aplicarCodigoAlfanumerico(codigoCompleto) {
+    const partes = codigoCompleto.split("|");
+    if (partes.length !== 2) {
+        alert("Código inválido");
+        return;
+    }
+
+    const turno = partes[0].toLowerCase();
+    const codigo = partes[1];
+
+    if (!tareas[turno]) {
+        alert("Turno inválido");
+        return;
+    }
+
+    turnoActual = turno;
+    renderizarTareas(); // necesitamos renderizar antes de aplicar
+
     const selects = document.querySelectorAll("#lista-tareas select");
     const base = BigInt(empleados.length);
     let numero;
@@ -141,6 +159,7 @@ function aplicarCodigoAlfanumerico(codigo) {
         select.selectedIndex = valores[i];
     });
 }
+
 
 // === QR ===
 function mostrarQRConfiguracion() {
