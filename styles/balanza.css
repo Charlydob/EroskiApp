@@ -6,7 +6,7 @@
     body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #d3d3f7, #5150a3); /* degradado vertical de fondo */
+    background: transparent; /* degradado vertical de fondo */
     color: #333; /* color de texto base */
     }
 
@@ -38,7 +38,6 @@
 
 
     /* Iconos dentro de los enlaces del menú */
-   
 
     /* Estilo del enlace activo (resaltado actual) */
 
@@ -60,17 +59,18 @@
     /* Título principal */
     h1 {
     text-align: center;
+    color: #ffffff;
     margin-bottom: 20px;
     }
 
     /* Contenedor de la tabla y controles de balanza */
     .balanza-wrapper {
-    background: white;
+    background: #eeeeee;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     padding: 20px;
+    width: 90%;
     max-width: 600px;
-    width: 100%;
     }
 
     /* Tabla de monedas */
@@ -84,7 +84,7 @@
     th, td {
     padding: 10px;
     text-align: center;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #aaa;
     }
 
     /* Campos de entrada de peso */
@@ -93,7 +93,8 @@
     padding: 5px;
     text-align: center;
     border-radius: 6px;
-    border: 1px solid #aaa;
+    border: 1px solid black;
+    
     }
 
     /* Texto del total calculado */

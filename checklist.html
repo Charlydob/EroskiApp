@@ -1,45 +1,59 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Sobre la web</title>
-    <link rel="stylesheet" href="styles/style.css" />
-    <!-- Resaltado del enlace activo  en el navbar -->
-    <script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Checklist</title>
+  <link rel="stylesheet" href="styles/style.css" />
+  <link rel="stylesheet" href="styles/checklist.css" />
+  <script>
     window.onload = () => {
-        const links = document.querySelectorAll('.sidebar a');
-        links.forEach(link => {
+      const links = document.querySelectorAll('.sidebar a');
+      links.forEach(link => {
         if (link.href === window.location.href) {
-            link.classList.add('active');
+          link.classList.add('active');
         }
-        });
+      });
     };
-    </script>
+  </script>
 </head>
 <body>
 
+  <div class="container">
     <nav class="sidebar">
-        <h2 class="logo">Mi Web</h2>
-        <a href="index.html">
-            <img src="recursos/img/iniciologo.png" alt="Inicio" class="icon">
-            </a>
-        <a href="balanza.html">
-            <img src="recursos/img/balanzalogo.png" alt="Balanza" class="icon">
-            </a>
-        <a href="checklist.html">
-            <img src="recursos/img/Checklist.png" alt="Checklist" class="icon">
-        </a>
-        <a href="calendario.html">
-            <img src="recursos/img/calendario.png" alt="Calendario" class="icon">
-        </a>
-        </nav>
+      <h2 class="logo">Mi Web</h2>
+      <a href="index.html"><img src="recursos/img/iniciologo.png" alt="Inicio" class="icon"></a>
+      <a href="balanza.html"><img src="recursos/img/balanzalogo.png" alt="Balanza" class="icon"></a>
+      <a href="checklist.html"><img src="recursos/img/Checklist.png" alt="Checklist" class="icon"></a>
+      <a href="calendario.html"><img src="recursos/img/calendario.png" alt="Calendario" class="icon"></a>
+    </nav>
 
-        <main class="content">
-        <h1>Estás en checklist</h1>
-        <p>Este es el contenido principal.</p>
-        </main>
-    </div>
+    <main class="content">
+      <h1 id="turno-label">📝 Checklist – Turno de Mañana</h1>
 
+      <div class="checklist-container">
+        <ul id="lista-tareas" class="tareas-lista"></ul>
+
+        <div class="botones-control">
+          <button onclick="alternarTurno()">Cambiar Turno</button>
+          <button onclick="reiniciarLista()">Reiniciar</button>
+        </div>
+
+        <div class="codigo-config">
+          <input type="number" id="input-codigo" placeholder="Introduce el código de configuración" />
+          <div class="codigo-botones">
+            <button onclick="aplicarDesdeInput()">Aplicar código</button>
+            <button onclick="copiarCodigoConfiguracion()">Copiar código actual</button>
+            </div>
+            <div class="generar-codigo">
+            <button onclick="mostrarCodigoConfiguracion()">Generar código actual</button>
+            <div id="codigo-generado" class="codigo-mostrado"></div>
+        </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="scripts/checklist.js"></script>
 </body>
 </html>
