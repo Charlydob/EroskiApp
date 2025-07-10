@@ -207,3 +207,59 @@ button:hover {
   border-radius: 8px;
   border: 1px solid #ccc;
 }
+/* NUEVO: Estilos separados para los botones de turno y de código */
+.botones-turno {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.botones-turno button {
+  background-color: #1a40bc;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  flex: 1;
+  min-width: 120px;
+}
+
+.botones-turno button:hover {
+  background-color: #0f2c80;
+}
+
+.botones-codigo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+  justify-content: center;
+}
+
+.botones-codigo button {
+  background-color: #007b55;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  flex: 1;
+  min-width: 120px;
+}
+
+.botones-codigo button:hover {
+  background-color: #005c3c;
+}
+
+.codigo-config input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  font-size: 1em;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+  box-sizing: border-box;
+}

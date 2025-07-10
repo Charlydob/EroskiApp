@@ -2,32 +2,19 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Checklist</title>
   <link rel="stylesheet" href="styles/style.css" />
   <link rel="stylesheet" href="styles/checklist.css" />
-  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-  <script>
-    window.onload = () => {
-      const links = document.querySelectorAll('.sidebar a');
-      links.forEach(link => {
-        if (link.href === window.location.href) {
-          link.classList.add('active');
-        }
-      });
-    };
-  </script>
 </head>
 <body>
-
   <div class="container">
     <nav class="sidebar">
       <h2 class="logo">Mi Web</h2>
-      <a href="index.html"><img src="recursos/img/iniciologo.png" alt="Inicio" class="icon"></a>
-      <a href="balanza.html"><img src="recursos/img/balanzalogo.png" alt="Balanza" class="icon"></a>
-      <a href="checklist.html"><img src="recursos/img/Checklist.png" alt="Checklist" class="icon"></a>
-      <a href="calendario.html"><img src="recursos/img/calendario.png" alt="Calendario" class="icon"></a>
+      <a href="index.html"><img src="recursos/img/iniciologo.png" alt="Inicio" class="icon" /></a>
+      <a href="balanza.html"><img src="recursos/img/balanzalogo.png" alt="Balanza" class="icon" /></a>
+      <a href="checklist.html"><img src="recursos/img/Checklist.png" alt="Checklist" class="icon" /></a>
+      <a href="calendario.html"><img src="recursos/img/calendario.png" alt="Calendario" class="icon" /></a>
     </nav>
 
     <main class="content">
@@ -36,20 +23,18 @@
       <div class="checklist-container">
         <ul id="lista-tareas" class="tareas-lista"></ul>
 
-        <div class="botones-control">
+        <div class="botones-turno">
           <button onclick="alternarTurno()">Cambiar Turno</button>
           <button onclick="reiniciarLista()">Reiniciar</button>
         </div>
 
         <div class="codigo-config">
           <div class="codigo-botones">
-            <button onclick="mostrarQRConfiguracion()">Generar QR</button>
-            <button onclick="escanearQRConfiguracion()">Aplicar código</button>
+            <button id="boton-generar">Generar código</button>
+            <input id="input-codigo" type="text" placeholder="Pega aquí el código" />
+            <button id="boton-aplicar">Aplicar código</button>
           </div>
           <div id="codigo-generado" class="codigo-mostrado"></div>
-          <div id="qr-container"></div>
-          <video id="video" width="300" height="200" style="display: none;"></video>
-          <button id="cancelar-qr" onclick="detenerEscaneoQR()" style="display:none;">❌ Cancelar escaneo</button>
         </div>
       </div>
     </main>

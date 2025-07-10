@@ -1,242 +1,180 @@
-// === DATOS ===
 const tareas = {
-    mañana: [
-        "Abrir caja registradora",
-        "Limpiar entrada",
-        "Reposición de panadería",
-        "Comprobar precios de ofertas"
-    ],
-    tarde: [
-        "Caja Principal 1",
-        "Caja Apoyo",
-        "Reposicion palets seco camión",
-        "Hacer negativos",
-        "Revisión frutería",
-        "Reposición frutería + ensaladas",
-        "Llenado neveras venta cruzada",
-        "Producción panadería lineal",
-        "Reposición cámara refrigerado",
-        "Reposición cámara congelado",
-        "Reposición almacén seco",
-        "Realizar revisión fechas herramienta caducados",
-        "Preparación carro panadería día siguiente",
-        "Hacer huecos",
-        "Hacer negativos al cierre después del APPC",
-        "Introducir temperaturas",
-        "Hacer APPC",
-        "Hacer blisters abono-rutura",
-        "Revisión fechas para venta anticipada",
-        "Fronteo y adelantamiento de tienda",
-        "Llenado de neveras bebida fría al cierre",
-        "Cierre y limpieza de caja 1",
-        "Cierre y limpieza de caja 2",
-        "Limpieza huecos nevera",
-        "Limpieza rampas panadería",
-        "Limpieza de suelo tienda",
-        "Limpieza baños cliente",
-        "Limpieza rampas frutería (Lunes)",
-        "Limpieza cristales fachada (lunes, miércoles y viernes)",
-        "Limpieza horno y bandejas (miércoles)",
-        "Limpieza carros y cestas (miércoles)",
-        "Imprimir listado ofertas futura (viernes)",
-        "Imprimir etiqueta oferta futura (viernes)",
-        "Realizar en carros productos oferta futura (viernes)",
-        "Emblistar etiquetas oferta futura en Glasspack (lunes)",
-        "Quitar etiquetas ofertas finalizadas (según fecha fin)",
-        "Realizar auditorías de precios (viernes un pasillo)",
-        "Glovo"
-    ]
+  mañana: [
+    "Abrir caja registradora", "Limpiar entrada", "Reposición de panadería", "Comprobar precios de ofertas"
+  ],
+  tarde: [
+    "Caja Principal 1",
+    "Caja Apoyo",
+    "Reposicion palets seco camión",
+    "Hacer negativos",
+    "Revisión frutería",
+    "Reposición frutería + ensaladas",
+    "Llenado neveras venta cruzada",
+    "Producción panadería lineal",
+    "Reposición cámara refrigerado",
+    "Reposición cámara congelado",
+    "Reposición almacén seco",
+    "Realizar revisión fechas herramienta caducados",
+    "Preparación carro panadería día siguiente",
+    "Hacer huecos",
+    "Hacer negativos al cierre después del APPC",
+    "Introducir temperaturas",
+    "Hacer APPC",
+    "Hacer blisters abono-rutura",
+    "Revisión fechas para venta anticipada",
+    "Fronteo y adelantamiento de tienda",
+    "Llenado de neveras bebida fría al cierre",
+    "Cierre y limpieza de caja 1",
+    "Cierre y limpieza de caja 2",
+    "Limpieza huecos nevera",
+    "Limpieza rampas panadería",
+    "Limpieza de suelo tienda",
+    "Limpieza baños cliente",
+    "Limpieza rampas frutería (Lunes)",
+    "Limpieza cristales fachada (lunes, miércoles y viernes)",
+    "Limpieza horno y bandejas (miércoles)",
+    "Limpieza carros y cestas (miércoles)",
+    "Imprimir listado ofertas futura (viernes)",
+    "Imprimir etiqueta oferta futura (viernes)",
+    "Realizar en carros productos oferta futura (viernes)",
+    "Emblistar etiquetas oferta futura en Glasspack (lunes)",
+    "Quitar etiquetas ofertas finalizadas (según fecha fin)",
+    "Realizar auditorías de precios (viernes un pasillo)",
+    "Glovo"
+  ]
 };
 
 const empleados = ["Leti", "Sergio", "Brian", "Rocío", "Juan", "Charly", "Natalia", "Lorena"];
 let turnoActual = "mañana";
 
-// === RENDER ===
 function renderizarTareas() {
-    const lista = document.getElementById("lista-tareas");
-    const titulo = document.getElementById("turno-label");
-    lista.innerHTML = "";
-    titulo.textContent = `📝 Checklist – Turno de ${turnoActual.charAt(0).toUpperCase() + turnoActual.slice(1)}`;
+  const lista = document.getElementById("lista-tareas");
+  const titulo = document.getElementById("turno-label");
+  lista.innerHTML = "";
+  titulo.textContent = `📝 Checklist – Turno de ${turnoActual.charAt(0).toUpperCase() + turnoActual.slice(1)}`;
 
-    tareas[turnoActual].forEach(tarea => {
-        const li = document.createElement("li");
+  tareas[turnoActual].forEach(tarea => {
+    const li = document.createElement("li");
 
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
 
-        const spanTarea = document.createElement("span");
-        spanTarea.textContent = tarea;
-        spanTarea.className = "tarea-texto";
+    const spanTarea = document.createElement("span");
+    spanTarea.textContent = tarea;
+    spanTarea.className = "tarea-texto";
 
-        checkbox.addEventListener("change", () => {
-            spanTarea.classList.toggle("tachado", checkbox.checked);
-        });
-
-        const select = document.createElement("select");
-        const defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.textContent = "-- Empleado --";
-        select.appendChild(defaultOption);
-
-        empleados.forEach(nombre => {
-            const option = document.createElement("option");
-            option.value = nombre;
-            option.textContent = nombre;
-            select.appendChild(option);
-        });
-
-        li.appendChild(checkbox);
-        li.appendChild(spanTarea);
-        li.appendChild(select);
-
-        lista.appendChild(li);
+    checkbox.addEventListener("change", () => {
+      spanTarea.classList.toggle("tachado", checkbox.checked);
     });
+
+    const select = document.createElement("select");
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "-- Empleado --";
+    select.appendChild(defaultOption);
+
+    empleados.forEach(nombre => {
+      const option = document.createElement("option");
+      option.value = nombre;
+      option.textContent = nombre;
+      select.appendChild(option);
+    });
+
+    li.appendChild(checkbox);
+    li.appendChild(spanTarea);
+    li.appendChild(select);
+
+    lista.appendChild(li);
+  });
 }
 
-// === FUNCIONES ===
 function alternarTurno() {
-    turnoActual = turnoActual === "mañana" ? "tarde" : "mañana";
-    renderizarTareas();
+  turnoActual = turnoActual === "mañana" ? "tarde" : "mañana";
+  renderizarTareas();
 }
 
 function reiniciarLista() {
-    document.querySelectorAll("#lista-tareas input[type='checkbox']").forEach(cb => cb.checked = false);
-    document.querySelectorAll("#lista-tareas .tarea-texto").forEach(span => span.classList.remove("tachado"));
-    document.querySelectorAll("#lista-tareas select").forEach(sel => sel.selectedIndex = 0);
+  document.querySelectorAll("#lista-tareas input[type='checkbox']").forEach(cb => cb.checked = false);
+  document.querySelectorAll("#lista-tareas .tarea-texto").forEach(span => span.classList.remove("tachado"));
+  document.querySelectorAll("#lista-tareas select").forEach(sel => sel.selectedIndex = 0);
 }
 
 function generarCodigoAlfanumerico() {
-    const selects = document.querySelectorAll("#lista-tareas select");
-    const base = BigInt(empleados.length + 1); // +1 por el caso "no asignado"
-    let numero = BigInt(0);
+  const selects = document.querySelectorAll("#lista-tareas select");
+  const base = BigInt(empleados.length + 1);
+  let numero = BigInt(0);
 
-    selects.forEach(select => {
-        const valor = BigInt(select.selectedIndex - 1); // -1 para que "no asignado" sea -1
-        numero = numero * base + (valor + 1n); // desplazamos todo para que -1 sea 0
+  selects.forEach(select => {
+    const valor = BigInt(select.selectedIndex);
+    numero = numero * base + valor;
+  });
+
+  return `${turnoActual}|${numero.toString(36).toUpperCase()}`;
+}
+
+function mostrarCodigo() {
+  const codigo = generarCodigoAlfanumerico();
+  const div = document.getElementById("codigo-generado");
+  const input = document.getElementById("input-codigo");
+  div.textContent = codigo;
+  input.value = codigo;
+}
+
+function copiarCodigo() {
+  const codigo = document.getElementById("codigo-generado").textContent.trim();
+  if (!codigo) return alert("No hay código para copiar.");
+
+  navigator.clipboard.writeText(codigo)
+    .then(() => alert("Código copiado al portapapeles."))
+    .catch(err => {
+      console.error("Error al copiar:", err);
+      alert("Error al copiar el código.");
     });
-
-    const codigoBase36 = numero.toString(36).toUpperCase();
-    return `${turnoActual}|${codigoBase36}`;
 }
 
 function aplicarCodigoAlfanumerico(codigoCompleto) {
-    const partes = codigoCompleto.split("|");
-    if (partes.length !== 2) {
-        alert("Código inválido");
-        return;
-    }
+  const [turno, cod] = codigoCompleto.split("|");
+  if (!turno || !cod || !tareas[turno]) {
+    alert("Código inválido");
+    return;
+  }
 
-    const turno = partes[0].toLowerCase();
-    const codigo = partes[1];
+  turnoActual = turno;
+  renderizarTareas();
 
-    if (!tareas[turno]) {
-        alert("Turno inválido");
-        return;
-    }
+  const base = BigInt(empleados.length + 1);
+  let numero;
+  try {
+    numero = BigInt(`0x${parseInt(cod, 36).toString(16)}`);
+  } catch {
+    alert("Código inválido");
+    return;
+  }
 
-    turnoActual = turno;
-    renderizarTareas(); // Renderizamos antes de aplicar
+  const selects = document.querySelectorAll("#lista-tareas select");
+  const valores = [];
 
-    const selects = document.querySelectorAll("#lista-tareas select");
-    const base = BigInt(empleados.length + 1);
-    let numero;
+  for (let i = selects.length - 1; i >= 0; i--) {
+    valores[i] = Number(numero % base);
+    numero = numero / base;
+  }
 
-    try {
-        numero = BigInt(codigo, 36);
-    } catch {
-        alert("Código inválido");
-        return;
-    }
-
-    const valores = [];
-
-    for (let i = selects.length - 1; i >= 0; i--) {
-        valores[i] = Number((numero % base) - 1n); // -1 para deshacer el desplazamiento
-        numero = numero / base;
-    }
-
-    selects.forEach((select, i) => {
-        select.selectedIndex = valores[i] + 1; // +1 para ajustar a la lista (que empieza en 0 con la opción por defecto)
-    });
+  selects.forEach((select, i) => {
+    select.selectedIndex = valores[i] || 0;
+  });
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  renderizarTareas();
 
-
-// === QR ===
-function mostrarQRConfiguracion() {
-    const codigo = generarCodigoAlfanumerico();
-    const contenedor = document.getElementById("qr-container");
-    contenedor.innerHTML = "";
-    const qr = qrcode(0, 'L');
-    qr.addData(codigo);
-    qr.make();
-    contenedor.innerHTML = qr.createImgTag(6);
-}
-
-function escanearQRConfiguracion() {
-    const video = document.getElementById("video");
-    const botonCancelar = document.getElementById("cancelar-qr");
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } } })
-        .then(stream => {
-            video.srcObject = stream;
-            video.setAttribute("playsinline", true); // evita pantalla completa en móviles
-            video.style.display = "block";
-            botonCancelar.style.display = "inline-block";
-            video.play();
-
-            let cerrado = false;
-
-            const detenerCamara = () => {
-                if (cerrado) return;
-                cerrado = true;
-                clearInterval(intervalo);
-                video.pause();
-                if (video.srcObject) {
-                    video.srcObject.getTracks().forEach(track => track.stop());
-                    video.srcObject = null;
-                }
-                video.style.display = "none";
-                botonCancelar.style.display = "none";
-            };
-
-            const intervalo = setInterval(() => {
-                if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
-
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                const codigo = jsQR(imageData.data, imageData.width, imageData.height);
-
-                if (codigo) {
-                    detenerCamara();
-                    aplicarCodigoAlfanumerico(codigo.data.trim().toUpperCase());
-                }
-            }, 500);
-
-            // Timeout de seguridad
-            setTimeout(() => {
-                if (!cerrado) detenerCamara();
-            }, 30000); // 30 segundos
-        })
-        .catch(() => {
-            alert("No se pudo acceder a la cámara.");
-        });
-}
-
-function detenerEscaneoQR() {
-    const video = document.getElementById("video");
-    const botonCancelar = document.getElementById("cancelar-qr");
-    clearInterval(intervalo);
-    if (video.srcObject) {
-        video.srcObject.getTracks().forEach(track => track.stop());
-        video.srcObject = null;
+  document.getElementById("boton-generar").addEventListener("click", mostrarCodigo);
+  document.getElementById("boton-copiar").addEventListener("click", copiarCodigo);
+  document.getElementById("boton-aplicar").addEventListener("click", () => {
+    const codigo = document.getElementById("input-codigo").value.trim();
+    if (!codigo) {
+      alert("Introduce un código válido");
+      return;
     }
-    video.style.display = "none";
-    botonCancelar.style.display = "none";
-}
-
-window.onload = renderizarTareas;
+    aplicarCodigoAlfanumerico(codigo);
+  });
+});
