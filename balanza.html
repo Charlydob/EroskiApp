@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Inicio</title>
+    <link rel="stylesheet" href="styles/style.css" />
+    <link rel="stylesheet" href="styles/balanza.css" />
+    <!-- Resaltado del enlace activo  en el navbar -->
+    <script>
+    window.onload = () => {
+        const links = document.querySelectorAll('.sidebar a');
+        links.forEach(link => {
+        if (link.href === window.location.href) {
+            link.classList.add('active');
+        }
+        });
+    };
+    </script>
+</head>
+<script src="scripts/balanza.js"></script>
+
+<body>
+
+    <div class="container">
+        <nav class="sidebar">
+        <h2 class="logo">Mi Web</h2>
+        <a href="index.html">
+            <img src="recursos/img/iniciologo.png" alt="Inicio" class="icon">
+            </a>
+        <a href="balanza.html">
+            <img src="recursos/img/balanzalogo.png" alt="Balanza" class="icon">
+            </a>
+        <a href="checklist.html">
+            <img src="recursos/img/Checklist.png" alt="Checklist" class="icon">
+        </a>
+        <a href="calendario.html">
+            <img src="recursos/img/calendario.png" alt="Calendario" class="icon">
+        </a>
+        </nav>
+
+    <main class="content">
+    <h1>💰 Calculadora de monedas por peso</h1>
+
+    <div class="balanza-wrapper">
+        <table id="tablaMonedas">
+        <thead>
+            <tr>
+            <th>Moneda</th>
+            <th>Peso por moneda (g)</th>
+            <th>Peso total (g)</th>
+            <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+            <td>2,00 €</td>
+            <td><input type="number" value="8.5" disabled></td>
+            <td><input type="number" id="peso-0" min="0" placeholder="0"></td>
+            <td><span id="cantidad-0">0</span></td>
+            </tr>
+            <tr>
+            <td>1,00 €</td>
+            <td><input type="number" value="7.5" disabled></td>
+            <td><input type="number" id="peso-1" min="0" placeholder="0"></td>
+            <td><span id="cantidad-1">0</span></td>
+            </tr>
+            <tr>
+            <td>0,50 €</td>
+            <td><input type="number" value="7.8" disabled></td>
+            <td><input type="number" id="peso-2" min="0" placeholder="0"></td>
+            <td><span id="cantidad-2">0</span></td>
+            </tr>
+            <tr>
+            <td>0,20 €</td>
+            <td><input type="number" value="5.7" disabled></td>
+            <td><input type="number" id="peso-3" min="0" placeholder="0"></td>
+            <td><span id="cantidad-3">0</span></td>
+            </tr>
+            <tr>
+            <td>0,10 €</td>
+            <td><input type="number" value="4.1" disabled></td>
+            <td><input type="number" id="peso-4" min="0" placeholder="0"></td>
+            <td><span id="cantidad-4">0</span></td>
+            </tr>
+        </tbody>
+        </table>
+
+        <div class="total">
+        Total estimado: <span id="totalEuros">0,00 €</span>
+        </div>
+
+        <button id="resetBtn">Reiniciar</button>
+    </div>
+    </main>
+
+
+    </div>
+<script>
+// Bloquear doble toque
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+    const now = new Date().getTime();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+    }
+    lastTouchEnd = now;
+}, false);
+
+// Bloquear zoom con dos dedos
+document.addEventListener('gesturestart', function (event) {
+    event.preventDefault();
+});
+</script>
+</body>
+</html>

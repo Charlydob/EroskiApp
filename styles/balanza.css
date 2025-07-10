@@ -1,0 +1,152 @@
+    html, body, button,input, select, textarea, table, th, td {
+    touch-action: manipulation;
+}
+    
+    /* Estilos generales del cuerpo de la página */
+    body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #d3d3f7, #5150a3); /* degradado vertical de fondo */
+    color: #333; /* color de texto base */
+    }
+
+    /* Contenedor principal: sidebar + contenido */
+    .container {
+    display: flex;
+    min-height: 100vh; /* altura mínima igual a la altura de la pantalla */
+    }
+
+    /* Menú lateral (sidebar) */
+    .sidebar {
+    width: 80px; /* ancho fijo */
+    background: linear-gradient(to bottom, #ff4d4d, #000000); /* degradado rojo a negro */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+    }
+
+    /* Logo del sidebar */
+    .sidebar .logo {
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6); /* sombra para mejorar visibilidad */
+    }
+
+    /* Separación entre enlaces del menú */
+
+
+    /* Iconos dentro de los enlaces del menú */
+   
+
+    /* Estilo del enlace activo (resaltado actual) */
+
+
+    /* Efecto hover en los iconos del menú */
+    .sidebar a:hover img.icon {
+    transform: scale(1.1); /* efecto de zoom ligero */
+    }
+
+    /* Zona principal de contenido */
+    .content {
+    flex: 1; /* ocupa todo el espacio restante */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    }
+
+    /* Título principal */
+    h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    }
+
+    /* Contenedor de la tabla y controles de balanza */
+    .balanza-wrapper {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    padding: 20px;
+    max-width: 600px;
+    width: 100%;
+    }
+
+    /* Tabla de monedas */
+    table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    }
+
+    /* Celdas de la tabla */
+    th, td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    }
+
+    /* Campos de entrada de peso */
+    input {
+    width: 80px;
+    padding: 5px;
+    text-align: center;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    }
+
+    /* Texto del total calculado */
+    .total {
+    font-size: 1.2em;
+    margin: 20px 0;
+    text-align: center;
+    }
+
+    /* Botón de reiniciar */
+    button#resetBtn {
+    display: block;
+    margin: auto;
+    padding: 10px 20px;
+    background-color: #1a40bc;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    }
+
+    /* Hover del botón de reinicio */
+    button#resetBtn:hover {
+    background-color: #0f2c80;
+    }
+
+    /* Estilos adaptativos para pantallas pequeñas */
+    @media (max-width: 480px) {
+    /* La barra lateral se convierte en barra inferior horizontal */
+    .sidebar {
+        flex-direction: row;
+        height: 60px;
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    /* El logo del menú se oculta para ahorrar espacio */
+    .sidebar .logo {
+        display: none;
+    }
+
+    /* Menor padding del contenido */
+    .content {
+        padding: 10px;
+    }
+
+    /* Texto e inputs más pequeños */
+    table, th, td {
+        font-size: 0.85em;
+    }
+
+    input {
+        width: 60px;
+    }
+    }
