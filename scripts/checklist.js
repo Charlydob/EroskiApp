@@ -107,12 +107,12 @@ function reiniciarLista() {
 
 function generarCodigoAlfanumerico() {
     const selects = document.querySelectorAll("#lista-tareas select");
-    const base = BigInt(empleados.length);
+    const base = BigInt(empleados.length + 1); // +1 por el caso "no asignado"
     let numero = BigInt(0);
 
     selects.forEach(select => {
-        const valor = BigInt(select.selectedIndex || 0);
-        numero = numero * base + valor;
+        const valor = BigInt(select.selectedIndex - 1); // -1 para que "no asignado" sea -1
+        numero = numero * base + (valor + 1n); // desplazamos todo para que -1 sea 0
     });
 
     const codigoBase36 = numero.toString(36).toUpperCase();
@@ -135,10 +135,10 @@ function aplicarCodigoAlfanumerico(codigoCompleto) {
     }
 
     turnoActual = turno;
-    renderizarTareas(); // necesitamos renderizar antes de aplicar
+    renderizarTareas(); // Renderizamos antes de aplicar
 
     const selects = document.querySelectorAll("#lista-tareas select");
-    const base = BigInt(empleados.length);
+    const base = BigInt(empleados.length + 1);
     let numero;
 
     try {
@@ -151,14 +151,15 @@ function aplicarCodigoAlfanumerico(codigoCompleto) {
     const valores = [];
 
     for (let i = selects.length - 1; i >= 0; i--) {
-        valores[i] = Number(numero % base);
+        valores[i] = Number((numero % base) - 1n); // -1 para deshacer el desplazamiento
         numero = numero / base;
     }
 
     selects.forEach((select, i) => {
-        select.selectedIndex = valores[i];
+        select.selectedIndex = valores[i] + 1; // +1 para ajustar a la lista (que empieza en 0 con la opción por defecto)
     });
 }
+
 
 
 // === QR ===
