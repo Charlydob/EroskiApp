@@ -1,83 +1,38 @@
 const tareas = {
   mañana: [
-    "CARGA VARIACIONES DIA",
-"CARGA PARAMETROS",
-"CARGA BALANZAS",
-"COLOCAR VARIACIONES",
-"REVISION CALIDAD FRUTERIA",
-"REPOSICION FRUTERIA",
-"PRODUCCION PANADERIA",
-"REPOSICIÓN CAMARA REFRIGERADO",
-"REPOSICION CAMARA CONGELADO",
-"LIMPIEZA PUERTA ENTRADA",
-"LIMPIEZA CRISTALES PUERTAS NEVERAS FRIO",
-"LIMPIEZA DE HUECOS SECO",
-"REPOSICIÓN ALMACEN SECO",
-"LLENADO NEVERAS VENTA CRUZADA",
-"CAJERA 1",
-"CAJERA 2",
-"REALIZAR HOJA DE CAJA",
-"REVISION PEDIDO DETALLADO",
-"REALIZAR PEDIDO MASAS CONGELADAS (M-J-S)",
-"REALIZAR PEDIDO CONSUMIBLES (M-J-S)",
-"REALIZAR PEDIDOS PROVEEDORES LOCALES (LUNES)",
-"REPOSICIÓN CONGELADO CAMIÓN (M-J-S)",
-"REPOSICIÓN FRUTERIA CAMIÓN (M-J-S)",
-"REPOSICIÓN CARNICERIA CAMIÓN (M-J-S)",
-"REPOSICIÓN PESCA CAMIÓN (M-J-S)",
-"REPOSICIÓN CHARCUTERIA CAMIÓN (M-J-S)",
-"REPOSICIÓN YOGURES CAMIÓN (M-J-S)",
-"REPOSICION PALETS SECO CAMIÓN (M-J-S)",
-"FRENTEO Y ADELANTAMIENTO TIENDA",
-"LIMPIEZA DE CAJA1",
-"LIMPIEZA DE CAJA 2",
-"LIMPIEZA OBRADOR",
-"ACTUALIZAR STOCK FRUTERIA (LUNES)",
-"ACTUALIZAR STOCK CARNICERIA (LUNES)",
-"COLOCAR ETIQUETAS OFERTAS (SEGÚN FECHA INICIO)",
-"PISTOLEAR ETIQUETAS SIN EAN (MIERCOLES)",
-"GLOVO"
-],
-
-    tarde: [
-    "Caja Principal 1",
-    "Caja Apoyo",
-    "Reposicion palets seco camión",
-    "Hacer negativos",
-    "Revisión frutería",
-    "Reposición frutería + ensaladas",
-    "Llenado neveras venta cruzada",
-    "Producción panadería lineal",
-    "Reposición cámara refrigerado",
-    "Reposición cámara congelado",
-    "Reposición almacén seco",
-    "Realizar revisión fechas herramienta caducados",
-    "Preparación carro panadería día siguiente",
-    "Hacer huecos",
-    "Hacer negativos al cierre después del APPC",
-    "Introducir temperaturas",
-    "Hacer APPC",
-    "Hacer blisters abono-rutura",
-    "Revisión fechas para venta anticipada",
-    "Fronteo y adelantamiento de tienda",
-    "Llenado de neveras bebida fría al cierre",
-    "Cierre y limpieza de caja 1",
-    "Cierre y limpieza de caja 2",
-    "Limpieza huecos nevera",
-    "Limpieza rampas panadería",
-    "Limpieza de suelo tienda",
-    "Limpieza baños cliente",
-    "Limpieza rampas frutería (Lunes)",
+    "CARGA VARIACIONES DIA", "CARGA PARAMETROS", "CARGA BALANZAS", "COLOCAR VARIACIONES",
+    "REVISION CALIDAD FRUTERIA", "REPOSICION FRUTERIA", "PRODUCCION PANADERIA",
+    "REPOSICIÓN CAMARA REFRIGERADO", "REPOSICION CAMARA CONGELADO", "LIMPIEZA PUERTA ENTRADA",
+    "LIMPIEZA CRISTALES PUERTAS NEVERAS FRIO", "LIMPIEZA DE HUECOS SECO", "REPOSICIÓN ALMACEN SECO",
+    "LLENADO NEVERAS VENTA CRUZADA", "CAJERA 1", "CAJERA 2", "REALIZAR HOJA DE CAJA",
+    "REVISION PEDIDO DETALLADO", "REALIZAR PEDIDO MASAS CONGELADAS (M-J-S)",
+    "REALIZAR PEDIDO CONSUMIBLES (M-J-S)", "REALIZAR PEDIDOS PROVEEDORES LOCALES (LUNES)",
+    "REPOSICIÓN CONGELADO CAMIÓN (M-J-S)", "REPOSICIÓN FRUTERIA CAMIÓN (M-J-S)",
+    "REPOSICIÓN CARNICERIA CAMIÓN (M-J-S)", "REPOSICIÓN PESCA CAMIÓN (M-J-S)",
+    "REPOSICIÓN CHARCUTERIA CAMIÓN (M-J-S)", "REPOSICIÓN YOGURES CAMIÓN (M-J-S)",
+    "REPOSICION PALETS SECO CAMIÓN (M-J-S)", "FRENTEO Y ADELANTAMIENTO TIENDA",
+    "LIMPIEZA DE CAJA1", "LIMPIEZA DE CAJA 2", "LIMPIEZA OBRADOR", "ACTUALIZAR STOCK FRUTERIA (LUNES)",
+    "ACTUALIZAR STOCK CARNICERIA (LUNES)", "COLOCAR ETIQUETAS OFERTAS (SEGÚN FECHA INICIO)",
+    "PISTOLEAR ETIQUETAS SIN EAN (MIERCOLES)", "GLOVO"
+  ],
+  tarde: [
+    "Caja Principal 1", "Caja Apoyo", "Reposicion palets seco camión", "Hacer negativos",
+    "Revisión frutería", "Reposición frutería + ensaladas", "Llenado neveras venta cruzada",
+    "Producción panadería lineal", "Reposición cámara refrigerado", "Reposición cámara congelado",
+    "Reposición almacén seco", "Realizar revisión fechas herramienta caducados",
+    "Preparación carro panadería día siguiente", "Hacer huecos", "Hacer negativos al cierre después del APPC",
+    "Introducir temperaturas", "Hacer APPC", "Hacer blisters abono-rutura",
+    "Revisión fechas para venta anticipada", "Fronteo y adelantamiento de tienda",
+    "Llenado de neveras bebida fría al cierre", "Cierre y limpieza de caja 1",
+    "Cierre y limpieza de caja 2", "Limpieza huecos nevera", "Limpieza rampas panadería",
+    "Limpieza de suelo tienda", "Limpieza baños cliente", "Limpieza rampas frutería (Lunes)",
     "Limpieza cristales fachada (lunes, miércoles y viernes)",
-    "Limpieza horno y bandejas (miércoles)",
-    "Limpieza carros y cestas (miércoles)",
-    "Imprimir listado ofertas futura (viernes)",
-    "Imprimir etiqueta oferta futura (viernes)",
+    "Limpieza horno y bandejas (miércoles)", "Limpieza carros y cestas (miércoles)",
+    "Imprimir listado ofertas futura (viernes)", "Imprimir etiqueta oferta futura (viernes)",
     "Realizar en carros productos oferta futura (viernes)",
     "Emblistar etiquetas oferta futura en Glasspack (lunes)",
     "Quitar etiquetas ofertas finalizadas (según fecha fin)",
-    "Realizar auditorías de precios (viernes un pasillo)",
-    "Glovo"
+    "Realizar auditorías de precios (viernes un pasillo)", "Glovo"
   ]
 };
 
@@ -90,8 +45,9 @@ function renderizarTareas() {
   lista.innerHTML = "";
   titulo.textContent = `📝 Checklist – Turno de ${turnoActual.charAt(0).toUpperCase() + turnoActual.slice(1)}`;
 
-  tareas[turnoActual].forEach(tarea => {
+  tareas[turnoActual].forEach((tarea, index) => {
     const li = document.createElement("li");
+    li.dataset.index = index;
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -117,12 +73,15 @@ function renderizarTareas() {
       select.appendChild(option);
     });
 
+    select.addEventListener("change", aplicarFiltroEmpleado);
+
     li.appendChild(checkbox);
     li.appendChild(spanTarea);
     li.appendChild(select);
-
     lista.appendChild(li);
   });
+
+  actualizarFiltroEmpleados();
 }
 
 function alternarTurno() {
@@ -151,22 +110,8 @@ function generarCodigoAlfanumerico() {
 
 function mostrarCodigo() {
   const codigo = generarCodigoAlfanumerico();
-  const div = document.getElementById("codigo-generado");
-  const input = document.getElementById("input-codigo");
-  div.textContent = codigo;
-  input.value = codigo;
-}
-
-function copiarCodigo() {
-  const codigo = document.getElementById("codigo-generado").textContent.trim();
-  if (!codigo) return alert("No hay código para copiar.");
-
-  navigator.clipboard.writeText(codigo)
-    .then(() => alert("Código copiado al portapapeles."))
-    .catch(err => {
-      console.error("Error al copiar:", err);
-      alert("Error al copiar el código.");
-    });
+  document.getElementById("codigo-generado").textContent = codigo;
+  document.getElementById("input-codigo").value = codigo;
 }
 
 function aplicarCodigoAlfanumerico(codigoCompleto) {
@@ -201,17 +146,50 @@ function aplicarCodigoAlfanumerico(codigoCompleto) {
   });
 }
 
+function actualizarFiltroEmpleados() {
+  const filtro = document.getElementById("filtro-empleado");
+  filtro.innerHTML = '<option value="">-- Ver todas --</option>';
+  empleados.forEach(emp => {
+    const option = document.createElement("option");
+    option.value = emp;
+    option.textContent = emp;
+    filtro.appendChild(option);
+  });
+}
+
+function aplicarFiltroEmpleado() {
+  const filtro = document.getElementById("filtro-empleado").value;
+  const tareas = document.querySelectorAll("#lista-tareas li");
+
+  tareas.forEach(li => {
+    const select = li.querySelector("select");
+    const empleado = select.value;
+    li.style.display = (!filtro || empleado === filtro) ? "" : "none";
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   renderizarTareas();
 
-  document.getElementById("boton-generar").addEventListener("click", mostrarCodigo);
-  document.getElementById("boton-copiar").addEventListener("click", copiarCodigo);
-  document.getElementById("boton-aplicar").addEventListener("click", () => {
-    const codigo = document.getElementById("input-codigo").value.trim();
-    if (!codigo) {
-      alert("Introduce un código válido");
-      return;
-    }
-    aplicarCodigoAlfanumerico(codigo);
-  });
+  const botonGenerar = document.getElementById("boton-generar");
+  if (botonGenerar) {
+    botonGenerar.addEventListener("click", mostrarCodigo);
+  }
+
+  const botonAplicar = document.getElementById("boton-aplicar");
+  if (botonAplicar) {
+    botonAplicar.addEventListener("click", () => {
+      const codigo = document.getElementById("input-codigo").value.trim();
+      if (!codigo) {
+        alert("Introduce un código válido");
+        return;
+      }
+      aplicarCodigoAlfanumerico(codigo);
+    });
+  }
+
+  const filtroEmpleado = document.getElementById("filtro-empleado");
+  if (filtroEmpleado) {
+    filtroEmpleado.addEventListener("change", aplicarFiltroEmpleado);
+  }
 });
