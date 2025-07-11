@@ -5,6 +5,9 @@ window.addEventListener("DOMContentLoaded", () => {
         { valor: 0.50, peso: 7.8 },
         { valor: 0.20, peso: 5.7 },
         { valor: 0.10, peso: 4.1 },
+        { valor: 0.05, peso: 3.9 },
+        { valor: 0.02, peso: 3.0 },
+        { valor: 0.01, peso: 2.3 },
     ];
 
     const totalEuros = document.getElementById("totalEuros");

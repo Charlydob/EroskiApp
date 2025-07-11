@@ -36,7 +36,8 @@ html {
     background: transparent;
     backdrop-filter: blur(10px);
     display: flex;
-    justify-content: space-around;
+      justify-content: center; /* ✅ Centra los elementos */
+ gap: 20px; /* ✅ Espacio entre los íconos */
     align-items: center;
     padding: 0 10px;
     z-index: 1000;
@@ -65,7 +66,11 @@ html {
     width: 20px;
     height: 20px;
     margin: 0; /* eliminamos el margin-bottom */
-}
+    filter: drop-shadow(1px 1px 1px rgb(109, 189, 255));
+    transition: transform 0.3s;
+    }
+
+
     nav.sidebar a:hover {
     color: #ffcccc;
     }
@@ -74,11 +79,18 @@ html {
     padding: 20px;
     padding-bottom: 80px; /* deja espacio para el menú inferior */
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     }
+
     /* Color de textos */
-    h2 {
-    color: #e7e7e7;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    main.content h2.logo {
+    text-align: center;
+    margin-bottom: 10px;
+    color: white;
+    font-size: 22px;
     }
     .sidebar a.active {
     background-color: #00bef875;
@@ -97,9 +109,9 @@ html {
 
     .menu-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(10px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     gap: 20px;
-    max-width: 500px;
+    max-width: 300px;
     margin: 0 auto;
     padding: 40px 20px;
     justify-items: center;
@@ -107,11 +119,11 @@ html {
     }
 
     .menu-item {
-    background-color: #1a40bc;
+    background-color: #1c3eaf9a;
     color: white;
     text-decoration: none;
     border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.3);
     display: flex;
     flex-direction: column;
     width: 50px;
@@ -168,6 +180,11 @@ html {
     }
 
     main.content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         padding: 40px;
         padding-bottom: 40px;
     }

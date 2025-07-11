@@ -1,0 +1,217 @@
+/* 🧠 Evita doble toque en móviles */
+html, body, button, input, select, textarea, table, th, td {
+  touch-action: manipulation;
+}
+
+/* 🧱 Estilo base */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: transparent;
+  color: #333;
+}
+
+/* 📦 Layout general */
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+.content {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sidebar {
+  width: 80px;
+  background: linear-gradient(to bottom, #ff4d4d, #000000);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+}
+.sidebar .logo {
+  margin-bottom: 20px;
+  font-size: 1.2em;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+}
+
+/* 🏷️ Título */
+h1 {
+  text-align: center;
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+/* 🔍 Buscador */
+#buscador {
+  display: block;
+  margin: 1em auto;
+  padding: 0.5em;
+  font-size: 1em;
+  width: 80%;
+  max-width: 400px;
+}
+
+/* 🖼️ Galería */
+.galeria {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1em;
+  padding: 1em;
+  max-height: fit-content;
+  align-items: stretch;
+}
+
+/* 📦 Item */
+.item {
+  background-color: rgb(255, 255, 255);
+  border-radius: 8px;
+  box-shadow: 0 0 4px rgba(255, 0, 0, 0.1);
+  text-align: center;
+  width: 110px;
+  height: 120px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  flex-grow: 0;
+  flex-basis: auto;
+  box-sizing: border-box;
+}
+
+/* 🌟 Vista normal */
+.vista-normal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  box-sizing: border-box;
+}
+.vista-normal img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 0.5em;
+}
+.nombre {
+  font-weight: bold;
+  font-size: 0.9em;
+  margin-top: 0em;
+}
+
+/* 🪄 Vista detalles */
+.vista-detalles {
+  position: absolute;
+  inset: 0;
+  background-color: #1e92ff2d;
+  color: #222;
+  font-size: 0.85em;
+  border-radius: 8px;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  animation: aparecer 0.15s ease-in-out;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.item.activo .vista-detalles {
+  display: flex;
+  pointer-events: auto;
+}
+.item.activo .vista-normal {
+  display: none;
+}
+.vista-detalles .dato {
+  margin-bottom: 4px;
+  text-align: center;
+}
+.vista-detalles .cerrar {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #c00;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* #️⃣ Código simple */
+.codigo {
+  font-weight: bold;
+  color: #333;
+}
+
+/* 📱 Móvil */
+@media (max-width: 480px) {
+  .sidebar {
+    flex-direction: row;
+    height: 60px;
+    width: 100%;
+    justify-content: space-around;
+  }
+  .sidebar .logo {
+    display: none;
+  }
+  .content {
+    padding: 10px;
+  }
+  table, th, td {
+    font-size: 0.85em;
+  }
+  input {
+    width: 60px;
+    border-radius: 20px;
+  }
+}
+#buscador {
+  position: relative;
+  padding-right: 30px; /* espacio para la X */
+  background-color: white;
+}
+
+/* Botón X visible solo cuando hay texto */
+#buscador::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+/* Personalizamos la X con un pseudo-elemento */
+#buscador.clearable::after {
+  content: '✖';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 1;
+}
+/* Estilo para el input con botón de limpiar */
+input.clearable {
+  background: rgb(255, 0, 0) url('data:image/svg+xml;utf8,<svg fill="gray" height="18" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M18.3 5.71a1 1 0 00-1.41 0L12 10.59 7.11 5.7a1 1 0 00-1.41 1.41L10.59 12l-4.89 4.89a1 1 0 101.41 1.41L12 13.41l4.89 4.89a1 1 0 001.41-1.41L13.41 12l4.89-4.89a1 1 0 000-1.4z"/></svg>') no-repeat right 0.7em center;
+  background-size: 1em;
+  padding-right: 2em;
+  color: #333;
+}

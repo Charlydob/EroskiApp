@@ -1,0 +1,91 @@
+const galeria = document.getElementById("galeria");
+const buscador = document.getElementById("buscador");
+let productos = [];
+
+async function cargarProductosDesdeTxt() {
+  try {
+    const response = await fetch("recursos/txt/codigos.txt");
+    const texto = await response.text();
+
+    productos = texto
+      .split("\n")
+      .map(linea => linea.trim())
+      .filter(linea => linea.length > 0)
+      .map(linea => {
+        const partes = linea.split(',');
+        const nombre = partes[0] || "";
+        const codigobalanza = partes[1] || "";
+        const codigomerma = partes[2] || "";
+        const referencia = partes[3] || "";
+        const imagen = partes[4] || "";
+        const categoria = partes[5] || "";
+        const visible = partes[6] === "false" ? "false" : "true";
+
+        return { nombre, codigobalanza, codigomerma, referencia, imagen, categoria, visible };
+      });
+
+    productos.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
+    mostrarProductos();
+  } catch (err) {
+    console.error("Error al cargar productos:", err);
+  }
+}
+
+function mostrarProductos(filtro = "") {
+  galeria.innerHTML = "";
+
+  productos
+    .filter(p => p.visible === "true" && p.nombre.toLowerCase().includes(filtro.toLowerCase()))
+    .forEach(p => {
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div class="vista-normal">
+          <img src="${p.imagen}" alt="${p.nombre}" />
+          <div class="nombre">${p.nombre}</div>
+          <div class="nombre">${p.codigobalanza}</div>
+        </div>
+        <div class="vista-detalles">
+          <div class="dato">Caja: ${p.codigobalanza}</div>
+          <div class="dato">Merma: ${p.codigomerma}</div>
+          <div class="dato">Ref: ${p.referencia}</div>
+          <div class="cerrar">[Cerrar]</div>
+        </div>
+      `;
+
+      div.querySelector(".vista-normal").addEventListener("click", () => {
+        document.querySelectorAll(".item.activo").forEach(el => el.classList.remove("activo"));
+        div.classList.add("activo");
+      });
+
+      div.querySelector(".cerrar").addEventListener("click", (e) => {
+        e.stopPropagation();
+        div.classList.remove("activo");
+      });
+
+      galeria.appendChild(div);
+    });
+}
+
+
+buscador.addEventListener("input", () => {
+  mostrarProductos(buscador.value);
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  cargarProductosDesdeTxt();
+});
+
+
+buscador.addEventListener('input', () => {
+  buscador.classList.toggle('clearable', buscador.value.length > 0);
+});
+
+buscador.addEventListener('click', (e) => {
+  const inputRightEdge = buscador.getBoundingClientRect().right;
+  if (e.clientX > inputRightEdge - 30 && buscador.classList.contains('clearable')) {
+    buscador.value = '';
+    buscador.classList.remove('clearable');
+    buscador.dispatchEvent(new Event('input')); // Para que actualice resultados si hace falta
+  }
+});

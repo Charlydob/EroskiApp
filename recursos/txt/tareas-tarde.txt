@@ -1,0 +1,38 @@
+Caja Principal 1
+Caja Apoyo
+Reposicion palets seco camión
+Hacer negativos
+Revisión frutería
+Reposición frutería + ensaladas
+Llenado neveras venta cruzada
+Producción panadería lineal
+Reposición cámara refrigerado
+Reposición cámara congelado
+Reposición almacén seco
+Realizar revisión fechas herramienta caducados
+Preparación carro panadería día siguiente
+Hacer huecos
+Hacer negativos al cierre después del APPC
+Introducir temperaturas
+Hacer APPC
+Hacer blisters abono-rutura
+Revisión fechas para venta anticipada
+Fronteo y adelantamiento de tienda
+Llenado de neveras bebida fría al cierre
+Cierre y limpieza de caja 1
+Cierre y limpieza de caja 2
+Limpieza huecos nevera
+Limpieza rampas panadería
+Limpieza de suelo tienda
+Limpieza baños cliente
+Limpieza rampas frutería (Lunes)
+Limpieza cristales fachada (lunes, miércoles y viernes)
+Limpieza horno y bandejas (miércoles)
+Limpieza carros y cestas (miércoles)
+Imprimir listado ofertas futura (viernes)
+Imprimir etiqueta oferta futura (viernes)
+Realizar en carros productos oferta futura (viernes)
+Emblistar etiquetas oferta futura en Glasspack (lunes)
+Quitar etiquetas ofertas finalizadas (según fecha fin)
+Realizar auditorías de precios (viernes un pasillo)
+Glovo

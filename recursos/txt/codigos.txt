@@ -1,0 +1,86 @@
+Aguacate,109,,18374611,recursos/img/codigos/frutas/aguacate.png,Fruta,true
+Ajo blanco,413,,15319254,recursos/img/codigos/frutas/ajoblanco.png,Fruta,true
+Albaricoque,1250,3135,31351,recursos/img/codigos/frutas/albaricoque.png,Fruta,true
+Almendra,680,,16665473,recursos/img/codigos/frutas/almendra.png,Fruto seco,true
+Alubia blanca,420,,17977596,recursos/img/codigos/frutas/alubiablanca.png,Legumbre,true
+Avellana,468,,399451,recursos/img/codigos/frutas/Avellana.png,Fruto seco,true
+Berenjena,1021,0000,000000,recursos/img/codigos/frutas/Berenjena.png,Fruta,true
+Boniato,482,0000,000000,recursos/img/codigos/frutas/Boniato.png,Fruta,true
+Cacahuete,437,0000,000000,recursos/img/codigos/frutas/Cacahuete.png,Fruta,true
+Calabacín,406,0000,000000,recursos/img/codigos/frutas/Calabacín.png,Fruta,true
+Calabaza,987,0000,000000,recursos/img/codigos/frutas/Calabaza.jpg,Fruta,true
+Castaña,291,0000,000000,recursos/img/codigos/frutas/castana.png,Fruta,true
+Cebolla blanca,86,0000,000000,recursos/img/codigos/frutas/cebollablanca.png,Fruta,true
+Cebolla dulce,376,0000,000000,recursos/img/codigos/frutas/cebolladulce.png,Fruta,true
+Chirivia,963,0000,000000,recursos/img/codigos/frutas/chirivia.png,Fruta,true
+Ciruela negra,1175,0000,000000,recursos/img/codigos/frutas/ciruelanegra.png,Fruta,true
+Ciruela roja,253,0000,000000,recursos/img/codigos/frutas/ciruelaroja.png,Fruta,true
+Coco,673,0000,000000,recursos/img/codigos/frutas/coco.png,Fruta,true
+Cogollo,1274,0000,000000,recursos/img/codigos/frutas/cogollo.png,Fruta,true
+Coliflor,185,0000,000000,recursos/img/codigos/frutas/coliflor.png,Fruta,true
+Datil con hueso,505,0000,000000,recursos/img/codigos/frutas/datilconhueso.png,Fruta,true
+Escarola,1267,0000,000000,recursos/img/codigos/frutas/escarola.png,Fruta,true
+Higo negro,734,0000,000000,recursos/img/codigos/frutas/higonegro.png,Fruta,true
+Garbanzo,543,0000,000000,recursos/img/codigos/frutas/garbanzo.png,Fruta,true
+Granada,000,0000,000000,recursos/img/codigos/frutas/granada.png,Fruta,false
+Bombon trad,000,0000,000000,recursos/img/codigos/frutas/bombontrad.png,Fruta,false
+Bombon prem,000,0000,000000,recursos/img/codigos/frutas/bombonprem.png,Fruta,false
+Kaki,93,0000,000000,recursos/img/codigos/frutas/kaki.png,Fruta,true
+Kiwi amarillo,000,0000,000000,recursos/img/codigos/frutas/kiwiamarillo.png,Fruta,false
+Kiwi maduro,154,0000,000000,recursos/img/codigos/frutas/kiwimaduro.png,Fruta,true
+Kiwi zespri,000,0000,000000,recursos/img/codigos/frutas/kiwizespri.png,Fruta,false
+Lenteja pardina,550,0000,000000,recursos/img/codigos/frutas/lentejapardina.png,Fruta,true
+Lima,314,0000,000000,recursos/img/codigos/frutas/lima.png,Fruta,true
+Limon,1236,0000,000000,recursos/img/codigos/frutas/limon.png,Fruta,true
+Mandarina,239,0000,000000,recursos/img/codigos/frutas/mandarina.png,Fruta,true
+Mango,17,0000,000000,recursos/img/codigos/frutas/mango.png,Fruta,true
+M.golden Natur,79,0000,000000,recursos/img/codigos/frutas/mgoldennatur.png,Fruta,true
+Manzana fuji,24,0000,000000,recursos/img/codigos/frutas/manzanafuji.png,Fruta,true
+Manzana goden,55,0000,000000,recursos/img/codigos/frutas/manzanagoden.png,Fruta,true
+M.Granny,512,0000,000000,recursos/img/codigos/frutas/mgranny.png,Fruta,true
+M.PinkLady,31,0000,000000,recursos/img/codigos/frutas/mpinklady.png,Fruta,true
+M.Reinata,284,0000,000000,recursos/img/codigos/frutas/mreinata.png,Fruta,true
+Manzana Roja,574,0000,000000,recursos/img/codigos/frutas/manzanaroja.png,Fruta,true
+Melocoton amarillo,1100,0000,000000,recursos/img/codigos/frutas/melocotonamarillo.png,Fruta,true
+Melocoton rojo,956,0000,000000,recursos/img/codigos/frutas/melocotonrojo.png,Fruta,true
+Melon amarillo,697,0000,000000,recursos/img/codigos/frutas/melonamarillo.png,Fruta,true
+Melon cantaloup,710,0000,000000,recursos/img/codigos/frutas/meloncantaloup.png,Fruta,true
+Melon abuelo,1304,0000,000000,recursos/img/codigos/frutas/melonabuelo.png,Fruta,true
+Melon Matisse,727,0000,000000,recursos/img/codigos/frutas/melonmatisse.png,Fruta,true
+Melon piel de sapo,277,0000,000000,recursos/img/codigos/frutas/melonpieldesapo.png,Fruta,true
+Nabo,970,0000,000000,recursos/img/codigos/frutas/nabo.png,Fruta,true
+Napicol,1007,0000,000000,recursos/img/codigos/frutas/napicol.png,Fruta,true
+Naranja postre,1137,0000,000000,recursos/img/codigos/frutas/naranjapostre.png,Fruta,true
+Naranja Zumo,161,0000,000000,recursos/img/codigos/frutas/naranjazumo.png,Fruta,true
+Nectarina,215,0000,000000,recursos/img/codigos/frutas/nectarina.png,Fruta,true
+Nuez,444,0000,000000,recursos/img/codigos/frutas/nuez.png,Fruta,true
+Paraguayo,1243,0000,000000,recursos/img/codigos/frutas/paraguayo.png,Fruta,true
+Patata Crillamur,659,0000,000000,recursos/img/codigos/frutas/patatacrillamur.png,Fruta,true
+Patata Agria,994,0000,000000,recursos/img/codigos/frutas/patataagria.png,Fruta,true
+Patata Roja,741,0000,000000,recursos/img/codigos/frutas/patataroja.png,Fruta,true
+Patata seleccion,208,0000,000000,recursos/img/codigos/frutas/patataseleccion.png,Fruta,true
+Pepino,1281,0000,000000,recursos/img/codigos/frutas/pepino.png,Fruta,true
+Pera blanquilla,130,0000,000000,recursos/img/codigos/frutas/perablanquilla.png,Fruta,true
+Pera conf,529,0000,000000,recursos/img/codigos/frutas/peraconf.png,Fruta,true
+Pimiento freir,352,0000,000000,recursos/img/codigos/frutas/pimientofreir.png,Fruta,true
+Pimiento rojo,611,0000,000000,recursos/img/codigos/frutas/pimientorojo.png,Fruta,true
+Pimiento verde,345,0000,000000,recursos/img/codigos/frutas/pimientoverde.png,Fruta,true
+Piña,536,0000,000000,recursos/img/codigos/frutas/pina.png,Fruta,true
+Pistacho,451,0000,000000,recursos/img/codigos/frutas/pistacho.png,Fruta,true
+Platano canarias,178,0000,000000,recursos/img/codigos/frutas/platanocanarias.png,Fruta,true
+Pomelo,1113,0000,000000,recursos/img/codigos/frutas/pomelo.png,Fruta,true
+Repollo,307,0000,000000,recursos/img/codigos/frutas/repollo.png,Fruta,true
+Sandia,321,0000,000000,recursos/img/codigos/frutas/sandia.png,Fruta,true
+Sandia Fashion,116,0000,000000,recursos/img/codigos/frutas/sandiafashion.png,Fruta,true
+Tomate bola,383,0000,000000,recursos/img/codigos/frutas/tomatebola.png,Fruta,true
+Tomate en rama,246,0000,000000,recursos/img/codigos/frutas/tomateenrama.png,Fruta,true
+Tomate pera,390,0000,000000,recursos/img/codigos/frutas/tomatepera.png,Fruta,true
+Tomate rosa,475,0000,000000,recursos/img/codigos/frutas/tomaterosa.png,Fruta,true
+Tomate raf,499,0000,000000,recursos/img/codigos/frutas/tomateraf.png,Fruta,true
+Tomate verde,48,0000,000000,recursos/img/codigos/frutas/tomateverde.png,Fruta,true
+Zanhaoria,1199,0000,000000,recursos/img/codigos/frutas/zanhaoria.png,Fruta,true
+fruta,000,0000,000000,recursos/img/codigos/frutas/fruta.png,Fruta,false
+fruta,000,0000,000000,recursos/img/codigos/frutas/fruta.png,Fruta,false
+fruta,000,0000,000000,recursos/img/codigos/frutas/fruta.png,Fruta,false
+fruta,000,0000,000000,recursos/img/codigos/frutas/fruta.png,Fruta,false
+fruta,000,0000,000000,recursos/img/codigos/frutas/fruta.png,Fruta,false

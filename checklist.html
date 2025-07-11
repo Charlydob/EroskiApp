@@ -6,6 +6,17 @@
   <title>Checklist</title>
   <link rel="stylesheet" href="styles/style.css" />
   <link rel="stylesheet" href="styles/checklist.css" />
+  <!-- Resaltado del enlace activo  en el navbar -->
+    <script>
+    window.onload = () => {
+        const links = document.querySelectorAll('.sidebar a');
+        links.forEach(link => {
+        if (link.href === window.location.href) {
+            link.classList.add('active');
+        }
+        });
+    };
+    </script>
 </head>
 <body>
   <div class="container">
@@ -15,6 +26,7 @@
       <a href="balanza.html"><img src="recursos/img/balanzalogo.png" alt="Balanza" class="icon" /></a>
       <a href="checklist.html"><img src="recursos/img/Checklist.png" alt="Checklist" class="icon" /></a>
       <a href="calendario.html"><img src="recursos/img/calendario.png" alt="Calendario" class="icon" /></a>
+      <a href="codigos.html"><img src="recursos/img/codigos.png" alt="Códigos" class="icon" /></a>
     </nav>
 
     <main class="content">

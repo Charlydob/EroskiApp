@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Inicio</title>
+    <link rel="stylesheet" href="styles/style.css" />
+    <link rel="stylesheet" href="styles/codigos.css" />
+    <!-- Resaltado del enlace activo  en el navbar -->
+    <script>
+    window.onload = () => {
+        const links = document.querySelectorAll('.sidebar a');
+        links.forEach(link => {
+        if (link.href === window.location.href) {
+            link.classList.add('active');
+        }
+        });
+    };
+    </script>
+</head>
+<body>
+  <div class="container">
+    <nav class="sidebar">
+      <h2 class="logo">Mi Web</h2>
+      <a href="index.html"><img src="recursos/img/iniciologo.png" alt="Inicio" class="icon" /></a>
+      <a href="balanza.html"><img src="recursos/img/balanzalogo.png" alt="Balanza" class="icon" /></a>
+      <a href="checklist.html"><img src="recursos/img/Checklist.png" alt="Checklist" class="icon" /></a>
+      <a href="calendario.html"><img src="recursos/img/calendario.png" alt="Calendario" class="icon" /></a>
+      <a href="codigos.html"><img src="recursos/img/codigos.png" alt="Códigos" class="icon" /></a>
+    </nav>
+
+    <main class="content">
+      <h1>🔍 Códigos de balanzas</h1>
+      <input type="text" id="buscador" placeholder="Buscar producto..." />
+      <div id="galeria" class="galeria"></div>
+    </main>
+  </div>
+
+  <script src="scripts/codigos.js"></script>
+</body>
+
+</html>
