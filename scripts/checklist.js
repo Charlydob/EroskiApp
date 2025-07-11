@@ -4,7 +4,7 @@ const tareas = {
     "REVISION CALIDAD FRUTERIA", "REPOSICION FRUTERIA", "PRODUCCION PANADERIA",
     "REPOSICIÓN CAMARA REFRIGERADO", "REPOSICION CAMARA CONGELADO", "LIMPIEZA PUERTA ENTRADA",
     "LIMPIEZA CRISTALES PUERTAS NEVERAS FRIO", "LIMPIEZA DE HUECOS SECO", "REPOSICIÓN ALMACEN SECO",
-    "LLENADO NEVERAS VENTA CRUZADA", "CAJERA 1", "CAJERA 2", "REALIZAR HOJA DE CAJA",
+    "LLENADO NEVERAS VENTA CRUZADA", "Caja principal", "Caja apoyo", "REALIZAR HOJA DE CAJA",
     "REVISION PEDIDO DETALLADO", "REALIZAR PEDIDO MASAS CONGELADAS (M-J-S)",
     "REALIZAR PEDIDO CONSUMIBLES (M-J-S)", "REALIZAR PEDIDOS PROVEEDORES LOCALES (LUNES)",
     "REPOSICIÓN CONGELADO CAMIÓN (M-J-S)", "REPOSICIÓN FRUTERIA CAMIÓN (M-J-S)",
@@ -82,6 +82,7 @@ function renderizarTareas() {
   });
 
   actualizarFiltroEmpleados();
+  aplicarFiltroEmpleado(); // Para mantener el filtro activo tras cambios
 }
 
 function alternarTurno() {
@@ -126,9 +127,10 @@ function aplicarCodigoAlfanumerico(codigoCompleto) {
 
   const base = BigInt(empleados.length + 1);
   let numero;
+
   try {
-    numero = BigInt(`0x${parseInt(cod, 36).toString(16)}`);
-  } catch {
+    numero = BigInt(`0x${BigInt(parseInt(cod, 36)).toString(16)}`);
+  } catch (e) {
     alert("Código inválido");
     return;
   }
@@ -144,6 +146,8 @@ function aplicarCodigoAlfanumerico(codigoCompleto) {
   selects.forEach((select, i) => {
     select.selectedIndex = valores[i] || 0;
   });
+
+  aplicarFiltroEmpleado(); // Reaplica el filtro al cambiar selección
 }
 
 function actualizarFiltroEmpleados() {
@@ -171,25 +175,15 @@ function aplicarFiltroEmpleado() {
 document.addEventListener("DOMContentLoaded", () => {
   renderizarTareas();
 
-  const botonGenerar = document.getElementById("boton-generar");
-  if (botonGenerar) {
-    botonGenerar.addEventListener("click", mostrarCodigo);
-  }
+  document.getElementById("boton-generar").addEventListener("click", mostrarCodigo);
+  document.getElementById("boton-aplicar").addEventListener("click", () => {
+    const codigo = document.getElementById("input-codigo").value.trim();
+    if (!codigo) {
+      alert("Introduce un código válido");
+      return;
+    }
+    aplicarCodigoAlfanumerico(codigo);
+  });
 
-  const botonAplicar = document.getElementById("boton-aplicar");
-  if (botonAplicar) {
-    botonAplicar.addEventListener("click", () => {
-      const codigo = document.getElementById("input-codigo").value.trim();
-      if (!codigo) {
-        alert("Introduce un código válido");
-        return;
-      }
-      aplicarCodigoAlfanumerico(codigo);
-    });
-  }
-
-  const filtroEmpleado = document.getElementById("filtro-empleado");
-  if (filtroEmpleado) {
-    filtroEmpleado.addEventListener("change", aplicarFiltroEmpleado);
-  }
+  document.getElementById("filtro-empleado").addEventListener("change", aplicarFiltroEmpleado);
 });
