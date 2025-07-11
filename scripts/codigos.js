@@ -1,5 +1,7 @@
 const galeria = document.getElementById("galeria");
 const buscador = document.getElementById("buscador");
+const filtroCategoria = document.getElementById("filtro-categoria");
+
 let productos = [];
 
 async function cargarProductosDesdeTxt() {
@@ -25,17 +27,42 @@ async function cargarProductosDesdeTxt() {
       });
 
     productos.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
+
+    poblarSelectCategorias();
     mostrarProductos();
   } catch (err) {
     console.error("Error al cargar productos:", err);
   }
 }
 
-function mostrarProductos(filtro = "") {
+// Solo queremos estas categorías reales, filtradas y ordenadas alfabéticamente
+const CATEGORIAS_VALIDAS = ["Fruta", "Pan", "Bolleria", "Legumbre", "Fruto seco"];
+
+function poblarSelectCategorias() {
+  filtroCategoria.innerHTML = '<option value="">Todas las categorías</option>';
+  const encontradas = new Set();
+
+  productos.forEach(p => {
+    const categoria = p.categoria.trim();
+    if (CATEGORIAS_VALIDAS.includes(categoria) && !encontradas.has(categoria)) {
+      encontradas.add(categoria);
+      const option = document.createElement("option");
+      option.value = categoria;
+      option.textContent = categoria;
+      filtroCategoria.appendChild(option);
+    }
+  });
+}
+
+function mostrarProductos(filtroTexto = "", categoriaSeleccionada = "") {
   galeria.innerHTML = "";
 
   productos
-    .filter(p => p.visible === "true" && p.nombre.toLowerCase().includes(filtro.toLowerCase()))
+    .filter(p =>
+      p.visible === "true" &&
+      p.nombre.toLowerCase().includes(filtroTexto.toLowerCase()) &&
+      (categoriaSeleccionada === "" || p.categoria === categoriaSeleccionada)
+    )
     .forEach(p => {
       const div = document.createElement("div");
       div.className = "item";
@@ -67,25 +94,27 @@ function mostrarProductos(filtro = "") {
     });
 }
 
-
 buscador.addEventListener("input", () => {
-  mostrarProductos(buscador.value);
+  mostrarProductos(buscador.value, filtroCategoria.value);
+});
+
+filtroCategoria.addEventListener("change", () => {
+  mostrarProductos(buscador.value, filtroCategoria.value);
 });
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarProductosDesdeTxt();
 });
 
-
-buscador.addEventListener('input', () => {
-  buscador.classList.toggle('clearable', buscador.value.length > 0);
+buscador.addEventListener("input", () => {
+  buscador.classList.toggle("clearable", buscador.value.length > 0);
 });
 
-buscador.addEventListener('click', (e) => {
+buscador.addEventListener("click", (e) => {
   const inputRightEdge = buscador.getBoundingClientRect().right;
-  if (e.clientX > inputRightEdge - 30 && buscador.classList.contains('clearable')) {
+  if (e.clientX > inputRightEdge - 30 && buscador.classList.contains("clearable")) {
     buscador.value = '';
-    buscador.classList.remove('clearable');
-    buscador.dispatchEvent(new Event('input')); // Para que actualice resultados si hace falta
+    buscador.classList.remove("clearable");
+    buscador.dispatchEvent(new Event("input"));
   }
 });
