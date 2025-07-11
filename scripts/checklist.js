@@ -61,15 +61,11 @@ function renderizarTareas() {
     });
 
     const select = document.createElement("select");
-    const defaultOption = document.createElement("option");
-    defaultOption.value = "";
-    defaultOption.textContent = "-- Empleado --";
-    select.appendChild(defaultOption);
-
-    empleados.forEach(nombre => {
+    select.innerHTML = '<option value="">-- Empleado --</option>';
+    empleados.forEach(emp => {
       const option = document.createElement("option");
-      option.value = nombre;
-      option.textContent = nombre;
+      option.value = emp;
+      option.textContent = emp;
       select.appendChild(option);
     });
 
@@ -82,7 +78,7 @@ function renderizarTareas() {
   });
 
   actualizarFiltroEmpleados();
-  aplicarFiltroEmpleado(); // Para mantener el filtro activo tras cambios
+  aplicarFiltroEmpleado();
 }
 
 function alternarTurno() {
@@ -94,25 +90,84 @@ function reiniciarLista() {
   document.querySelectorAll("#lista-tareas input[type='checkbox']").forEach(cb => cb.checked = false);
   document.querySelectorAll("#lista-tareas .tarea-texto").forEach(span => span.classList.remove("tachado"));
   document.querySelectorAll("#lista-tareas select").forEach(sel => sel.selectedIndex = 0);
+  aplicarFiltroEmpleado();
 }
 
 function generarCodigoAlfanumerico() {
   const selects = document.querySelectorAll("#lista-tareas select");
-  const base = BigInt(empleados.length + 1);
-  let numero = BigInt(0);
-
-  selects.forEach(select => {
-    const valor = BigInt(select.selectedIndex);
-    numero = numero * base + valor;
-  });
-
-  return `${turnoActual}|${numero.toString(36).toUpperCase()}`;
+  const indices = Array.from(selects).map(select => select.selectedIndex || 0);
+  const comprimido = comprimirCodigo(indices);
+  return `${turnoActual}|${comprimido}`;
 }
 
 function mostrarCodigo() {
   const codigo = generarCodigoAlfanumerico();
   document.getElementById("codigo-generado").textContent = codigo;
   document.getElementById("input-codigo").value = codigo;
+}
+
+function comprimirCodigo(indices) {
+  const tabla = {
+    2: "a",
+    3: "b",
+    4: "c",
+    5: "d",
+    6: "e",
+    7: "f",
+    8: "g",
+    9: "h",
+    10: "i"
+  };
+
+  let resultado = [];
+  let i = 0;
+
+  while (i < indices.length) {
+    if (indices[i] === 0) {
+      let count = 1;
+      while (i + count < indices.length && indices[i + count] === 0) {
+        count++;
+      }
+      if (count === 1) {
+        resultado.push("0");
+      } else if (tabla[count]) {
+        resultado.push(tabla[count]);
+      } else {
+        resultado.push("0".repeat(count).split("").join(",")); // fallback
+      }
+      i += count;
+    } else {
+      resultado.push(String(indices[i]));
+      i++;
+    }
+  }
+
+  return resultado.join("");
+}
+
+function descomprimirCodigo(cadena) {
+  const tabla = {
+    a: "0,0",
+    b: "0,0,0",
+    c: "0,0,0,0",
+    d: "0,0,0,0,0",
+    e: "0,0,0,0,0,0",
+    f: "0,0,0,0,0,0,0",
+    g: "0,0,0,0,0,0,0,0",
+    h: "0,0,0,0,0,0,0,0,0",
+    i: "0,0,0,0,0,0,0,0,0,0"
+  };
+
+  let resultado = "";
+  for (let i = 0; i < cadena.length; i++) {
+    const char = cadena[i];
+    if (/[a-i]/.test(char)) {
+      resultado += tabla[char] + ",";
+    } else {
+      resultado += char + ",";
+    }
+  }
+  return resultado.replace(/,$/, ""); // quitar última coma
 }
 
 function aplicarCodigoAlfanumerico(codigoCompleto) {
@@ -125,29 +180,15 @@ function aplicarCodigoAlfanumerico(codigoCompleto) {
   turnoActual = turno;
   renderizarTareas();
 
-  const base = BigInt(empleados.length + 1);
-  let numero;
-
-  try {
-    numero = BigInt(`0x${BigInt(parseInt(cod, 36)).toString(16)}`);
-  } catch (e) {
-    alert("Código inválido");
-    return;
-  }
-
+  const cadenaExpandida = descomprimirCodigo(cod);
+  const indices = cadenaExpandida.split(",").map(n => parseInt(n, 10));
   const selects = document.querySelectorAll("#lista-tareas select");
-  const valores = [];
-
-  for (let i = selects.length - 1; i >= 0; i--) {
-    valores[i] = Number(numero % base);
-    numero = numero / base;
-  }
 
   selects.forEach((select, i) => {
-    select.selectedIndex = valores[i] || 0;
+    select.selectedIndex = indices[i] ?? 0;
   });
 
-  aplicarFiltroEmpleado(); // Reaplica el filtro al cambiar selección
+  aplicarFiltroEmpleado();
 }
 
 function actualizarFiltroEmpleados() {
@@ -163,18 +204,15 @@ function actualizarFiltroEmpleados() {
 
 function aplicarFiltroEmpleado() {
   const filtro = document.getElementById("filtro-empleado").value;
-  const tareas = document.querySelectorAll("#lista-tareas li");
-
-  tareas.forEach(li => {
+  document.querySelectorAll("#lista-tareas li").forEach(li => {
     const select = li.querySelector("select");
     const empleado = select.value;
-    li.style.display = (!filtro || empleado === filtro) ? "" : "none";
+    li.style.display = !filtro || empleado === filtro ? "" : "none";
   });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   renderizarTareas();
-
   document.getElementById("boton-generar").addEventListener("click", mostrarCodigo);
   document.getElementById("boton-aplicar").addEventListener("click", () => {
     const codigo = document.getElementById("input-codigo").value.trim();
@@ -184,6 +222,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     aplicarCodigoAlfanumerico(codigo);
   });
-
   document.getElementById("filtro-empleado").addEventListener("change", aplicarFiltroEmpleado);
 });
