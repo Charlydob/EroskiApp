@@ -36,7 +36,7 @@ const tareas = {
   ]
 };
 
-const empleados = ["Leti", "Sergio", "Brian", "Rocío", "Juan", "Charly", "Natalia", "Lorena"];
+const empleados = ["Leti", "Sergio", "Brian", "Rocío", "Juan", "Charly", "Natalia", "Lorena", "TODOS"];
 let turnoActual = "mañana";
 
 function renderizarTareas() {
