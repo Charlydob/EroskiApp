@@ -1,40 +1,65 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Inicio</title>
-    <link rel="stylesheet" href="styles/style.css" />
-    <!-- Resaltado del enlace activo  en el navbar -->
-    <script>
-    window.onload = () => {
-        const links = document.querySelectorAll('.sidebar a');
-        links.forEach(link => {
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Calendario</title>
+  <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" href="styles/calendario.css">
+  <script defer>
+    document.addEventListener("DOMContentLoaded", () => {
+      const links = document.querySelectorAll('.sidebar a');
+      links.forEach(link => {
         if (link.href === window.location.href) {
-            link.classList.add('active');
+          link.classList.add('active');
         }
-        });
-    };
-    </script>
+      });
 
+      // Mostrar u ocultar zona de creación según el rol
+      const rol = localStorage.getItem("rol");
+      const crearHorario = document.getElementById("crearHorario");
+      const botonJefa = document.getElementById("activarModoJefa");
+
+      if (rol === "jefa") {
+        crearHorario.classList.remove("oculto");
+        botonJefa.style.display = "none";
+      } else {
+        crearHorario.classList.add("oculto");
+        botonJefa.style.display = "none"; // Lo ocultamos porque ya no se usa
+      }
+    });
+  </script>
 </head>
 <body>
-<!-- Esto es el menu de navegación lateral -->
-    <div class="container">
-        <nav class="sidebar">
-      <h2 class="logo">Mi Web</h2>
-      <a href="index.html"><img src="recursos/img/iniciologo.png" alt="Inicio" class="icon" /></a>
-      <a href="balanza.html"><img src="recursos/img/balanzalogo.png" alt="Balanza" class="icon" /></a>
-      <a href="checklist.html"><img src="recursos/img/Checklist.png" alt="Checklist" class="icon" /></a>
-      <a href="calendario.html"><img src="recursos/img/calendario.png" alt="Calendario" class="icon" /></a>
-      <a href="codigos.html"><img src="recursos/img/codigos.png" alt="Códigos" class="icon" /></a>
+  <div class="container">
+    <nav class="sidebar">
+      <a href="index.html"><img src="recursos/img/iniciologo.png" alt="Inicio" class="icon"></a>
+      <a href="balanza.html"><img src="recursos/img/balanzalogo.png" alt="Balanza" class="icon"></a>
+      <a href="checklist.html"><img src="recursos/img/Checklist.png" alt="Checklist" class="icon"></a>
+      <a href="calendario.html"><img src="recursos/img/calendario.png" alt="Calendario" class="icon"></a>
+      <a href="codigos.html"><img src="recursos/img/codigos.png" alt="Códigos" class="icon"></a>
     </nav>
-<!-- Esto es el contenido de la pagina -->
-        <main class="content">
-        <h1>Estás en calendario</h1>
-        <p>Este es el contenido principal.</p>
-        </main>
-    </div>
 
+    <main class="content">
+      </main>
+  </div>
+
+  <script>
+    let lastTouchEnd = 0;
+
+    document.addEventListener('touchend', function (event) {
+      const now = new Date().getTime();
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+
+    document.addEventListener('gesturestart', function (event) {
+      event.preventDefault();
+    });
+  </script>
+
+  <script src="scripts/calendario.js"></script>
 </body>
 </html>

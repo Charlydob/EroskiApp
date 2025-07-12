@@ -1,55 +1,126 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Inicio</title>
-    <link rel="stylesheet" href="styles/style.css" />
-    <!-- Resaltado del enlace activo  en el navbar -->
-    <script>
-    window.onload = () => {
-        const links = document.querySelectorAll('.sidebar a');
-        links.forEach(link => {
-        if (link.href === window.location.href) {
-            link.classList.add('active');
-        }
-        });
-    };
-    </script>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inicio</title>
+  <link rel="stylesheet" href="styles/style.css" />
+  <style>
+    .login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 100px;
+      gap: 10px;
+    }
+    .login-container input {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .login-container button {
+      background-color: #1a40bc;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .login-container .error {
+      color: red;
+      font-size: 14px;
+    }
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .menu-item {
+      text-align: center;
+      text-decoration: none;
+      color: black;
+    }
+    .menu-item img {
+      width: 60px;
+      height: 60px;
+    }
+    .logo {
+      text-align: center;
+      font-size: 24px;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-<!-- Esto es el menu de navegación lateral -->
-    <div class="container">
-        <nav class="sidebar">
-        
-        
-        </nav>
-<!-- Esto es el contenido de la pagina -->
-        <main class="content">
-            <h2 class="logo">La app de Charly</h2>
+
+  <div class="container">
+    <nav class="sidebar"></nav>
+
+    <main class="content">
+      <div id="loginSection" class="login-container">
+        <h2>La app de Charly</h2>
+        <p>Introduce tu código de acceso:</p>
+        <input type="password" id="codigoAcceso" placeholder="Código..." />
+        <button onclick="iniciarSesion()">Entrar</button>
+        <p id="errorMsg" class="error"></p>
+      </div>
+
+      <div id="menuSection" style="display: none;">
+        <h2 class="logo">La app de Charly</h2>
         <div class="menu-grid">
-    <a href="balanza.html" class="menu-item">
-        <img src="recursos/img/balanzalogo.png" alt="Balanza" />
-        <span>Balanza</span>
-    </a>
-    <a href="checklist.html" class="menu-item">
-        <img src="recursos/img/Checklist.png" alt="Checklist" />
-        <span>Checklist</span>
-    </a>
-    <a href="calendario.html" class="menu-item">
-        <img src="recursos/img/calendario.png" alt="Calendario" />
-        <span>Calendario</span>
-    </a>
-    <a href="codigos.html" class="menu-item">
-        <img src="recursos/img/codigos.png" alt="Códigos" />
-        <span>Códigos</span>
-    </a>
-    <!-- Puedes seguir añadiendo más -->
-    </div>
+          <a href="balanza.html" class="menu-item">
+            <img src="recursos/img/balanzalogo.png" alt="Balanza" />
+            <span>Balanza</span>
+          </a>
+          <a href="checklist.html" class="menu-item">
+            <img src="recursos/img/Checklist.png" alt="Checklist" />
+            <span>Checklist</span>
+          </a>
+          <a href="calendario.html" class="menu-item">
+            <img src="recursos/img/calendario.png" alt="Calendario" />
+            <span>Calendario</span>
+          </a>
+          <a href="codigos.html" class="menu-item">
+            <img src="recursos/img/codigos.png" alt="Códigos" />
+            <span>Códigos</span>
+          </a>
+        </div>
+      </div>
+    </main>
+  </div>
 
-        </main>
-    </div>
+  <script>
+    window.onload = () => {
+      const links = document.querySelectorAll('.sidebar a');
+      links.forEach(link => {
+        if (link.href === window.location.href) {
+          link.classList.add('active');
+        }
+      });
 
+      const rol = localStorage.getItem("rol");
+      if (rol) {
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("menuSection").style.display = "block";
+      }
+    };
+
+    function iniciarSesion() {
+      const codigo = document.getElementById('codigoAcceso').value.trim();
+      const empleados = ["Brian", "Rocío", "Elías", "El Nuevo"];
+      if (codigo === "1306") {
+        localStorage.setItem("rol", "jefa");
+        window.location.reload();
+      } else if (empleados.includes(codigo)) {
+        localStorage.setItem("rol", "empleado");
+        localStorage.setItem("nombre", codigo);
+        window.location.reload();
+      } else {
+        document.getElementById("errorMsg").textContent = "Código incorrecto.";
+      }
+    }
+  </script>
 </body>
 </html>
