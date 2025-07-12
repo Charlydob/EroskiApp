@@ -105,6 +105,68 @@ filtroCategoria.addEventListener("change", () => {
 document.addEventListener("DOMContentLoaded", () => {
   cargarProductosDesdeTxt();
 });
+// Filtro: mostrar productos que tienen código de merma
+document.getElementById("btn-merma").addEventListener("click", () => {
+  const resultado = productos.filter(p => p.visible === "true" && p.codigomerma.trim() !== "");
+  mostrarFiltrados(resultado, "merma");
+});
+
+
+// Filtro: categoría Bolleria (envasar)
+document.getElementById("btn-envasar").addEventListener("click", () => {
+  const resultado = productos.filter(p => p.visible === "true" && p.categoria === "Bolleria");
+  mostrarFiltrados(resultado);
+});
+
+// Filtro: frutas con código de balanza asignado
+document.getElementById("btn-caja").addEventListener("click", () => {
+  const resultado = productos.filter(p =>
+    p.visible === "true" &&
+    p.categoria === "Fruta" &&
+    p.codigobalanza.trim() !== ""
+  );
+  mostrarFiltrados(resultado);
+});
+
+// Función auxiliar para mostrar una lista filtrada específica
+function mostrarFiltrados(lista, modo = "normal") {
+  galeria.innerHTML = "";
+  lista.forEach(p => {
+    let codigo = p.codigobalanza;
+    if (modo === "merma") {
+      codigo = p.codigomerma;
+    }
+
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `
+      <div class="vista-normal">
+        <img src="${p.imagen}" alt="${p.nombre}" />
+        <div class="nombre">${p.nombre}</div>
+        <div class="nombre">${codigo}</div>
+      </div>
+      <div class="vista-detalles">
+        <div class="dato">Caja: ${p.codigobalanza}</div>
+        <div class="dato">Merma: ${p.codigomerma}</div>
+        <div class="dato">Ref: ${p.referencia}</div>
+        <div class="cerrar">[Cerrar]</div>
+      </div>
+    `;
+
+    div.querySelector(".vista-normal").addEventListener("click", () => {
+      document.querySelectorAll(".item.activo").forEach(el => el.classList.remove("activo"));
+      div.classList.add("activo");
+    });
+
+    div.querySelector(".cerrar").addEventListener("click", (e) => {
+      e.stopPropagation();
+      div.classList.remove("activo");
+    });
+
+    galeria.appendChild(div);
+  });
+}
+
 
 buscador.addEventListener("input", () => {
   buscador.classList.toggle("clearable", buscador.value.length > 0);

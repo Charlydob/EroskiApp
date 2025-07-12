@@ -106,7 +106,7 @@ h1 {
 }
 .nombre {
   font-weight: bold;
-  font-size: 0.9em;
+  font-size: 0.8em;
   margin-top: 0em;
 }
 
@@ -214,4 +214,26 @@ input.clearable {
   background-size: 1em;
   padding-right: 2em;
   color: #333;
+}
+.filtros-rapidos {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 1em;
+  flex-wrap: wrap;
+}
+
+.filtros-rapidos button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background 0.2s ease;
+}
+
+.filtros-rapidos button:hover {
+  background-color: #cc0000;
 }

@@ -1,134 +1,154 @@
-Aguacate,109,28006,18374611,recursos/img/codigos/frutas/aguacate.png,Fruta,True
+Aguacate,109,286,18374611,recursos/img/codigos/frutas/aguacate.png,Fruta,True
 Ajo blanco,413,15952,15319254,recursos/img/codigos/frutas/ajoblanco.png,Fruta,True
 Albaricoque,1250,3135,31351,recursos/img/codigos/frutas/albaricoque.png,Fruta,True
 Almendra,680,,16665473,recursos/img/codigos/frutas/almendra.png,Fruto seco,True
 Alubia blanca,420,,17977596,recursos/img/codigos/frutas/alubiablanca.png,Legumbre,True
 Avellana,468,,399451,recursos/img/codigos/frutas/Avellana.png,Fruto seco,True
+Banana,62,13793,14382832,recursos/img/codigos/frutas/Banana.png,Fruta,True
 Berenjena,1021,36577,15318246,recursos/img/codigos/frutas/Berenjena.png,Fruta,True
-Boniato,482,36579,18372578,recursos/img/codigos/frutas/Boniato.png,Fruta,True
-Cacahuete,437,,000000,recursos/img/codigos/frutas/Cacahuete.png,Fruta,True
-Calabacín,406,28006,18374633,recursos/img/codigos/frutas/Calabacín.png,Fruta,True
-Calabaza,987,,000000,recursos/img/codigos/frutas/Calabaza.jpg,Fruta,True
-Castaña,291,9071,18374889,recursos/img/codigos/frutas/castana.png,Fruta,True
-Cebolla blanca,86,13406,18374718,recursos/img/codigos/frutas/cebollablanca.png,Fruta,True
-Cebolla dulce,376,8355,18374697,recursos/img/codigos/frutas/cebolladulce.png,Fruta,True
-Chirivia,963,,000000,recursos/img/codigos/frutas/chirivia.png,Fruta,True
-Ciruela negra,1175,,000000,recursos/img/codigos/frutas/ciruelanegra.png,Fruta,True
+Boniato,482,17948,179481,recursos/img/codigos/frutas/Boniato.png,Fruta,True
+Cacahuete,437,,,recursos/img/codigos/frutas/Cacahuete.png,Fruta,True
+Calabacín,406,9071,90712,recursos/img/codigos/frutas/Calabacín.png,Fruta,True
+Calabaza,987,,,recursos/img/codigos/frutas/Calabaza.jpg,Fruta,True
+Castaña,291,13406,2680775,recursos/img/codigos/frutas/castana.png,Fruta,True
+Cebolla blanca,86,8355,12043626,recursos/img/codigos/frutas/cebollablanca.png,Fruta,True
+Cebolla dulce,376,26295,17745340,recursos/img/codigos/frutas/cebolladulce.png,Fruta,True
+Chirivia,963,,,recursos/img/codigos/frutas/chirivia.png,Fruta,True
+Ciruela negra,1175,70,8384653,recursos/img/codigos/frutas/ciruelanegra.png,Fruta,True
 Ciruela roja,253,70,18374635,recursos/img/codigos/frutas/ciruelaroja.png,Fruta,True
-Coco,673,22217,18374639,recursos/img/codigos/frutas/coco.png,Fruta,True
-Cogollo,1274,,000000,recursos/img/codigos/frutas/cogollo.png,Fruta,True
-Coliflor,185,,000000,recursos/img/codigos/frutas/coliflor.png,Fruta,True
-Datil con hueso,505,,000000,recursos/img/codigos/frutas/datilconhueso.png,Fruta,True
-Escarola,1267,,000000,recursos/img/codigos/frutas/escarola.png,Fruta,True
-Higo negro,734,,000000,recursos/img/codigos/frutas/higonegro.png,Fruta,True
-Garbanzo,543,,000000,recursos/img/codigos/frutas/garbanzo.png,Fruta,True
-Granada,000,,000000,recursos/img/codigos/frutas/granada.png,Fruta,False
-Bombon trad,000,,000000,recursos/img/codigos/frutas/bombontrad.png,Fruta,False
-Bombon prem,000,,000000,recursos/img/codigos/frutas/bombonprem.png,Fruta,False
-Kaki,93,,000000,recursos/img/codigos/frutas/kaki.png,Fruta,True
-Kiwi amarillo,000,28821,18374641,recursos/img/codigos/frutas/kiwiamarillo.png,Fruta,True
-Kiwi maduro,154,270,18374642,recursos/img/codigos/frutas/kiwimaduro.png,Fruta,True
-Kiwi zespri,000,,000000,recursos/img/codigos/frutas/kiwizespri.png,Fruta,False
-Lenteja pardina,550,,000000,recursos/img/codigos/frutas/lentejapardina.png,Fruta,True
-Lima,314,38003,18374643,recursos/img/codigos/frutas/lima.png,Fruta,True
-Limon,1236,37342,18374645,recursos/img/codigos/frutas/limon.png,Fruta,True
-Mandarina,239,9710,18374647,recursos/img/codigos/frutas/mandarina.png,Fruta,True
-Mango,17,17293,18374648,recursos/img/codigos/frutas/mango.png,Fruta,True
-M.golden Natur,79,236,18374654,recursos/img/codigos/frutas/mgoldennatur.png,Fruta,True
-Manzana fuji,24,1115,18374649,recursos/img/codigos/frutas/manzanafuji.png,Fruta,True
-Manzana goden,55,11830,18374650,recursos/img/codigos/frutas/manzanagoden.png,Fruta,True
-M.Granny,512,1155,18374651,recursos/img/codigos/frutas/mgranny.png,Fruta,True
-M.PinkLady,31,12693,18374652,recursos/img/codigos/frutas/mpinklady.png,Fruta,True
-M.Reinata,284,3066,18374653,recursos/img/codigos/frutas/mreinata.png,Fruta,True
-Manzana Roja,574,1145,18374655,recursos/img/codigos/frutas/manzanaroja.png,Fruta,True
-Melocoton amarillo,1100,,000000,recursos/img/codigos/frutas/melocotonamarillo.png,Fruta,True
-Melocoton rojo,956,,000000,recursos/img/codigos/frutas/melocotonrojo.png,Fruta,True
-Melon amarillo,697,,000000,recursos/img/codigos/frutas/melonamarillo.png,Fruta,True
-Melon cantaloup,710,,000000,recursos/img/codigos/frutas/meloncantaloup.png,Fruta,True
-Melon abuelo,1304,,000000,recursos/img/codigos/frutas/melonabuelo.png,Fruta,True
-Melon Matisse,727,,000000,recursos/img/codigos/frutas/melonmatisse.png,Fruta,True
-Melon piel de sapo,277,4111,18374656,recursos/img/codigos/frutas/melonpieldesapo.png,Fruta,True
-Nabo,970,,000000,recursos/img/codigos/frutas/nabo.png,Fruta,True
-Napicol,1007,,000000,recursos/img/codigos/frutas/napicol.png,Fruta,True
+Coco,673,22217,52019,recursos/img/codigos/frutas/coco.png,Fruta,True
+Cogollo,1274,,,recursos/img/codigos/frutas/cogollo.png,Fruta,True
+Coliflor,185,,,recursos/img/codigos/frutas/coliflor.png,Fruta,True
+Datil con hueso,505,,,recursos/img/codigos/frutas/datilconhueso.png,Fruta,True
+Escarola,1267,,,recursos/img/codigos/frutas/escarola.png,Fruta,True
+Higo negro,734,,,recursos/img/codigos/frutas/higonegro.png,Fruta,True
+Garbanzo,543,,,recursos/img/codigos/frutas/garbanzo.png,Fruta,True
+Granada,0,,,recursos/img/codigos/frutas/granada.png,Fruta,false
+Bombon trad,0,,,recursos/img/codigos/frutas/bombontrad.png,Fruta,false
+Bombon prem,0,,,recursos/img/codigos/frutas/bombonprem.png,Fruta,false
+Kaki,93,,,recursos/img/codigos/frutas/kaki.png,Fruta,True
+Kiwi amarillo,,15341,15117351,recursos/img/codigos/frutas/kiwimaduro.png,Fruta,True
+Kiwi maduro,154,28821,18522805,recursos/img/codigos/frutas/kiwimaduro.png,Fruta,True
+Kiwi zespri,0,,,recursos/img/codigos/frutas/kiwizespri.png,Fruta,false
+Lenteja pardina,550,,,recursos/img/codigos/frutas/lentejapardina.png,Fruta,True
+Lima,314,270,56515,recursos/img/codigos/frutas/lima.png,Fruta,True
+Limon Natur,1236,383,22318372,recursos/img/codigos/frutas/limon.png,Fruta,True
+Limon Opor,1236,37342,22244743,recursos/img/codigos/frutas/limon.png,Fruta,True
+Mandarina,239,17293,15950769,recursos/img/codigos/frutas/mandarina.png,Fruta,True
+Mango,17,33685,8426736,recursos/img/codigos/frutas/mango.png,Fruta,True
+M.golden Natur,79,11830,1934868,recursos/img/codigos/frutas/mgoldennatur.png,Fruta,True
+Manzana fuji,24,236,2360,recursos/img/codigos/frutas/manzanafuji.png,Fruta,True
+Manzana goden,55,1115,11155,recursos/img/codigos/frutas/manzanagoden.png,Fruta,True
+M.Granny,512,1155,11551,recursos/img/codigos/frutas/mgranny.png,Fruta,True
+M.PinkLady,31,12693,2388676,recursos/img/codigos/frutas/mpinklady.png,Fruta,True
+M.Reinata,284,3066,11321775,recursos/img/codigos/frutas/mreinata.png,Fruta,True
+Manzana Roja,574,1145,11452,recursos/img/codigos/frutas/manzanaroja.png,Fruta,True
+Melocoton amarillo,11,,,recursos/img/codigos/frutas/melocotonamarillo.png,Fruta,True
+Melocoton rojo,956,,,recursos/img/codigos/frutas/melocotonrojo.png,Fruta,True
+Melon amarillo,697,,,recursos/img/codigos/frutas/melonamarillo.png,Fruta,True
+Melon cantaloup,710,,,recursos/img/codigos/frutas/meloncantaloup.png,Fruta,True
+Melon abuelo,1304,,,recursos/img/codigos/frutas/melonabuelo.png,Fruta,True
+Melon Matisse,727,,,recursos/img/codigos/frutas/melonmatisse.png,Fruta,True
+Melon piel de sapo,277,4111,41111,recursos/img/codigos/frutas/melonpieldesapo.png,Fruta,True
+Nabo,970,,,recursos/img/codigos/frutas/nabo.png,Fruta,True
+Napicol,17,,,recursos/img/codigos/frutas/napicol.png,Fruta,True
 Naranja postre,1137,36579,18374657,recursos/img/codigos/frutas/naranjapostre.png,Fruta,True
-Naranja Zumo,161,9711,18374659,recursos/img/codigos/frutas/naranjazumo.png,Fruta,True
-Nectarina,215,,000000,recursos/img/codigos/frutas/nectarina.png,Fruta,True
-Nuez,444,,000000,recursos/img/codigos/frutas/nuez.png,Fruta,True
-Paraguayo,1243,,000000,recursos/img/codigos/frutas/paraguayo.png,Fruta,True
-Patata Crillamur,659,,000000,recursos/img/codigos/frutas/patatacrillamur.png,Fruta,True
-Patata Agria,994,,000000,recursos/img/codigos/frutas/patataagria.png,Fruta,True
-Patata Roja,741,,000000,recursos/img/codigos/frutas/patataroja.png,Fruta,True
-Patata seleccion,208,9940,18374660,recursos/img/codigos/frutas/patataseleccion.png,Fruta,True
-Pepino,1281,1633,18374662,recursos/img/codigos/frutas/pepino.png,Fruta,True
-Pera blanquilla,130,1721,18374663,recursos/img/codigos/frutas/perablanquilla.png,Fruta,True
-Pera conf,529,36575,18374664,recursos/img/codigos/frutas/peraconf.png,Fruta,True
-Pimiento freir,352,14722,18374667,recursos/img/codigos/frutas/pimientofreir.png,Fruta,True
-Pimiento rojo,611,8376,18374668,recursos/img/codigos/frutas/pimientorojo.png,Fruta,True
-Pimiento verde,345,28422,18374669,recursos/img/codigos/frutas/pimientoverde.png,Fruta,True
-Piña,536,8111,18374670,recursos/img/codigos/frutas/pina.png,Fruta,True
-Pistacho,451,,000000,recursos/img/codigos/frutas/pistacho.png,Fruta,True
-Platano canarias,178,25462,18374671,recursos/img/codigos/frutas/platanocanarias.png,Fruta,True
-Pomelo,1113,,000000,recursos/img/codigos/frutas/pomelo.png,Fruta,True
-Repollo,307,23981,18374672,recursos/img/codigos/frutas/repollo.png,Fruta,True
-Sandia,321,,000000,recursos/img/codigos/frutas/sandia.png,Fruta,True
-Sandia Fashion,116,,000000,recursos/img/codigos/frutas/sandiafashion.png,Fruta,True
-Tomate bola,383,6301,18374674,recursos/img/codigos/frutas/tomatebola.png,Fruta,True
-Tomate en rama,246,38096,18374675,recursos/img/codigos/frutas/tomateenrama.png,Fruta,True
-Tomate pera,390,31306,18374676,recursos/img/codigos/frutas/tomatepera.png,Fruta,True
-Tomate rosa,475,40651,18374677,recursos/img/codigos/frutas/tomaterosa.png,Fruta,True
-Tomate raf,499,9148,18374678,recursos/img/codigos/frutas/tomateraf.png,Fruta,True
-Tomate verde,48,,000000,recursos/img/codigos/frutas/tomateverde.png,Fruta,True
-Zanhaoria,1199,,000000,recursos/img/codigos/frutas/zanhaoria.png,Fruta,True
+Naranja Natur,161,14912,14897615,recursos/img/codigos/frutas/naranjazumo.png,Fruta,True
+Naranja Opor,161,36579,21770912,recursos/img/codigos/frutas/naranjazumo.png,Fruta,True
+Naranja Zumo,161,9711,12781654,recursos/img/codigos/frutas/naranjazumo.png,Fruta,True
+Nectarina,215,,,recursos/img/codigos/frutas/nectarina.png,Fruta,True
+Nuez,444,,,recursos/img/codigos/frutas/nuez.png,Fruta,True
+Paraguayo,1243,,,recursos/img/codigos/frutas/paraguayo.png,Fruta,True
+Patata Crillamur,659,,,recursos/img/codigos/frutas/patatacrillamur.png,Fruta,True
+Patata Agria,994,,,recursos/img/codigos/frutas/patataagria.png,Fruta,True
+Patata Roja,741,,,recursos/img/codigos/frutas/patataroja.png,Fruta,True
+Patata seleccion,208,8358,12043717,recursos/img/codigos/frutas/patataseleccion.png,Fruta,True
+Patata Opor,,36576,21770888,recursos/img/codigos/frutas/patataseleccion.png,Fruta,True
+Pepino,1281,9940,12862041,recursos/img/codigos/frutas/pepino.png,Fruta,True
+Pera blanquilla,130,1633,16337,recursos/img/codigos/frutas/perablanquilla.png,Fruta,True
+Pera conf,529,1721,17210,recursos/img/codigos/frutas/peraconf.png,Fruta,True
+Pimiento freir,352,28046,18377952,recursos/img/codigos/frutas/pimientofreir.png,Fruta,True
+Pimiento rojo,611,36575,21770870,recursos/img/codigos/frutas/pimientorojo.png,Fruta,True
+Pimiento verde,345,302,3020,recursos/img/codigos/frutas/pimientoverde.png,Fruta,True
+Piña,536,14722,5848726,recursos/img/codigos/frutas/pina.png,Fruta,True
+Pistacho,451,,,recursos/img/codigos/frutas/pistacho.png,Fruta,True
+Platano canarias igp,,8376,12069175,recursos/img/codigos/frutas/platanocanarias.png,Fruta,True
+Platano Natur,178,28422,18439216,recursos/img/codigos/frutas/platanocanarias.png,Fruta,True
+Pomelo,1113,,,recursos/img/codigos/frutas/pomelo.png,Fruta,True
+Repollo,307,8111,81117,recursos/img/codigos/frutas/repollo.png,Fruta,True
+Sandia Rayada,321,,13669,recursos/img/codigos/frutas/sandia.png,Fruta,True
+Sandia Fashion,116,,,recursos/img/codigos/frutas/sandiafashion.png,Fruta,True
+Tomate bola,383,25462,17506619,recursos/img/codigos/frutas/tomatebola.png,Fruta,True
+Tomate en rama,246,23981,62216,recursos/img/codigos/frutas/tomateenrama.png,Fruta,True
+Tomate pera,390,6301,63016,recursos/img/codigos/frutas/tomatepera.png,Fruta,True
+Tomate rosa,475,31306,19511088,recursos/img/codigos/frutas/tomaterosa.png,Fruta,True
+Tomate raf,499,40651,23090186,recursos/img/codigos/frutas/tomateraf.png,Fruta,True
+Tomate verde,48,,,recursos/img/codigos/frutas/tomateverde.png,Fruta,True
+Zanhaoria,1199,,,recursos/img/codigos/frutas/zanhaoria.png,Fruta,True
 
 
 
-BAGUETTE,1846,0000,000000,recursos/img/codigos/pan/baguette.png,Pan,true
-BAGUETTE 2 UNID,9277,0000,000000,recursos/img/codigos/pan/baguette2unid.png,Pan,false
-BARRA MEDIANA,6918,0000,000000,recursos/img/codigos/pan/barramediana.png,Pan,true
-BARRA MEDIANA 2U,11022,0000,000000,recursos/img/codigos/pan/barramediana2u.png,Pan,false
-BARRA GRANDE,7123,0000,000000,recursos/img/codigos/pan/barragrande.png,Pan,true
-5 PANES,20604,0000,000000,recursos/img/codigos/pan/5panes.png,Pan,true
-BARRA ASPAS,17653,0000,000000,recursos/img/codigos/pan/barraaspas.png,Pan,true
-PAN CANDEAL PICOS,2164,0000,000000,recursos/img/codigos/pan/pancandealpicos.png,Pan,true
-10 PANECILLOS PINCHO,48336,0000,000000,recursos/img/codigos/pan/10panecillospincho.png,Pan,false
-BAGUETINA S/GLUTEN,284,0000,000000,recursos/img/codigos/pan/baguetinasgluten.png,Pan,flase
-HOGAZA PAN NATURAL,352,0000,000000,recursos/img/codigos/pan/hogazapannatural.png,Pan,true
-HOGAZA PAN CER/SEM,23220,0000,000000,recursos/img/codigos/pan/hogazapancersem.png,Pan,true
-HOGAZA CENT AVENA,16358,0000,000000,recursos/img/codigos/pan/hogazacentavena.png,Pan,true
-BARRA TRADICION,1805,0000,000000,recursos/img/codigos/pan/barratradicion.png,Pan,true
-BARRA RUSTICA,7758,0000,000000,recursos/img/codigos/pan/barrarustica.png,Pan,true
-CHAPATA,9244,0000,000000,recursos/img/codigos/pan/chapata.png,Pan,true
-PAN BASTON,9118,0000,000000,recursos/img/codigos/pan/panbaston.png,Pan,true
-BARRA 56% CEREALES,11957,0000,000000,recursos/img/codigos/pan/barra56cereales.png,Pan,true
-PAN 5 SEMILLAS(3%),20354,0000,000000,recursos/img/codigos/pan/pan5semillas.png,Pan,true
-PAN CROQUANT,45717,0000,000000,recursos/img/codigos/pan/pancroquant.png,Pan,true
-BARRA CAMPESINA,27340,0000,000000,recursos/img/codigos/pan/barracampesina.png,Pan,true
-BAGUETINA 100%INT.,39100,0000,000000,recursos/img/codigos/pan/baguetina100int.png,Pan,true
-PAN DE AGUA,46917,0000,000000,recursos/img/codigos/pan/pandeagua.png,Pan,true
+BAGUETTE,1846,,,recursos/img/codigos/pan/baguette.png,Pan,true
+BAGUETTE 2 UNID,9277,,,recursos/img/codigos/pan/baguette2unid.png,Pan,false
+BARRA MEDIANA,6918,,,recursos/img/codigos/pan/barramediana.png,Pan,true
+BARRA MEDIANA 2U,11022,,,recursos/img/codigos/pan/barramediana2u.png,Pan,false
+BARRA GRANDE,7123,,,recursos/img/codigos/pan/barragrande.png,Pan,true
+5 PANES,20604,,,recursos/img/codigos/pan/5panes.png,Pan,true
+BARRA ASPAS,17653,,,recursos/img/codigos/pan/barraaspas.png,Pan,true
+PAN CANDEAL PICOS,2164,,,recursos/img/codigos/pan/pancandealpicos.png,Pan,true
+10 PANECILLOS PINCHO,48336,,,recursos/img/codigos/pan/10panecillospincho.png,Pan,false
+BAGUETINA S/GLUTEN,284,,,recursos/img/codigos/pan/baguetinasgluten.png,Pan,false
+HOGAZA PAN NATURAL,352,,,recursos/img/codigos/pan/hogazapannatural.png,Pan,true
+HOGAZA PAN CER/SEM,23220,,,recursos/img/codigos/pan/hogazapancersem.png,Pan,true
+HOGAZA CENT AVENA,16358,,,recursos/img/codigos/pan/hogazacentavena.png,Pan,true
+BARRA TRADICION,1805,,,recursos/img/codigos/pan/barratradicion.png,Pan,true
+BARRA RUSTICA,7758,,,recursos/img/codigos/pan/barrarustica.png,Pan,true
+CHAPATA,9244,,,recursos/img/codigos/pan/chapata.png,Pan,true
+PAN BASTON,9118,,,recursos/img/codigos/pan/panbaston.png,Pan,true
+BARRA 56% CEREALES,11957,,,recursos/img/codigos/pan/barra56cereales.png,Pan,true
+PAN 5 SEMILLAS(3%),20354,,,recursos/img/codigos/pan/pan5semillas.png,Pan,true
+PAN CROQUANT,45717,,,recursos/img/codigos/pan/pancroquant.png,Pan,true
+BARRA CAMPESINA,27340,,,recursos/img/codigos/pan/barracampesina.png,Pan,true
+BAGUETINA 100%INT.,391,,,recursos/img/codigos/pan/baguetina100int.png,Pan,true
+PAN DE AGUA,46917,,,recursos/img/codigos/pan/pandeagua.png,Pan,true
 
 
-CROISS CURVO 2U,53313,0000,000000,recursos/img/codigos/bolleria/croiss_curvo_2u.png,Bolleria,true
-CROISS RECT 3U,45706,0000,000000,recursos/img/codigos/bolleria/croiss_rect_3u.png,Bolleria,true
-CROISSANT SUPREME 2U,53315,0000,000000,recursos/img/codigos/bolleria/croissant_supreme_2u.png,Bolleria,true
-CROISSANT DUO 2U,53322,0000,000000,recursos/img/codigos/bolleria/croissant_duo_2u.png,Bolleria,true
-MINI CROISSANT 5U,50798,0000,000000,recursos/img/codigos/bolleria/mini_croissant_5u.png,Bolleria,true
-BASTON CACAO 5U,53327,0000,000000,recursos/img/codigos/bolleria/baston_cacao_5u.png,Bolleria,true
-NAPOLITANA CACAO 4U,45863,0000,000000,recursos/img/codigos/bolleria/napolitana_cacao_4u.png,Bolleria,true
-NAPOLITANA CREMA 4U,45871,0000,000000,recursos/img/codigos/bolleria/napolitana_crema_4u.png,Bolleria,true
-MINI NAPOLITA CACAO 8 U,45899,0000,000000,recursos/img/codigos/bolleria/mini_napolita_cacao_8_u.png,Bolleria,true
-HOJALDRE CREMA 3U,45834,0000,000000,recursos/img/codigos/bolleria/hojaldre_crema_3u.png,Bolleria,true
-PANAL DE CABELLO 2U,45879,0000,000000,recursos/img/codigos/bolleria/panal_de_cabello_2u.png,Bolleria,true
-HOJALDRE MANZANA 1U,45911,0000,000000,recursos/img/codigos/bolleria/hojaldre_manzana_1u.png,Bolleria,true
-BOLLO MANTEQUILLA 2U,17724,0000,000000,recursos/img/codigos/bolleria/bollo_mantequilla_2u.png,Bolleria,true
-BOLLO MTQ C/CACAO 2U,28867,0000,000000,recursos/img/codigos/bolleria/bollo_mtq_c_cacao_2u.png,Bolleria,false
-MINi SEEKEN PASAS Y NUECES 5U,45907,0000,000000,recursos/img/codigos/bolleria/mini_seeken_pasas_y_nueces_5u.png,Bolleria,false
-EMP. BOCATA ATUN 2U,30412,0000,000000,recursos/img/codigos/bolleria/emp_bocata_atun_2u.png,Bolleria,false
-EMIP BOCATA CARNE 2U,30413,0000,000000,recursos/img/codigos/bolleria/emip_bocata_carne_2u.png,Bolleria,false
-EMP BOCATA POLLO 2U,30414,0000,000000,recursos/img/codigos/bolleria/emp_bocata_pollo_2u.png,Bolleria,false
-NAPOLITANA MIXTA 2U,45855,0000,000000,recursos/img/codigos/bolleria/napolitana_mixta_2u.png,Bolleria,true
-BERLINA PINK EROSKI 2 U,50146,0000,000000,recursos/img/codigos/bolleria/berlina_pink_eroski_2_u.png,Bolleria,true
-BERLINA CACAO 2U,50148,0000,000000,recursos/img/codigos/bolleria/berlina_cacao_2u.png,Bolleria,true
-BERLINA NORMAL 3 U,45764,0000,000000,recursos/img/codigos/bolleria/berlina_normal_3_u.png,Bolleria,true
-BERLINA C.BLANCO 3 U,45934,0000,000000,recursos/img/codigos/bolleria/berlina_c_blanco_3_u.png,Bolleria,true
-BERLINA RELLENA 2U,45935,0000,000000,recursos/img/codigos/bolleria/berlina_rellena_2u.png,Bolleria,true
-BERLINA RELLENA AVELLANA 2U,53168,0000,000000,recursos/img/codigos/bolleria/berlina_rellena_avellana_2u.png,Bolleria,true
+CROISS CURVO 2U,53313,,,recursos/img/codigos/bolleria/croiss_curvo_2u.png,Bolleria,true
+CROISS RECT 3U,45706,,,recursos/img/codigos/bolleria/croiss_rect_3u.png,Bolleria,true
+CROISSANT SUPREME 2U,53315,,,recursos/img/codigos/bolleria/croissant_supreme_2u.png,Bolleria,true
+CROISSANT DUO 2U,53322,,,recursos/img/codigos/bolleria/croissant_duo_2u.png,Bolleria,true
+MINI CROISSANT 5U,50798,,,recursos/img/codigos/bolleria/mini_croissant_5u.png,Bolleria,true
+BASTON CACAO 5U,53327,,,recursos/img/codigos/bolleria/baston_cacao_5u.png,Bolleria,true
+NAPOLITANA CACAO 4U,45863,,,recursos/img/codigos/bolleria/napolitana_cacao_4u.png,Bolleria,true
+NAPOLITANA CREMA 4U,45871,,,recursos/img/codigos/bolleria/napolitana_crema_4u.png,Bolleria,true
+MINI NAPOLITA CACAO 8 U,45899,,,recursos/img/codigos/bolleria/mini_napolita_cacao_8_u.png,Bolleria,true
+HOJALDRE CREMA 3U,45834,,,recursos/img/codigos/bolleria/hojaldre_crema_3u.png,Bolleria,true
+PANAL DE CABELLO 2U,45879,,,recursos/img/codigos/bolleria/panal_de_cabello_2u.png,Bolleria,true
+HOJALDRE MANZANA 1U,45911,,,recursos/img/codigos/bolleria/hojaldre_manzana_1u.png,Bolleria,true
+BOLLO MANTEQUILLA 2U,17724,,,recursos/img/codigos/bolleria/bollo_mantequilla_2u.png,Bolleria,true
+BOLLO MTQ C/CACAO 2U,28867,,,recursos/img/codigos/bolleria/bollo_mtq_c_cacao_2u.png,Bolleria,false
+MINi SEEKEN PASAS Y NUECES 5U,45907,,,recursos/img/codigos/bolleria/mini_seeken_pasas_y_nueces_5u.png,Bolleria,false
+EMP. BOCATA ATUN 2U,30412,,,recursos/img/codigos/bolleria/emp_bocata_atun_2u.png,Bolleria,false
+EMIP BOCATA CARNE 2U,30413,,,recursos/img/codigos/bolleria/emip_bocata_carne_2u.png,Bolleria,false
+EMP BOCATA POLLO 2U,30414,,,recursos/img/codigos/bolleria/emp_bocata_pollo_2u.png,Bolleria,false
+NAPOLITANA MIXTA 2U,45855,,,recursos/img/codigos/bolleria/napolitana_mixta_2u.png,Bolleria,true
+BERLINA PINK EROSKI 2 U,50146,,,recursos/img/codigos/bolleria/berlina_pink_eroski_2_u.png,Bolleria,true
+BERLINA CACAO 2U,50148,,,recursos/img/codigos/bolleria/berlina_cacao_2u.png,Bolleria,false
+BERLINA NORMAL 3 U,45764,,,recursos/img/codigos/bolleria/berlina_normal_3_u.png,Bolleria,true
+BERLINA C.BLANCO 3 U,45934,,,recursos/img/codigos/bolleria/berlina_c_blanco_3_u.png,Bolleria,true
+BERLINA RELLENA 2U,45935,,,recursos/img/codigos/bolleria/berlina_rellena_2u.png,Bolleria,true
+BERLINA RELLENA AVELLANA 2U,53168,,,recursos/img/codigos/bolleria/berlina_rellena_avellana_2u.png,Bolleria,true
+
+
+Emp. Espinacas,53313,,,recursos/img/codigos/bolleria/emp.png,Bolleria,true
+Emp. Guisantes,17569,,,recursos/img/codigos/bolleria/emp.png,Bolleria,false
+Emp. Tomate,17567,,,recursos/img/codigos/bolleria/emp.png,Bolleria,true
+Emp. Carne,17571,,,recursos/img/codigos/bolleria/emp.png,Bolleria,true
+Emp. Vegana,17573,,,recursos/img/codigos/bolleria/emp.png,Bolleria,true
+Emp. Atun,39422,,,recursos/img/codigos/bolleria/emp.png,Bolleria,true
+Emp. Argentina,39423,,,recursos/img/codigos/bolleria/empargentina.png,Bolleria,true
+Emp. Curry,39425,,,recursos/img/codigos/bolleria/emp.png,Bolleria,true
+Calzone,39426,,,recursos/img/codigos/bolleria/calzone.png,Bolleria,true
+Pizza atun,46679,,,recursos/img/codigos/bolleria/pizza.png,Bolleria,true
+Pizza Jamon,17578,,,recursos/img/codigos/bolleria/pizza.png,Bolleria,true
+Triangulo,46680,,,recursos/img/codigos/bolleria/mini_croissant_5u.png,Bolleria,false
