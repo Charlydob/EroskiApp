@@ -1,3 +1,8 @@
+h2 {
+  color: antiquewhite;
+  text-align: center;
+  margin: 0;
+}
 .galeria-horarios {
   display: flex;
   flex-direction: column;
