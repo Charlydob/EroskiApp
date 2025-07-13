@@ -1,142 +1,46 @@
-/* calendario.css */
-
-/* Zona principal */
-main.content {
-  padding: 20px;
-  padding-bottom: 80px;
-  flex: 1;
+.galeria-horarios {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 20px;
+  padding: 2em;
 }
 
-/* Título */
-h1 {
-  text-align: center;
-  color: white;
-  margin-bottom: 20px;
-}
-
-/* Selector de empleado */
-#empleadoSelector {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-  margin-bottom: 20px;
-}
-
-/* Tabla de horarios */
-#tablaHorario {
-  width: 100%;
-  max-width: 600px;
-  background: #eeeeee;
+.galeria-horarios img {
+  max-width: 90%;
+  max-height: 300px;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  border-collapse: collapse;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  cursor: zoom-in;
+  transition: transform 0.3s;
+}
+
+.galeria-horarios img:hover {
+  transform: scale(1.03);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
   overflow: hidden;
+  touch-action: none; /* Evita scroll accidental */
 }
 
-#tablaHorario th, #tablaHorario td {
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid #aaa;
+.modal img {
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: auto;
+  transform-origin: center center;
+  touch-action: pinch-zoom; /* Permite solo zoom con dos dedos */
 }
 
-#tablaHorario th {
-  background-color: #1c3eaf;
-  color: white;
-}
-
-#tablaHorario td {
-  background-color: #fff;
-}
-
-/* Botón aplicar código */
-#codigoInput {
-  width: 80%;
-  max-width: 400px;
-  padding: 8px;
-  margin: 20px auto 10px;
-  display: block;
-  border: 1px solid black;
-  border-radius: 6px;
-  text-align: center;
-}
-
-#aplicarCodigoBtn {
-  background-color: #1a40bc;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 20px;
-  transition: background-color 0.3s;
-}
-
-#aplicarCodigoBtn:hover {
-  background-color: #0f2c80;
-}
-
-/* Responsive */
-@media (max-width: 480px) {
-  #tablaHorario th, #tablaHorario td {
-    font-size: 0.85em;
-    padding: 8px;
-  }
-
-  #empleadoSelector {
-    width: 90%;
-  }
-
-  #codigoInput {
-    width: 90%;
-  }
-}
-.selector-empleado, .modo-jefa, .form-clave, .crear-horario {
-  margin: 20px 0;
-  text-align: center;
-}
-
-input#claveInput {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  margin-right: 10px;
-}
-
-button {
-  background-color: #1a40bc;
-  color: white;
-  padding: 8px 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0f2c80;
-}
 
 .oculto {
   display: none;
-}
-
-.error {
-  color: red;
-  margin-top: 8px;
-}
-
-.horario-resultado {
-  background: #eeeeee;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  width: 90%;
-  max-width: 600px;
-  margin: 20px auto;
-}
-#formClave:not(.oculto) {
-  background: red;
 }

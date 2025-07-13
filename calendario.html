@@ -6,6 +6,7 @@
   <title>Calendario</title>
   <link rel="stylesheet" href="styles/style.css">
   <link rel="stylesheet" href="styles/calendario.css">
+
   <script defer>
     document.addEventListener("DOMContentLoaded", () => {
       const links = document.querySelectorAll('.sidebar a');
@@ -15,20 +16,20 @@
         }
       });
 
-      // Mostrar u ocultar zona de creación según el rol
       const rol = localStorage.getItem("rol");
       const crearHorario = document.getElementById("crearHorario");
       const botonJefa = document.getElementById("activarModoJefa");
 
       if (rol === "jefa") {
-        crearHorario.classList.remove("oculto");
-        botonJefa.style.display = "none";
+        crearHorario?.classList.remove("oculto");
+        botonJefa?.style.setProperty("display", "none");
       } else {
-        crearHorario.classList.add("oculto");
-        botonJefa.style.display = "none"; // Lo ocultamos porque ya no se usa
+        crearHorario?.classList.add("oculto");
+        botonJefa?.style.setProperty("display", "none");
       }
     });
   </script>
+
   <script src="scripts/proteccion.js"></script>
 </head>
 <body>
@@ -42,24 +43,17 @@
     </nav>
 
     <main class="content">
-      </main>
+      <div class="galeria-horarios">
+        <img src="Recursos/img/horarios/horario1.jpg" alt="Horario de tarde" onclick="abrirModal(0)">
+        <img src="Recursos/img/horarios/horario2.jpg" alt="Horario de mañana" onclick="abrirModal(1)">
+        <img src="Recursos/img/horarios/temporal.jpg" alt="Horario de noche" onclick="abrirModal(2)">
+      </div>
+
+      <div id="visorImagen" class="modal oculto" >
+        <img id="imagenGrande" src="" alt="Horario ampliado">
+      </div>
+    </main>
   </div>
-
-  <script>
-    let lastTouchEnd = 0;
-
-    document.addEventListener('touchend', function (event) {
-      const now = new Date().getTime();
-      if (now - lastTouchEnd <= 300) {
-        event.preventDefault();
-      }
-      lastTouchEnd = now;
-    }, false);
-
-    document.addEventListener('gesturestart', function (event) {
-      event.preventDefault();
-    });
-  </script>
 
   <script src="scripts/calendario.js"></script>
 </body>
