@@ -1,7 +1,8 @@
 const imagenes = Array.from(document.querySelectorAll(".galeria-horarios img"));
 let indiceActual = 0;
-let startX = 0;
-let startY = 0;
+let startX = 0, startY = 0;
+let currentX = 0, currentY = 0;
+let translateX = 0, translateY = 0;
 let scale = 1;
 let initialDistance = 0;
 
@@ -22,19 +23,27 @@ function cerrarModal() {
 
 function actualizarImagen() {
   grande.src = imagenes[indiceActual].src;
-  grande.style.transform = "scale(1)";
-  scale = 1;
+  resetTransform();
 }
 
-// ZOOM táctil
+function resetTransform() {
+  scale = 1;
+  translateX = 0;
+  translateY = 0;
+  grande.style.transform = "translate(0px, 0px) scale(1)";
+}
+
+// ZOOM y PAN táctil
 visor.addEventListener("touchstart", e => {
   if (e.touches.length === 2) {
     const dx = e.touches[0].clientX - e.touches[1].clientX;
     const dy = e.touches[0].clientY - e.touches[1].clientY;
-    initialDistance = Math.max(1, Math.sqrt(dx * dx + dy * dy)); // evitar división por cero
+    initialDistance = Math.sqrt(dx * dx + dy * dy);
   } else if (e.touches.length === 1) {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
+    currentX = translateX;
+    currentY = translateY;
   }
 }, { passive: false });
 
@@ -46,7 +55,14 @@ visor.addEventListener("touchmove", e => {
     const currentDistance = Math.sqrt(dx * dx + dy * dy);
     const zoomFactor = currentDistance / initialDistance;
     scale = Math.min(Math.max(1, zoomFactor), 3);
-    grande.style.transform = `scale(${scale})`;
+    grande.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+  } else if (e.touches.length === 1 && scale > 1.05) {
+    e.preventDefault();
+    const deltaX = e.touches[0].clientX - startX;
+    const deltaY = e.touches[0].clientY - startY;
+    translateX = currentX + deltaX;
+    translateY = currentY + deltaY;
+    grande.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
   }
 }, { passive: false });
 
@@ -58,7 +74,6 @@ visor.addEventListener("touchend", e => {
     const deltaY = endY - startY;
 
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      // Deslizamiento lateral
       if (deltaX < -50 && indiceActual < imagenes.length - 1) {
         indiceActual++;
         actualizarImagen();
@@ -67,19 +82,16 @@ visor.addEventListener("touchend", e => {
         actualizarImagen();
       }
     } else if (deltaY > 80) {
-      // Deslizamiento hacia abajo
       cerrarModal();
     }
   }
 });
 
-// TOQUE lateral como fallback (funciona bien en desktop también)
+// TOQUE lateral
 visor.addEventListener("click", e => {
   if (scale > 1.05) return;
-
   const x = e.clientX;
   const ancho = window.innerWidth;
-
   if (x > ancho * 0.66 && indiceActual < imagenes.length - 1) {
     indiceActual++;
     actualizarImagen();
