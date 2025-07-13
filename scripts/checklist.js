@@ -232,6 +232,13 @@ function aplicarFiltroEmpleado() {
 
 document.addEventListener("DOMContentLoaded", () => {
   renderizarTareas();
+    const nombreSesion = localStorage.getItem("nombre");
+  const filtro = document.getElementById("filtro-empleado");
+
+  if (nombreSesion && empleados.includes(nombreSesion)) {
+    filtro.value = nombreSesion;
+  }
+
   document.getElementById("boton-generar").addEventListener("click", mostrarCodigo);
   document.getElementById("boton-aplicar").addEventListener("click", () => {
     const codigo = document.getElementById("input-codigo").value.trim();

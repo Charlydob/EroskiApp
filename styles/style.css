@@ -29,19 +29,21 @@ html {
     /* NAV DEFAULT: ESTILO PARA MÓVILES (MENU SUPERIOR) */
     nav.sidebar {
     position: fixed;
-    bottom: 100;
     left: 0;
     right: 0;
     height: 40px;
-    background: transparent;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0)); /* aquí está la magia */
     backdrop-filter: blur(10px);
+    backdrop-filter: saturate(180%) grayscale(10%);
     display: flex;
-      justify-content: center; /* ✅ Centra los elementos */
- gap: 20px; /* ✅ Espacio entre los íconos */
+    justify-content: center;
+    gap: 20px;
     align-items: center;
     padding: 0 10px;
     z-index: 1000;
-    }
+}
+
+
 
     nav.sidebar a {
     color: white;
@@ -189,3 +191,11 @@ html {
         padding-bottom: 40px;
     }
     }
+html, body {
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  overscroll-behavior: contain;
+}
+
+

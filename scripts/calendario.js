@@ -126,9 +126,4 @@ document.getElementById("diaSiguiente").addEventListener("click", () => {
   renderTabla();
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  const rol = localStorage.getItem("rol");
-  if (rol === "jefa") {
-    renderTabla();
-  }
-});
+document.addEventListener("DOMContentLoaded", renderTabla);
