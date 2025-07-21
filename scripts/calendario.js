@@ -102,3 +102,45 @@ visor.addEventListener("click", e => {
     cerrarModal();
   }
 });
+
+function subirImagen(event, indice) {
+  const archivo = event.target.files[0];
+  if (!archivo) return;
+
+  const ruta = `horarios/horario${indice}.jpg`;
+  const storageRef = storage.ref(ruta);
+
+  // Eliminar la anterior si existe
+  storageRef.delete().catch(() => {
+    console.log("ℹ️ No hay imagen anterior o error al eliminar (ignorado)");
+  });
+
+  // Subir nueva imagen
+  storageRef.put(archivo).then(snapshot => snapshot.ref.getDownloadURL())
+    .then(url => {
+      const img = document.getElementById(`img-${indice}`);
+      img.src = url;
+      if (indiceActual === indice) grande.src = url;
+      console.log(`✅ Imagen ${indice} actualizada`);
+    })
+    .catch(err => console.error("❌ Error al subir imagen:", err));
+}
+
+// Al iniciar, intenta cargar imágenes desde Firebase
+window.addEventListener("DOMContentLoaded", () => {
+  const totalImagenes = 5; // ajusta si tienes más
+  for (let i = 0; i < totalImagenes; i++) {
+    const ruta = `horarios/horario${i}.jpg`;
+    const storageRef = storage.ref(ruta);
+    const img = document.getElementById(`img-${i}`);
+
+    storageRef.getDownloadURL()
+      .then(url => {
+        img.src = url;
+      })
+      .catch(() => {
+        console.log(`📂 Imagen ${i} no encontrada en Firebase, usando la local`);
+      });
+  }
+});
+

@@ -49,3 +49,25 @@ h2 {
 .oculto {
   display: none;
 }
+.bloque-imagen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.bloque-imagen img {
+  width: 100%;
+  max-width: 350px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.bloque-imagen input[type="file"] {
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}

@@ -44,14 +44,36 @@
 
     <main class="content">
       <div class="galeria-horarios">
-        <h2>Horario semana 1</h2>
-        <img src="recursos/img/horarios/horario1.1.jpg" alt="Horario de tarde" onclick="abrirModal(0)">
-        <img src="recursos/img/horarios/horario1.2.jpg" alt="Horario de mañana" onclick="abrirModal(1)">
-        <h2>Horario semana 2</h2>
-        <img src="recursos/img/horarios/horario2.1.jpg" alt="Horario de tarde" onclick="abrirModal(2)">
-        <img src="recursos/img/horarios/horario2.2.jpg" alt="Horario de mañana" onclick="abrirModal(3)">
-        <img src="recursos/img/horarios/temporal.jpg" alt="Horario de noche" onclick="abrirModal(4)">
-      </div>
+  <h2>Horario semana 1</h2>
+
+  <div class="bloque-imagen">
+    <img id="img-0" alt="Horario de tarde" onclick="abrirModal(0)">
+    <input type="file" accept="image/*" onchange="subirImagen(event, 0)">
+  </div>
+
+  <div class="bloque-imagen">
+    <img id="img-1" alt="Horario de mañana" onclick="abrirModal(1)">
+    <input type="file" accept="image/*" onchange="subirImagen(event, 1)">
+  </div>
+
+  <h2>Horario semana 2</h2>
+
+  <div class="bloque-imagen">
+    <img id="img-2" alt="Horario de tarde" onclick="abrirModal(2)">
+    <input type="file" accept="image/*" onchange="subirImagen(event, 2)">
+  </div>
+
+  <div class="bloque-imagen">
+    <img id="img-3" alt="Horario de mañana" onclick="abrirModal(3)">
+    <input type="file" accept="image/*" onchange="subirImagen(event, 3)">
+  </div>
+
+  <div class="bloque-imagen">
+    <img id="img-4" alt="Horario de noche" onclick="abrirModal(4)">
+    <input type="file" accept="image/*" onchange="subirImagen(event, 4)">
+  </div>
+</div>
+
 
       <div id="visorImagen" class="modal oculto" >
         <img id="imagenGrande" src="" alt="Horario ampliado">
@@ -59,6 +81,20 @@
     </main>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN8KAiad5vmKNwhtfd9EUzVgTt2uUapno",
+      authDomain: "eroskiapp.firebaseapp.com",
+      projectId: "eroskiapp",
+      storageBucket: "eroskiapp.firebasestorage.app",
+      messagingSenderId: "1033463841470",
+      appId: "1:1033463841470:web:ec92569dd7dabe8a93d4ef"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
+  </script>
   <script src="scripts/calendario.js"></script>
 </body>
 </html>
