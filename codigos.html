@@ -18,6 +18,22 @@
         });
     };
     </script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDN8KAiad5vmKNwhtfd9EUzVgTt2uUapno",
+    authDomain: "eroskiapp.firebaseapp.com",
+    databaseURL: "https://eroskiapp-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "eroskiapp",
+    storageBucket: "eroskiapp.appspot.com",
+    messagingSenderId: "1033463841470",
+    appId: "1:1033463841470:web:ec92569dd7dabe8a93d4ef"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
+
 </head>
 <body>
   <div class="container">
@@ -47,10 +63,30 @@
   <option value="Legumbre">Legumbre</option>
   <!-- Añade más si las tienes -->
 </select>
+<button id="btn-nuevo" style="margin: 1rem 0;">➕ Añadir producto</button>
+<button id="toggle-ocultos" style="margin: 1rem 0;">👀 Ver productos ocultos</button>
 
       <div id="galeria" class="galeria"></div>
     </main>
   </div>
+  <div id="modal-edicion" class="modal oculto">
+  <div class="modal-contenido">
+    <h3>Editar producto</h3>
+    <input id="edit-nombre" placeholder="Nombre">
+    <input id="edit-balanza" placeholder="Código balanza">
+    <input id="edit-merma" placeholder="Código merma">
+    <input id="edit-ref" placeholder="Referencia">
+    <input id="edit-img" placeholder="URL imagen">
+    <input id="edit-cat" placeholder="Categoría">
+    <div class="acciones">
+      <button id="guardar-edicion">Guardar</button>
+      <button id="toggle-visible"></button>
+
+      <button onclick="cerrarModalEdicion()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 
   <script src="scripts/codigos.js"></script>
 </body>

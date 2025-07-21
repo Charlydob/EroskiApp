@@ -2,38 +2,22 @@ const galeria = document.getElementById("galeria");
 const buscador = document.getElementById("buscador");
 const filtroCategoria = document.getElementById("filtro-categoria");
 
+let mostrarOcultos = false;
 let productos = [];
 
-async function cargarProductosDesdeTxt() {
+async function cargarProductosDesdeFirebase() {
   try {
-    const response = await fetch("recursos/txt/codigos.txt");
-    const texto = await response.text();
-
-    productos = texto
-      .split("\n")
-      .map(linea => linea.trim())
-      .filter(linea => linea.length > 0)
-      .map(linea => {
-        const partes = linea.split(',');
-        const nombre = partes[0] || "";
-        const codigobalanza = partes[1] || "";
-        const codigomerma = partes[2] || "";
-        const referencia = partes[3] || "";
-        const imagen = partes[4] || "";
-        const categoria = partes[5] || "";
-        const visible = partes[6] === "false" ? "false" : "true";
-
-        return { nombre, codigobalanza, codigomerma, referencia, imagen, categoria, visible };
-      });
-
+    const snapshot = await db.ref("productos").once("value");
+    const data = snapshot.val() || {};
+    productos = Object.entries(data).map(([id, prod]) => ({ ...prod, id }));
     productos.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
-
     poblarSelectCategorias();
     mostrarProductos();
   } catch (err) {
-    console.error("Error al cargar productos:", err);
+    console.error("❌ Error al cargar productos desde Firebase:", err);
   }
 }
+
 
 // Solo queremos estas categorías reales, filtradas y ordenadas alfabéticamente
 const CATEGORIAS_VALIDAS = ["Fruta", "Pan", "Bolleria", "Legumbre", "Fruto seco"];
@@ -59,7 +43,7 @@ function mostrarProductos(filtroTexto = "", categoriaSeleccionada = "") {
 
   productos
     .filter(p =>
-      p.visible === "true" &&
+      (mostrarOcultos || p.visible === "true") &&
       p.nombre.toLowerCase().includes(filtroTexto.toLowerCase()) &&
       (categoriaSeleccionada === "" || p.categoria === categoriaSeleccionada)
     )
@@ -80,6 +64,7 @@ function mostrarProductos(filtroTexto = "", categoriaSeleccionada = "") {
         </div>
       `;
 
+      // Click corto → abre detalle
       div.querySelector(".vista-normal").addEventListener("click", () => {
         document.querySelectorAll(".item.activo").forEach(el => el.classList.remove("activo"));
         div.classList.add("activo");
@@ -90,9 +75,26 @@ function mostrarProductos(filtroTexto = "", categoriaSeleccionada = "") {
         div.classList.remove("activo");
       });
 
+      // Pulsación larga → edición
+      let presionado = false;
+      let timeout = null;
+
+      div.addEventListener("touchstart", () => {
+        presionado = true;
+        timeout = setTimeout(() => {
+          if (presionado) abrirModalEdicion(p, productos.indexOf(p));
+        }, 600);
+      });
+
+      div.addEventListener("touchend", () => {
+        presionado = false;
+        clearTimeout(timeout);
+      });
+
       galeria.appendChild(div);
     });
 }
+
 
 buscador.addEventListener("input", () => {
   mostrarProductos(buscador.value, filtroCategoria.value);
@@ -103,7 +105,7 @@ filtroCategoria.addEventListener("change", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  cargarProductosDesdeTxt();
+  cargarProductosDesdeFirebase();
 });
 // Filtro: mostrar productos que tienen código de merma
 document.getElementById("btn-merma").addEventListener("click", () => {
@@ -179,4 +181,79 @@ buscador.addEventListener("click", (e) => {
     buscador.classList.remove("clearable");
     buscador.dispatchEvent(new Event("input"));
   }
+});
+let productoEditando = null;
+
+function abrirModalEdicion(producto, indice = null) {
+  productoEditando = { producto, indice };
+
+  document.getElementById("edit-nombre").value = producto.nombre || "";
+  document.getElementById("edit-balanza").value = producto.codigobalanza || "";
+  document.getElementById("edit-merma").value = producto.codigomerma || "";
+  document.getElementById("edit-ref").value = producto.referencia || "";
+  document.getElementById("edit-img").value = producto.imagen || "";
+  document.getElementById("edit-cat").value = producto.categoria || "";
+
+  document.getElementById("modal-edicion").classList.remove("oculto");
+  const btnToggle = document.getElementById("toggle-visible");
+if (producto.visible === "false") {
+  btnToggle.textContent = "🔓 Mostrar producto";
+} else {
+  btnToggle.textContent = "🔒 Ocultar producto";
+}
+btnToggle.onclick = () => {
+  producto.visible = producto.visible === "false" ? "true" : "false";
+  if (producto.id) {
+    db.ref(`productos/${producto.id}`).set(producto);
+  }
+  cerrarModalEdicion();
+  mostrarProductos(buscador.value, filtroCategoria.value);
+};
+
+}
+
+function cerrarModalEdicion() {
+  document.getElementById("modal-edicion").classList.add("oculto");
+}
+
+document.getElementById("guardar-edicion").addEventListener("click", () => {
+  if (!productoEditando) return;
+
+  const { producto, indice } = productoEditando;
+
+  producto.nombre = document.getElementById("edit-nombre").value;
+  producto.codigobalanza = document.getElementById("edit-balanza").value;
+  producto.codigomerma = document.getElementById("edit-merma").value;
+  producto.referencia = document.getElementById("edit-ref").value;
+  producto.imagen = document.getElementById("edit-img").value;
+  producto.categoria = document.getElementById("edit-cat").value;
+  producto.visible = "true";
+
+  if (producto.id) {
+    // Editar producto existente
+    db.ref(`productos/${producto.id}`).set(producto);
+    productos[indice] = producto;
+  } else {
+    // Nuevo producto
+    const ref = db.ref("productos").push();
+    producto.id = ref.key;
+    ref.set(producto);
+    productos.push(producto);
+  }
+
+  cerrarModalEdicion();
+  mostrarProductos(buscador.value, filtroCategoria.value);
+});
+
+
+// Crear producto nuevo
+document.getElementById("btn-nuevo").addEventListener("click", () => {
+  abrirModalEdicion({ nombre: "", codigobalanza: "", codigomerma: "", referencia: "", imagen: "", categoria: "", visible: "true" });
+});
+document.getElementById("toggle-ocultos").addEventListener("click", () => {
+  mostrarOcultos = !mostrarOcultos;
+  document.getElementById("toggle-ocultos").textContent = mostrarOcultos
+    ? "🔒 Ocultar productos ocultos"
+    : "👀 Ver productos ocultos";
+  mostrarProductos(buscador.value, filtroCategoria.value);
 });
