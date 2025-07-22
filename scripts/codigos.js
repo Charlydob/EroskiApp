@@ -1,75 +1,72 @@
 const dbRef = db.ref("productos/eroski");
 const storage = firebase.storage();
-let productos = {};
-let mostrarOcultos = false;
-let modoEspecial = null;
+
+window.productos = {};
+window.mostrarOcultos = false;
+window.modoEspecial = null;
 
 document.addEventListener("DOMContentLoaded", () => {
-  cargarProductos();
+  window.cargarProductos();
 
-  document.getElementById("btn-nuevo").addEventListener("click", mostrarModalNuevo);
+  document.getElementById("btn-nuevo").addEventListener("click", window.mostrarModalNuevo);
 
-  document.getElementById("toggle-ocultos").addEventListener("click", () => {
-    mostrarOcultos = !mostrarOcultos;
-    cargarProductos();
+  document.getElementById("toggle-ocultos")?.addEventListener("click", () => {
+    window.mostrarOcultos = !window.mostrarOcultos;
+    window.cargarProductos();
   });
 
-  document.getElementById("filtro-categoria").addEventListener("change", () => {
-    modoEspecial = null;
-    cargarProductos();
+  document.getElementById("filtro-categoria")?.addEventListener("change", () => {
+    window.modoEspecial = null;
+    window.cargarProductos();
   });
 
-  document.getElementById("buscador").addEventListener("input", () => {
-    modoEspecial = null;
-    cargarProductos();
+  document.getElementById("buscador")?.addEventListener("input", () => {
+    window.modoEspecial = null;
+    window.cargarProductos();
   });
 
-  document.getElementById("btn-merma").addEventListener("click", () => {
-    modoEspecial = (modoEspecial === "merma") ? null : "merma";
-    cargarProductos();
+  document.getElementById("btn-merma")?.addEventListener("click", () => {
+    window.modoEspecial = (window.modoEspecial === "merma") ? null : "merma";
+    window.cargarProductos();
   });
 
-  document.getElementById("btn-envasar").addEventListener("click", () => {
-    modoEspecial = (modoEspecial === "envasar") ? null : "envasar";
-    cargarProductos();
+  document.getElementById("btn-envasar")?.addEventListener("click", () => {
+    window.modoEspecial = (window.modoEspecial === "envasar") ? null : "envasar";
+    window.cargarProductos();
   });
 
-  document.getElementById("btn-caja").addEventListener("click", () => {
-    modoEspecial = (modoEspecial === "caja") ? null : "caja";
-    cargarProductos();
+  document.getElementById("btn-caja")?.addEventListener("click", () => {
+    window.modoEspecial = (window.modoEspecial === "caja") ? null : "caja";
+    window.cargarProductos();
   });
 });
 
-
-function cargarProductos() {
+window.cargarProductos = function () {
   dbRef.once("value")
     .then(snapshot => {
-      productos = snapshot.val() || {};
-      renderizarProductos();
+      window.productos = snapshot.val() || {};
+      window.renderizarProductos();
     })
     .catch(err => console.error("❌ Error al cargar productos:", err));
-}
+};
 
-function renderizarProductos() {
+window.renderizarProductos = function () {
   const galeria = document.getElementById("galeria");
   galeria.innerHTML = "";
 
   const filtro = document.getElementById("filtro-categoria").value.toLowerCase();
   const busqueda = document.getElementById("buscador").value.toLowerCase();
 
-  // Convertimos a array y filtramos ocultos
-  let lista = Object.entries(productos)
-    .filter(([_, prod]) => mostrarOcultos || !prod.oculto);
+  let lista = Object.entries(window.productos)
+    .filter(([_, prod]) => window.mostrarOcultos || !prod.oculto);
 
-  // Si hay modo especial, lo aplicamos y anulamos otros filtros
-  if (modoEspecial === "merma") {
+  if (window.modoEspecial === "merma") {
     lista = lista.filter(([_, prod]) => prod.merma);
-  } else if (modoEspecial === "envasar") {
+  } else if (window.modoEspecial === "envasar") {
     lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === "bolleria");
-  } else if (modoEspecial === "caja") {
+  } else if (window.modoEspecial === "caja") {
     lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === "fruta");
   } else {
-    // Solo si no hay modo especial, aplicamos filtros normales
     if (filtro) {
       lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === filtro);
     }
@@ -78,10 +75,8 @@ function renderizarProductos() {
     }
   }
 
-  // Orden alfabético
   lista.sort((a, b) => (a[1].nombre || '').localeCompare(b[1].nombre || ''));
 
-  // Renderizado
   lista.forEach(([id, prod]) => {
     const tarjeta = document.createElement("div");
     tarjeta.className = "tarjeta-producto";
@@ -94,15 +89,13 @@ function renderizarProductos() {
         <h4>${prod.nombre || 'Sin nombre'}</h4>
     `;
 
-    if (modoEspecial === "merma") {
-      contenido += `<p>${prod.merma || '-'}</p>`;
-    } else {
-      contenido += `<p>${prod.balanza || '-'}</p>`;
-    }
+    contenido += (window.modoEspecial === "merma")
+      ? `<p>${prod.merma || '-'}</p>`
+      : `<p>${prod.balanza || '-'}</p>`;
 
     contenido += `<button class="btn-editar oculto">✏️</button></div>`;
 
-    if (!modoEspecial) {
+    if (!window.modoEspecial) {
       contenido += `
         <div class="vista-detalles oculto">
           <p><strong>Merma:</strong> ${prod.merma || '-'}</p>
@@ -114,7 +107,6 @@ function renderizarProductos() {
 
     tarjeta.innerHTML = contenido;
 
-    // Edición long press
     let longPressTimeout;
     tarjeta.addEventListener("mousedown", () => {
       longPressTimeout = setTimeout(() => {
@@ -124,12 +116,10 @@ function renderizarProductos() {
     tarjeta.addEventListener("mouseup", () => clearTimeout(longPressTimeout));
     tarjeta.addEventListener("mouseleave", () => clearTimeout(longPressTimeout));
 
-    // Alternar detalles
-    if (!modoEspecial) {
+    if (!window.modoEspecial) {
       tarjeta.addEventListener("click", () => {
         tarjeta.querySelector(".vista-detalles").classList.toggle("oculto");
       });
-
       tarjeta.querySelector(".cerrar-detalle")?.addEventListener("click", (e) => {
         e.stopPropagation();
         tarjeta.querySelector(".vista-detalles").classList.add("oculto");
@@ -138,55 +128,51 @@ function renderizarProductos() {
 
     tarjeta.querySelector(".btn-editar").addEventListener("click", (e) => {
       e.stopPropagation();
-      editarProducto(id);
+      window.editarProducto(id);
     });
 
     galeria.appendChild(tarjeta);
   });
-}
+};
 
-
-
-
-
-function mostrarModalNuevo() {
-  limpiarModal();
-  document.getElementById("guardar-edicion").onclick = () => guardarEdicion(null);
+window.mostrarModalNuevo = function () {
+  window.limpiarModal();
+  document.getElementById("guardar-edicion").onclick = () => window.guardarEdicion(null);
   document.getElementById("toggle-visible").classList.add("oculto");
   document.getElementById("modal-edicion").classList.remove("oculto");
   document.getElementById("btn-eliminar").classList.add("oculto");
-document.body.style.overflow = "hidden";
+  document.body.style.overflow = "hidden";
+};
 
-}
-
-function editarProducto(id) {
-  const prod = productos[id];
+window.editarProducto = function (id) {
+  const prod = window.productos[id];
   if (!prod) return;
+
   document.getElementById("edit-nombre").value = prod.nombre || "";
   document.getElementById("edit-balanza").value = prod.balanza || "";
   document.getElementById("edit-merma").value = prod.merma || "";
   document.getElementById("edit-ref").value = prod.ref || "";
-  document.getElementById("edit-img").value = prod.img || "";
   document.getElementById("edit-cat").value = prod.categoria || "";
-  document.getElementById("btn-eliminar").classList.remove("oculto");
-document.getElementById("btn-eliminar").onclick = () => eliminarProducto(id);
-document.body.style.overflow = "hidden";
+  document.getElementById("edit-img").value = "";
 
+  document.getElementById("btn-eliminar").classList.remove("oculto");
+  document.getElementById("btn-eliminar").onclick = () => window.eliminarProducto(id);
+  document.body.style.overflow = "hidden";
 
   const btnVisible = document.getElementById("toggle-visible");
   btnVisible.classList.remove("oculto");
   btnVisible.textContent = prod.oculto ? "👁️ Mostrar" : "🙈 Ocultar";
   btnVisible.onclick = () => {
-    productos[id].oculto = !productos[id].oculto;
-    dbRef.child(id).update({ oculto: productos[id].oculto }).then(() => cargarProductos());
-    cerrarModalEdicion();
+    window.productos[id].oculto = !window.productos[id].oculto;
+    dbRef.child(id).update({ oculto: window.productos[id].oculto }).then(() => window.cargarProductos());
+    window.cerrarModalEdicion();
   };
 
-  document.getElementById("guardar-edicion").onclick = () => guardarEdicion(id);
+  document.getElementById("guardar-edicion").onclick = () => window.guardarEdicion(id);
   document.getElementById("modal-edicion").classList.remove("oculto");
-}
+};
 
-function guardarEdicion(id) {
+window.guardarEdicion = function (id) {
   const archivo = document.getElementById("edit-img").files[0];
 
   const nuevoProd = {
@@ -195,18 +181,17 @@ function guardarEdicion(id) {
     merma: document.getElementById("edit-merma").value.trim(),
     ref: document.getElementById("edit-ref").value.trim(),
     categoria: document.getElementById("edit-cat").value.trim(),
-    oculto: productos[id]?.oculto || false,
-    img: productos[id]?.img || "" // temporal, se sobreescribe si se sube nueva
+    oculto: window.productos[id]?.oculto || false,
+    img: window.productos[id]?.img || ""
   };
 
   const guardarEnDB = (imgURL = null) => {
     if (imgURL) nuevoProd.img = imgURL;
-
     const ref = id ? dbRef.child(id) : dbRef.push();
     ref.set(nuevoProd)
       .then(() => {
-        cerrarModalEdicion();
-        cargarProductos();
+        window.cerrarModalEdicion();
+        window.cargarProductos();
       })
       .catch(err => console.error("❌ Error al guardar producto:", err));
   };
@@ -217,41 +202,36 @@ function guardarEdicion(id) {
 
     refStorage.put(archivo)
       .then(snapshot => snapshot.ref.getDownloadURL())
-      .then(url => {
-        guardarEnDB(url);
-      })
+      .then(url => guardarEnDB(url))
       .catch(err => {
         console.error("❌ Error al subir imagen:", err);
-        guardarEnDB(); // guarda sin imagen si falla la subida
+        guardarEnDB(); // guardar sin imagen si falla
       });
   } else {
-    guardarEnDB(); // no hay imagen nueva
+    guardarEnDB();
   }
-}
+};
 
-
-function cerrarModalEdicion() {
+window.cerrarModalEdicion = function () {
   document.getElementById("modal-edicion").classList.add("oculto");
   document.body.style.overflow = "";
+};
 
-}
-
-function limpiarModal() {
+window.limpiarModal = function () {
   ["edit-nombre", "edit-balanza", "edit-merma", "edit-ref", "edit-img", "edit-cat"].forEach(id => {
-    document.getElementById(id).value = "";
+    const input = document.getElementById(id);
+    if (input) input.value = "";
   });
-}
-function eliminarProducto(id) {
+};
+
+window.eliminarProducto = function (id) {
   const tarjeta = document.querySelector(`.tarjeta-producto[data-id="${id}"]`);
-  if (tarjeta) {
-    tarjeta.style.opacity = "0.3";
-  }
+  if (tarjeta) tarjeta.style.opacity = "0.3";
 
   dbRef.child(id).remove()
     .then(() => {
-      cerrarModalEdicion();       // 👈 esto faltaba
-      cargarProductos();          // 👈 refresca galería
+      window.cerrarModalEdicion();
+      window.cargarProductos();
     })
     .catch(err => console.error("❌ Error al eliminar producto:", err));
-}
-
+};
