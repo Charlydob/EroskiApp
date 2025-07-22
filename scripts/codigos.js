@@ -189,12 +189,15 @@ window.guardarEdicion = function (id) {
   console.log(id ? "💾 Guardando edición..." : "🆕 Guardando nuevo producto...");
   const archivo = document.getElementById("edit-img").files[0];
 
+  const nombre = document.getElementById("edit-nombre").value.trim();
+  const categoria = document.getElementById("edit-cat").value.trim();
+
   const nuevoProd = {
-    nombre: document.getElementById("edit-nombre").value.trim(),
+    nombre,
     balanza: document.getElementById("edit-balanza").value.trim(),
     merma: document.getElementById("edit-merma").value.trim(),
     ref: document.getElementById("edit-ref").value.trim(),
-    categoria: document.getElementById("edit-cat").value.trim(),
+    categoria,
     oculto: window.productos[id]?.oculto || false,
     img: window.productos[id]?.img || ""
   };
@@ -225,12 +228,16 @@ window.guardarEdicion = function (id) {
       })
       .catch(err => {
         console.error("❌ Error al subir imagen:", err);
-        guardarEnDB(); // guarda sin imagen
+        guardarEnDB(); // guarda sin imagen si falla
       });
   } else {
-    guardarEnDB();
+    const nombreArchivo = nombre.toLowerCase().replace(/\s+/g, "_");
+    const rutaLocal = `recursos/img/${categoria.toLowerCase()}/${nombreArchivo}.png`;
+    console.log("📂 Usando ruta local de imagen:", rutaLocal);
+    guardarEnDB(rutaLocal);
   }
 };
+
 
 
 window.cerrarModalEdicion = function () {
