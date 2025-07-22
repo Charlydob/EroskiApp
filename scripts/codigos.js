@@ -240,6 +240,7 @@ window.guardarEdicion = function (id) {
 
 
 
+
 window.cerrarModalEdicion = function () {
   console.log("❎ Cerrando modal...");
   document.getElementById("modal-edicion").classList.add("oculto");
