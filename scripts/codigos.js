@@ -1,7 +1,7 @@
 const dbRef = db.ref("productos/eroski");
+const storage = firebase.storage();
 let productos = {};
 let mostrarOcultos = false;
-
 let modoEspecial = null;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -187,24 +187,48 @@ document.body.style.overflow = "hidden";
 }
 
 function guardarEdicion(id) {
+  const archivo = document.getElementById("edit-img").files[0];
+
   const nuevoProd = {
     nombre: document.getElementById("edit-nombre").value.trim(),
     balanza: document.getElementById("edit-balanza").value.trim(),
     merma: document.getElementById("edit-merma").value.trim(),
     ref: document.getElementById("edit-ref").value.trim(),
-img: productos[id]?.img || "", // o cualquier otro sistema que uses para guardar la imagen (revisar lógica de subida)
     categoria: document.getElementById("edit-cat").value.trim(),
-    oculto: productos[id]?.oculto || false
+    oculto: productos[id]?.oculto || false,
+    img: productos[id]?.img || "" // temporal, se sobreescribe si se sube nueva
   };
 
-  const ref = id ? dbRef.child(id) : dbRef.push();
-  ref.set(nuevoProd)
-    .then(() => {
-      cerrarModalEdicion();
-      cargarProductos();
-    })
-    .catch(err => console.error("❌ Error al guardar producto:", err));
+  const guardarEnDB = (imgURL = null) => {
+    if (imgURL) nuevoProd.img = imgURL;
+
+    const ref = id ? dbRef.child(id) : dbRef.push();
+    ref.set(nuevoProd)
+      .then(() => {
+        cerrarModalEdicion();
+        cargarProductos();
+      })
+      .catch(err => console.error("❌ Error al guardar producto:", err));
+  };
+
+  if (archivo) {
+    const nombreUnico = `${Date.now()}_${archivo.name}`;
+    const refStorage = storage.ref().child("imagenesProductos/" + nombreUnico);
+
+    refStorage.put(archivo)
+      .then(snapshot => snapshot.ref.getDownloadURL())
+      .then(url => {
+        guardarEnDB(url);
+      })
+      .catch(err => {
+        console.error("❌ Error al subir imagen:", err);
+        guardarEnDB(); // guarda sin imagen si falla la subida
+      });
+  } else {
+    guardarEnDB(); // no hay imagen nueva
+  }
 }
+
 
 function cerrarModalEdicion() {
   document.getElementById("modal-edicion").classList.add("oculto");
