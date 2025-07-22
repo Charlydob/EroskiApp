@@ -80,13 +80,31 @@
   <div id="modal-edicion" class="modal oculto">
   <div class="modal-contenido">
     <h3>Editar producto</h3>
-    <input id="edit-nombre" placeholder="Nombre">
-    <input id="edit-balanza" placeholder="Código balanza">
-    <input id="edit-merma" placeholder="Código merma">
-    <input id="edit-ref" placeholder="Referencia">
-    <input type="file" id="edit-img" accept="image/*" capture="environment">
-<img id="preview-img" src="" alt="Vista previa" style="max-width: 100%; margin-top: 1em;" />
-    <input id="edit-cat" placeholder="Categoría">
+    <div class="form-grid">
+  <div class="campo">
+    <input id="edit-nombre" type="text" placeholder="Nombre" />
+  </div>
+  <div class="campo">
+    <input id="edit-balanza" type="text" placeholder="Código balanza" />
+  </div>
+  <div class="campo">
+    <input id="edit-merma" type="text" placeholder="Código merma" />
+  </div>
+  <div class="campo">
+    <input id="edit-ref" type="text" placeholder="Referencia" />
+  </div>
+  <div class="campo">
+    <select id="edit-cat">
+      <option value="" disabled selected>Selecciona una categoría</option>
+      <option value="fruta">Fruta</option>
+      <option value="bolleria">Bollería</option>
+      <option value="pan">Pan</option>
+    </select>
+  </div>
+  <div class="campo">
+    <input id="edit-img" type="file" accept="image/*" />
+  </div>
+</div>
     <div class="acciones">
   <button id="guardar-edicion">Guardar</button>
   <button id="toggle-visible"></button>
