@@ -232,7 +232,7 @@ window.guardarEdicion = function (id) {
       });
   } else {
     const nombreArchivo = nombre.toLowerCase().replace(/\s+/g, "_");
-    const rutaLocal = `recursos/img/${categoria.toLowerCase()}/${nombreArchivo}.png`;
+    const rutaLocal = `recursos/img/codigos/${categoria.toLowerCase()}/${nombreArchivo}.png`;
     console.log("📂 Usando ruta local de imagen:", rutaLocal);
     guardarEnDB(rutaLocal);
   }
