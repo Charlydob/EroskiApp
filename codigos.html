@@ -73,7 +73,6 @@
   <!-- Añade más si las tienes -->
 </select>
 <button id="btn-nuevo" style="margin: 1rem 0;">➕ Añadir producto</button>
-<button id="toggle-ocultos" style="margin: 1rem 0;">👀 Ver productos ocultos</button>
 
       <div id="galeria" class="galeria"></div>
     </main>
@@ -85,14 +84,16 @@
     <input id="edit-balanza" placeholder="Código balanza">
     <input id="edit-merma" placeholder="Código merma">
     <input id="edit-ref" placeholder="Referencia">
-    <input id="edit-img" placeholder="URL imagen">
+    <input type="file" id="edit-img" accept="image/*" capture="environment">
+<img id="preview-img" src="" alt="Vista previa" style="max-width: 100%; margin-top: 1em;" />
     <input id="edit-cat" placeholder="Categoría">
     <div class="acciones">
-      <button id="guardar-edicion">Guardar</button>
-      <button id="toggle-visible"></button>
+  <button id="guardar-edicion">Guardar</button>
+  <button id="toggle-visible"></button>
+  <button id="btn-eliminar" class="eliminar">🗑️ Eliminar</button>
+  <button onclick="cerrarModalEdicion()">Cancelar</button>
+</div>
 
-      <button onclick="cerrarModalEdicion()">Cancelar</button>
-    </div>
   </div>
 </div>
 

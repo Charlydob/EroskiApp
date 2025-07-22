@@ -25,6 +25,7 @@ function cargarProductos() {
 function renderizarProductos() {
   const galeria = document.getElementById("galeria");
   galeria.innerHTML = "";
+
   const filtro = document.getElementById("filtro-categoria").value.toLowerCase();
   const busqueda = document.getElementById("buscador").value.toLowerCase();
 
@@ -35,26 +36,68 @@ function renderizarProductos() {
 
     const tarjeta = document.createElement("div");
     tarjeta.className = "tarjeta-producto";
+    tarjeta.dataset.id = id;
     if (prod.oculto) tarjeta.classList.add("oculto");
 
     tarjeta.innerHTML = `
-      <h4>${prod.nombre || "Sin nombre"}</h4>
-      <p><strong>Cod. balanza:</strong> ${prod.balanza || "-"}</p>
-      <p><strong>Merma:</strong> ${prod.merma || "-"}</p>
-      <p><strong>Ref:</strong> ${prod.ref || "-"}</p>
-      <p><strong>Categoría:</strong> ${prod.categoria || "-"}</p>
-      <img src="${prod.img || ""}" alt="Imagen" style="max-width: 100px;" />
-      <button onclick="editarProducto('${id}')">✏️ Editar</button>
+      <div class="vista-simple">
+        <img src="${prod.img || ''}" alt="Imagen del producto" />
+        <h4>${prod.nombre || 'Sin nombre'}</h4>
+        <p>${prod.balanza || '-'}</p>
+        <button class="btn-editar oculto">✏️</button>
+      </div>
+      <div class="vista-detalles oculto">
+        <p><strong>Merma:</strong> ${prod.merma || '-'}</p>
+        <p><strong>Ref:</strong> ${prod.ref || '-'}</p>
+        <p><strong>Cat:</strong> ${prod.categoria || '-'}</p>
+        <span class="cerrar-detalle">✖</span>
+      </div>
     `;
+
+    // Mostrar edición en long press
+    let longPressTimeout;
+    tarjeta.addEventListener("mousedown", () => {
+      longPressTimeout = setTimeout(() => {
+        const btn = tarjeta.querySelector(".btn-editar");
+        btn.classList.remove("oculto");
+      }, 500);
+    });
+    tarjeta.addEventListener("mouseup", () => clearTimeout(longPressTimeout));
+    tarjeta.addEventListener("mouseleave", () => clearTimeout(longPressTimeout));
+
+   // Alternar entre vista simple y detalles con clic corto
+tarjeta.addEventListener("click", () => {
+  const detalle = tarjeta.querySelector(".vista-detalles");
+  detalle.classList.toggle("oculto");
+});
+
+
+    // Cerrar detalles
+    tarjeta.querySelector(".cerrar-detalle").addEventListener("click", (e) => {
+      e.stopPropagation();
+      tarjeta.querySelector(".vista-detalles").classList.add("oculto");
+    });
+
+    // Editar producto
+    tarjeta.querySelector(".btn-editar").addEventListener("click", (e) => {
+      e.stopPropagation();
+      editarProducto(id);
+    });
+
     galeria.appendChild(tarjeta);
   });
 }
+
+
 
 function mostrarModalNuevo() {
   limpiarModal();
   document.getElementById("guardar-edicion").onclick = () => guardarEdicion(null);
   document.getElementById("toggle-visible").classList.add("oculto");
   document.getElementById("modal-edicion").classList.remove("oculto");
+  document.getElementById("btn-eliminar").classList.add("oculto");
+document.body.style.overflow = "hidden";
+
 }
 
 function editarProducto(id) {
@@ -66,6 +109,10 @@ function editarProducto(id) {
   document.getElementById("edit-ref").value = prod.ref || "";
   document.getElementById("edit-img").value = prod.img || "";
   document.getElementById("edit-cat").value = prod.categoria || "";
+  document.getElementById("btn-eliminar").classList.remove("oculto");
+document.getElementById("btn-eliminar").onclick = () => eliminarProducto(id);
+document.body.style.overflow = "hidden";
+
 
   const btnVisible = document.getElementById("toggle-visible");
   btnVisible.classList.remove("oculto");
@@ -102,6 +149,8 @@ function guardarEdicion(id) {
 
 function cerrarModalEdicion() {
   document.getElementById("modal-edicion").classList.add("oculto");
+  document.body.style.overflow = "";
+
 }
 
 function limpiarModal() {
@@ -109,3 +158,17 @@ function limpiarModal() {
     document.getElementById(id).value = "";
   });
 }
+function eliminarProducto(id) {
+  const tarjeta = document.querySelector(`.tarjeta-producto[data-id="${id}"]`);
+  if (tarjeta) {
+    tarjeta.style.opacity = "0.3";
+  }
+
+  dbRef.child(id).remove()
+    .then(() => {
+      cerrarModalEdicion();       // 👈 esto faltaba
+      cargarProductos();          // 👈 refresca galería
+    })
+    .catch(err => console.error("❌ Error al eliminar producto:", err));
+}
+

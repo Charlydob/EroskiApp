@@ -237,3 +237,344 @@ input.clearable {
 .filtros-rapidos button:hover {
   background-color: #cc0000;
 }
+
+.modal {
+  display: flex;
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.oculto {
+  display: none;
+}
+
+.modal-contenido {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  font-size: 0.95em;
+  box-sizing: border-box;
+}
+/* 🧾 Inputs del modal */
+.modal-contenido input,
+.modal-contenido select,
+.modal-contenido textarea {
+  width: 100%;
+  padding: 0.6em;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95em;
+  box-sizing: border-box;
+}
+
+.modal-contenido label {
+  font-weight: bold;
+  margin-bottom: 0.2em;
+  font-size: 0.85em;
+  color: #333;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.acciones button {
+  flex: 1;
+  padding: 0.5em;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85em;
+  cursor: pointer;
+}
+
+#guardar-edicion { background: #28a745; color: white; }
+#toggle-visible  { background: #ffc107; color: black; }
+#btn-eliminar    { background: #dc3545; color: white; }
+.acciones button:last-child { background: #6c757d; color: white; }
+
+@media (max-width: 480px) {
+  .modal-contenido {
+    padding: 1rem;
+    font-size: 0.9em;
+  }
+
+  .modal-contenido input,
+  .modal-contenido select,
+  .modal-contenido textarea {
+    font-size: 1em;
+    padding: 0.5em;
+    width: 100%;
+    display: flex;
+    flex-direction: column 2fr;
+  }
+
+  .acciones {
+    flex-direction: column;
+  }
+
+  .acciones button {
+    width: 100%;
+  }
+}
+.modal {
+  display: flex;
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* <-- bloquea scroll general */
+}
+
+.modal-contenido {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 360px;
+  max-height: 90vh; /* <-- altura máxima */
+  overflow-y: auto;  /* <-- scroll interno si se necesita */
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  font-size: 0.95em;
+  box-sizing: border-box;
+}
+
+
+/* 🎯 Botones de acción */
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 1em;
+}
+
+.acciones button {
+  padding: 0.6em 1.2em;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* 💾 Guardar */
+#guardar-edicion {
+  background-color: #28a745;
+  color: white;
+}
+#guardar-edicion:hover {
+  background-color: #218838;
+}
+
+/* 👁️ Ocultar/mostrar */
+#toggle-visible {
+  background-color: #ffc107;
+  color: black;
+}
+#toggle-visible:hover {
+  background-color: #e0a800;
+}
+
+/* 🗑️ Eliminar */
+#btn-eliminar {
+  background-color: #dc3545;
+  color: white;
+}
+#btn-eliminar:hover {
+  background-color: #c82333;
+}
+
+/* ❌ Cancelar */
+.acciones button:last-child {
+  background-color: #6c757d;
+  color: white;
+}
+.acciones button:last-child:hover {
+  background-color: #5a6268;
+}
+
+
+/* 🔲 Tarjetas pequeñas para galería */
+.galeria {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  justify-items: center;
+}
+
+.tarjeta-producto {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  width: 110px;
+  height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  padding: 0.5rem;
+  transition: transform 0.2s ease;
+  position: relative;
+}
+
+.tarjeta-producto:hover {
+  transform: scale(1.05);
+}
+
+.tarjeta-producto img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 0.4rem;
+  border: 1px solid #ccc;
+}
+
+.tarjeta-producto h4 {
+  font-size: 0.85em;
+  margin: 0.2em 0;
+  font-weight: bold;
+}
+
+.tarjeta-producto p {
+  font-size: 0.7em;
+  margin: 0.1em 0;
+  color: #444;
+}
+
+/* 🧊 Botón editar */
+.tarjeta-producto button {
+  font-size: 0.7em;
+  padding: 0.3em 0.6em;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  margin-top: auto;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.tarjeta-producto button:hover {
+  background-color: #0056b3;
+}
+
+/* 🙈 Ocultos en gris claro */
+.tarjeta-producto.oculto {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.galeria {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.tarjeta-producto {
+  position: relative;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  padding: 0.5em;
+  width: 110px;
+  height: 110px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+  font-size: 0.75em;
+}
+
+.tarjeta-producto img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  margin-bottom: 0.4em;
+  border-radius: 4px;
+}
+
+.vista-simple h4 {
+  margin: 0.2em 0;
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+.vista-simple p {
+  margin: 0;
+  font-size: 0.75em;
+  color: #333;
+}
+
+.btn-editar {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.3em 0.5em;
+  font-size: 0.7em;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  z-index: 3;
+}
+.btn-editar.oculto {
+  display: none;
+}
+
+.vista-detalles {
+  position: absolute;
+  inset: 0;
+  background: #f2f2f2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5em;
+  font-size: 0.7em;
+  border-radius: 8px;
+  z-index: 2;
+}
+.vista-detalles.oculto {
+  display: none;
+}
+
+.vista-detalles p {
+  margin: 2px 0;
+}
+.cerrar-detalle {
+  margin-top: 6px;
+  font-size: 0.9em;
+  color: #c00;
+  cursor: pointer;
+}
