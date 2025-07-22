@@ -187,10 +187,17 @@ window.editarProducto = function (id) {
 
 window.guardarEdicion = function (id) {
   console.log(id ? "💾 Guardando edición..." : "🆕 Guardando nuevo producto...");
-  const archivo = document.getElementById("edit-img").files[0];
 
   const nombre = document.getElementById("edit-nombre").value.trim();
-  const categoria = document.getElementById("edit-cat").value.trim();
+  const categoria = document.getElementById("edit-cat").value.trim().toLowerCase();
+
+  // Generar ruta de imagen local
+  const nombreArchivo = nombre
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quita tildes
+    .replace(/\s+/g, "_"); // espacios por guiones bajos
+
+const rutaLocal = `recursos/img/codigos/${categoria.toLowerCase()}/${nombreArchivo.toLowerCase()}.png`;
 
   const nuevoProd = {
     nombre,
@@ -199,44 +206,21 @@ window.guardarEdicion = function (id) {
     ref: document.getElementById("edit-ref").value.trim(),
     categoria,
     oculto: window.productos[id]?.oculto || false,
-    img: window.productos[id]?.img || ""
+    img: rutaLocal
   };
 
-  console.log("🧾 Datos del producto:", nuevoProd);
+  console.log("🧾 Producto final a guardar:", nuevoProd);
 
-  const guardarEnDB = (imgURL = null) => {
-    if (imgURL) nuevoProd.img = imgURL;
-    const ref = id ? dbRef.child(id) : dbRef.push();
-    ref.set(nuevoProd)
-      .then(() => {
-        console.log("✅ Producto guardado correctamente");
-        window.cerrarModalEdicion();
-        window.cargarProductos();
-      })
-      .catch(err => console.error("❌ Error al guardar producto:", err));
-  };
-
-  if (archivo) {
-    const nombreUnico = `${Date.now()}_${archivo.name}`;
-    const refStorage = storage.ref().child("imagenesProductos/" + nombreUnico);
-
-    refStorage.put(archivo)
-      .then(snapshot => snapshot.ref.getDownloadURL())
-      .then(url => {
-        console.log("📸 Imagen subida. URL:", url);
-        guardarEnDB(url);
-      })
-      .catch(err => {
-        console.error("❌ Error al subir imagen:", err);
-        guardarEnDB(); // guarda sin imagen si falla
-      });
-  } else {
-    const nombreArchivo = nombre.toLowerCase().replace(/\s+/g, "_");
-    const rutaLocal = `recursos/img/codigos/${categoria.toLowerCase()}/${nombreArchivo.toLowerCase()}.png`;
-    console.log("📂 Usando ruta local de imagen:", rutaLocal);
-    guardarEnDB(rutaLocal);
-  }
+  const ref = id ? dbRef.child(id) : dbRef.push();
+  ref.set(nuevoProd)
+    .then(() => {
+      console.log("✅ Producto guardado con imagen local:", rutaLocal);
+      window.cerrarModalEdicion();
+      window.cargarProductos();
+    })
+    .catch(err => console.error("❌ Error al guardar producto:", err));
 };
+
 
 
 
