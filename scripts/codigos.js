@@ -42,15 +42,19 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.cargarProductos = function () {
+  console.log("🔄 Cargando productos desde Firebase...");
   dbRef.once("value")
     .then(snapshot => {
       window.productos = snapshot.val() || {};
+      console.log("✅ Productos cargados:", window.productos);
       window.renderizarProductos();
     })
     .catch(err => console.error("❌ Error al cargar productos:", err));
 };
 
+
 window.renderizarProductos = function () {
+  console.log("🎨 Renderizando productos...");
   const galeria = document.getElementById("galeria");
   galeria.innerHTML = "";
 
@@ -60,6 +64,8 @@ window.renderizarProductos = function () {
   let lista = Object.entries(window.productos)
     .filter(([_, prod]) => window.mostrarOcultos || !prod.oculto);
 
+  console.log("🧪 Filtro aplicado:", filtro, " | Búsqueda:", busqueda, " | Modo especial:", window.modoEspecial);
+
   if (window.modoEspecial === "merma") {
     lista = lista.filter(([_, prod]) => prod.merma);
   } else if (window.modoEspecial === "envasar") {
@@ -67,15 +73,12 @@ window.renderizarProductos = function () {
   } else if (window.modoEspecial === "caja") {
     lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === "fruta");
   } else {
-    if (filtro) {
-      lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === filtro);
-    }
-    if (busqueda) {
-      lista = lista.filter(([_, prod]) => prod.nombre?.toLowerCase().includes(busqueda));
-    }
+    if (filtro) lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === filtro);
+    if (busqueda) lista = lista.filter(([_, prod]) => prod.nombre?.toLowerCase().includes(busqueda));
   }
 
   lista.sort((a, b) => (a[1].nombre || '').localeCompare(b[1].nombre || ''));
+  console.log(`📦 ${lista.length} productos a mostrar`);
 
   lista.forEach(([id, prod]) => {
     const tarjeta = document.createElement("div");
@@ -135,7 +138,10 @@ window.renderizarProductos = function () {
   });
 };
 
+
+
 window.mostrarModalNuevo = function () {
+  console.log("🆕 Abriendo modal para nuevo producto...");
   window.limpiarModal();
   document.getElementById("guardar-edicion").onclick = () => window.guardarEdicion(null);
   document.getElementById("toggle-visible").classList.add("oculto");
@@ -144,9 +150,14 @@ window.mostrarModalNuevo = function () {
   document.body.style.overflow = "hidden";
 };
 
+
 window.editarProducto = function (id) {
+  console.log("✏️ Editando producto con ID:", id);
   const prod = window.productos[id];
-  if (!prod) return;
+  if (!prod) {
+    console.warn("⚠️ Producto no encontrado.");
+    return;
+  }
 
   document.getElementById("edit-nombre").value = prod.nombre || "";
   document.getElementById("edit-balanza").value = prod.balanza || "";
@@ -163,6 +174,7 @@ window.editarProducto = function (id) {
   btnVisible.classList.remove("oculto");
   btnVisible.textContent = prod.oculto ? "👁️ Mostrar" : "🙈 Ocultar";
   btnVisible.onclick = () => {
+    console.log("🔁 Cambiando visibilidad del producto...");
     window.productos[id].oculto = !window.productos[id].oculto;
     dbRef.child(id).update({ oculto: window.productos[id].oculto }).then(() => window.cargarProductos());
     window.cerrarModalEdicion();
@@ -172,7 +184,9 @@ window.editarProducto = function (id) {
   document.getElementById("modal-edicion").classList.remove("oculto");
 };
 
+
 window.guardarEdicion = function (id) {
+  console.log(id ? "💾 Guardando edición..." : "🆕 Guardando nuevo producto...");
   const archivo = document.getElementById("edit-img").files[0];
 
   const nuevoProd = {
@@ -185,11 +199,14 @@ window.guardarEdicion = function (id) {
     img: window.productos[id]?.img || ""
   };
 
+  console.log("🧾 Datos del producto:", nuevoProd);
+
   const guardarEnDB = (imgURL = null) => {
     if (imgURL) nuevoProd.img = imgURL;
     const ref = id ? dbRef.child(id) : dbRef.push();
     ref.set(nuevoProd)
       .then(() => {
+        console.log("✅ Producto guardado correctamente");
         window.cerrarModalEdicion();
         window.cargarProductos();
       })
@@ -202,36 +219,47 @@ window.guardarEdicion = function (id) {
 
     refStorage.put(archivo)
       .then(snapshot => snapshot.ref.getDownloadURL())
-      .then(url => guardarEnDB(url))
+      .then(url => {
+        console.log("📸 Imagen subida. URL:", url);
+        guardarEnDB(url);
+      })
       .catch(err => {
         console.error("❌ Error al subir imagen:", err);
-        guardarEnDB(); // guardar sin imagen si falla
+        guardarEnDB(); // guarda sin imagen
       });
   } else {
     guardarEnDB();
   }
 };
 
+
 window.cerrarModalEdicion = function () {
+  console.log("❎ Cerrando modal...");
   document.getElementById("modal-edicion").classList.add("oculto");
   document.body.style.overflow = "";
 };
 
+
 window.limpiarModal = function () {
+  console.log("🧽 Limpiando modal de edición...");
   ["edit-nombre", "edit-balanza", "edit-merma", "edit-ref", "edit-img", "edit-cat"].forEach(id => {
     const input = document.getElementById(id);
     if (input) input.value = "";
   });
 };
 
+
 window.eliminarProducto = function (id) {
+  console.log("🗑️ Eliminando producto con ID:", id);
   const tarjeta = document.querySelector(`.tarjeta-producto[data-id="${id}"]`);
   if (tarjeta) tarjeta.style.opacity = "0.3";
 
   dbRef.child(id).remove()
     .then(() => {
+      console.log("✅ Producto eliminado");
       window.cerrarModalEdicion();
       window.cargarProductos();
     })
     .catch(err => console.error("❌ Error al eliminar producto:", err));
 };
+

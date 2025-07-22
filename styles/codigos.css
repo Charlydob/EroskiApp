@@ -447,14 +447,7 @@ input.clearable {
   transform: scale(1.05);
 }
 
-.tarjeta-producto img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 4px;
-  margin-bottom: 0.4rem;
-  border: 1px solid #ccc;
-}
+
 
 .tarjeta-producto h4 {
   font-size: 0.85em;
@@ -516,6 +509,7 @@ input.clearable {
 }
 
 .tarjeta-producto img {
+  display: block;
   width: 50px;
   height: 50px;
   object-fit: cover;
