@@ -32,6 +32,15 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
+
+   // TEST DE CONEXIÓN
+  db.ref().once("value")
+    .then(snapshot => {
+      console.log("🔥 Firebase raíz:", snapshot.val());
+    })
+    .catch(err => {
+      console.error("❌ Error al conectar con Firebase:", err);
+    });
 </script>
 
 </head>
