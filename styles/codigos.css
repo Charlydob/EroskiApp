@@ -296,7 +296,6 @@ input.clearable {
 }
 
 .acciones button {
-  flex: 1;
   padding: 0.5em;
   border: none;
   border-radius: 6px;
@@ -327,6 +326,7 @@ input.clearable {
 
   .acciones {
     flex-direction: column;
+    
   }
 
   .acciones button {
@@ -348,7 +348,7 @@ input.clearable {
 }
 
 .modal-contenido {
-  background: white;
+  background: rgb(255, 255, 255);
   padding: 1rem;
   border-radius: 10px;
   width: 90%;
@@ -365,11 +365,17 @@ input.clearable {
 
 /* 🎯 Botones de acción */
 .acciones {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* dos columnas iguales */
   gap: 10px;
-  justify-content: flex-end;
+  justify-items: stretch;
   margin-top: 1em;
+}
+h3 {
+  font-size: 24px;
+  text-align: center;
+  color: #333;
+  margin-bottom: 2px;
 }
 
 .acciones button {
@@ -378,6 +384,7 @@ input.clearable {
   border-radius: 6px;
   font-size: 0.9em;
   cursor: pointer;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.637);
   transition: background-color 0.2s ease;
 }
 
@@ -589,14 +596,9 @@ input.clearable {
 .campo {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
-.campo label {
-  font-size: 0.75em;
-  font-weight: bold;
-  margin-bottom: 0.3em;
-  color: #444;
-}
 
 .campo input,
 .campo select,
@@ -609,4 +611,14 @@ input.clearable {
 #selectores{
   margin: 0px;
 
+}
+  .campo textarea,
+  .campo input {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+div#botones-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
