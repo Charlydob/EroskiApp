@@ -110,14 +110,21 @@ window.renderizarProductos = function () {
 
     tarjeta.innerHTML = contenido;
 
-    let longPressTimeout;
-    tarjeta.addEventListener("mousedown", () => {
-      longPressTimeout = setTimeout(() => {
-        tarjeta.querySelector(".btn-editar").classList.remove("oculto");
-      }, 500);
-    });
-    tarjeta.addEventListener("mouseup", () => clearTimeout(longPressTimeout));
-    tarjeta.addEventListener("mouseleave", () => clearTimeout(longPressTimeout));
+  let longPressTimeout;
+
+["mousedown", "touchstart"].forEach(eventoInicio => {
+  tarjeta.addEventListener(eventoInicio, (e) => {
+    e.stopPropagation();
+    longPressTimeout = setTimeout(() => {
+      tarjeta.querySelector(".btn-editar").classList.remove("oculto");
+    }, 500); // Tiempo de pulsación en milisegundos
+  });
+
+  const eventoFin = eventoInicio === "mousedown" ? "mouseup" : "touchend";
+  tarjeta.addEventListener(eventoFin, () => clearTimeout(longPressTimeout));
+});
+
+tarjeta.addEventListener("mouseleave", () => clearTimeout(longPressTimeout));
 
     if (!window.modoEspecial) {
       tarjeta.addEventListener("click", () => {

@@ -116,7 +116,7 @@ h1 {
   inset: 0;
   background-color: #1e92ff2d;
   color: #222;
-  font-size: 0.85em;
+  font-size: 16px;
   border-radius: 8px;
   display: none;
   flex-direction: column;
@@ -450,7 +450,7 @@ input.clearable {
 
 
 .tarjeta-producto h4 {
-  font-size: 0.85em;
+  font-size: 26px;
   margin: 0.2em 0;
   font-weight: bold;
 }
@@ -497,6 +497,8 @@ input.clearable {
   padding: 0.5em;
   width: 100px;
   height: 90px;
+  max-height: 90px;
+  max-width: 100px;
   margin: 3px;
   text-align: center;
   display: flex;
@@ -505,7 +507,7 @@ input.clearable {
   align-items: center;
   overflow: hidden;
   transition: transform 0.2s ease;
-  font-size: 0.75em;
+  font-size: 16px;
 }
 
 .tarjeta-producto img {
@@ -516,6 +518,9 @@ input.clearable {
   margin-left: auto;
   margin-right: auto;
   border-radius: 4px;
+    pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 
@@ -600,4 +605,8 @@ input.clearable {
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 0.9em;
+}
+#selectores{
+  margin: 0px;
+
 }
