@@ -171,8 +171,6 @@ window.editarProducto = function (id) {
   document.getElementById("edit-merma").value = prod.merma || "";
   document.getElementById("edit-ref").value = prod.ref || "";
   document.getElementById("edit-cat").value = prod.categoria || "";
-  document.getElementById("edit-img").value = "";
-
   document.getElementById("btn-eliminar").classList.remove("oculto");
   document.getElementById("btn-eliminar").onclick = () => window.eliminarProducto(id);
   document.body.style.overflow = "hidden";
