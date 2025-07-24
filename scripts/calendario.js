@@ -1,10 +1,13 @@
-const imagenes = Array.from(document.querySelectorAll(".galeria-horarios img"));
+
 let indiceActual = 0;
 let startX = 0, startY = 0;
 let currentX = 0, currentY = 0;
 let translateX = 0, translateY = 0;
 let scale = 1;
 let initialDistance = 0;
+firebase.database().ref("horarios/imagen0").once("value").then(snapshot => {
+  document.getElementById("imagenGrande").src = snapshot.val();
+});
 
 const visor = document.getElementById("visorImagen");
 const grande = document.getElementById("imagenGrande");
@@ -22,9 +25,11 @@ function cerrarModal() {
 }
 
 function actualizarImagen() {
-  grande.src = imagenes[indiceActual].src;
+  const imgActual = document.getElementById(`img-${indiceActual}`);
+  grande.src = imgActual.src;
   resetTransform();
 }
+
 
 function resetTransform() {
   scale = 1;
@@ -74,7 +79,7 @@ visor.addEventListener("touchend", e => {
     const deltaY = endY - startY;
 
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      if (deltaX < -50 && indiceActual < imagenes.length - 1) {
+      if (deltaX < -50 && indiceActual < totalImagenes - 1) {
         indiceActual++;
         actualizarImagen();
       } else if (deltaX > 50 && indiceActual > 0) {
@@ -92,7 +97,7 @@ visor.addEventListener("click", e => {
   if (scale > 1.05) return;
   const x = e.clientX;
   const ancho = window.innerWidth;
-  if (x > ancho * 0.66 && indiceActual < imagenes.length - 1) {
+  if (x > ancho * 0.66 && indiceActual < totalImagenes - 1) {
     indiceActual++;
     actualizarImagen();
   } else if (x < ancho * 0.33 && indiceActual > 0) {
@@ -107,40 +112,63 @@ function subirImagen(event, indice) {
   const archivo = event.target.files[0];
   if (!archivo) return;
 
-  const ruta = `horarios/horario${indice}.jpg`;
-  const storageRef = storage.ref(ruta);
+  subirAImgBB(archivo, url => {
+    // Mostrar en miniatura
+    const img = document.getElementById(`img-${indice}`);
+    img.src = url;
 
-  // Eliminar la anterior si existe
-  storageRef.delete().catch(() => {
-    console.log("ℹ️ No hay imagen anterior o error al eliminar (ignorado)");
+    // Mostrar en grande si está abierta
+    if (indiceActual === indice) {
+      grande.src = url;
+    }
+
+    // Guardar en Firebase para persistencia
+    firebase.database().ref(`horarios/imagen${indice}`).set(url);
   });
-
-  // Subir nueva imagen
-  storageRef.put(archivo).then(snapshot => snapshot.ref.getDownloadURL())
-    .then(url => {
-      const img = document.getElementById(`img-${indice}`);
-      img.src = url;
-      if (indiceActual === indice) grande.src = url;
-      console.log(`✅ Imagen ${indice} actualizada`);
-    })
-    .catch(err => console.error("❌ Error al subir imagen:", err));
 }
+
 
 // Al iniciar, intenta cargar imágenes desde Firebase
 window.addEventListener("DOMContentLoaded", () => {
-  const totalImagenes = 5; // ajusta si tienes más
+  const totalImagenes = 5; // ajusta según necesites
   for (let i = 0; i < totalImagenes; i++) {
-    const ruta = `horarios/horario${i}.jpg`;
-    const storageRef = storage.ref(ruta);
     const img = document.getElementById(`img-${i}`);
-
-    storageRef.getDownloadURL()
-      .then(url => {
-        img.src = url;
-      })
-      .catch(() => {
-        console.log(`📂 Imagen ${i} no encontrada en Firebase, usando la local`);
+    firebase.database().ref(`horarios/imagen${i}`).once("value")
+      .then(snapshot => {
+        const url = snapshot.val();
+        if (url) {
+          img.src = url;
+        } else {
+          console.log(`📂 No hay imagen ${i} en Firebase`);
+        }
       });
   }
 });
 
+
+function subirAImgBB(file, callback) {
+  const apiKey = "aa88487ab04700365dbd8e33bb98ce72"; // 👈 cambia esto por la tuya
+
+  const formData = new FormData();
+  formData.append("image", file);
+
+  fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      const url = data.data.url;
+      console.log("✅ Imagen subida:", url);
+      if (typeof callback === "function") callback(url);
+    } else {
+      console.error("❌ Error al subir:", data);
+      alert("Error al subir la imagen.");
+    }
+  })
+  .catch(err => {
+    console.error("❌ Error de red:", err);
+    alert("Error al conectar con ImgBB.");
+  });
+}
