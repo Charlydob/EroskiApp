@@ -92,7 +92,7 @@ window.renderizarProductos = function () {
         <h4>${prod.nombre || 'Sin nombre'}</h4>
     `;
 
-    
+
     contenido += (window.modoEspecial === "merma")
       ? `<p>${prod.merma || '-'}</p>`
       : `<p>${prod.balanza || '-'}</p>`;
