@@ -71,3 +71,30 @@ h2 {
   border: 1px solid #ccc;
   border-radius: 6px;
 }
+.bloque-imagen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 1em;
+}
+
+.bloque-imagen input[type="file"] {
+  display: none;
+}
+
+.bloque-imagen::after {
+  content: "Cambiar imagen";
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease;
+}
+
+.bloque-imagen:hover::after {
+  background-color: #0056b3;
+}
