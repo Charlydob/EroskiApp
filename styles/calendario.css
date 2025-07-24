@@ -53,48 +53,35 @@ h2 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 1.5rem;
+  gap: 0.5em;
+  margin-bottom: 1em;
 }
 
 .bloque-imagen img {
   width: 100%;
   max-width: 350px;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  margin-bottom: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
 
-.bloque-imagen input[type="file"] {
-  padding: 0.5rem;
-  font-size: 0.9rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-.bloque-imagen {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5em;
-  margin-bottom: 1em;
-}
-
+/* Oculta el input real */
 .bloque-imagen input[type="file"] {
   display: none;
 }
 
-.bloque-imagen::after {
-  content: "Cambiar imagen";
+/* Estiliza el label como botón */
+.bloque-imagen label {
   display: inline-block;
   padding: 6px 12px;
   background-color: #007bff;
   color: white;
   border-radius: 5px;
-  cursor: pointer;
   font-size: 0.9em;
+  cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-.bloque-imagen:hover::after {
+.bloque-imagen label:hover {
   background-color: #0056b3;
 }

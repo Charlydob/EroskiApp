@@ -47,42 +47,53 @@
         <a href="tpv.html"><img src="recursos/img/tpv.png" alt="tpv" class="icon" /></a>
     </nav>
 
-    <main class="content">
-      <div class="galeria-horarios">
-  <h2>Horario semana 1</h2>
+<main class="content">
+  <div class="galeria-horarios">
+    <h2>Horario semana 1</h2>
 
-  <div class="bloque-imagen">
-    <img id="img-0"  onclick="abrirModal(0)">
-<input type="file" onchange="subirImagen(event, 0)">
+    <div class="bloque-imagen">
+      <img id="img-0" onclick="abrirModal(0)">
+      <label>
+        Cambiar imagen
+        <input type="file" onchange="subirImagen(event, 0)">
+      </label>
+    </div>
 
+    <div class="bloque-imagen">
+      <img id="img-1" onclick="abrirModal(1)">
+      <label>
+        Cambiar imagen
+        <input type="file" onchange="subirImagen(event, 1)">
+      </label>
+    </div>
+
+    <h2>Horario semana 2</h2>
+
+    <div class="bloque-imagen">
+      <img id="img-2" onclick="abrirModal(2)">
+      <label>
+        Cambiar imagen
+        <input type="file" onchange="subirImagen(event, 2)">
+      </label>
+    </div>
+
+    <div class="bloque-imagen">
+      <img id="img-3" onclick="abrirModal(3)">
+      <label>
+        Cambiar imagen
+        <input type="file" onchange="subirImagen(event, 3)">
+      </label>
+    </div>
+
+    <div class="bloque-imagen">
+      <img id="img-4" onclick="abrirModal(4)">
+      <label>
+        Cambiar imagen
+        <input type="file" onchange="subirImagen(event, 4)">
+      </label>
+    </div>
   </div>
-
-  <div class="bloque-imagen">
-    <img id="img-1"  onclick="abrirModal(1)">
-<input type="file" onchange="subirImagen(event, 1)">
-
-  </div>
-
-  <h2>Horario semana 2</h2>
-
-  <div class="bloque-imagen">
-    <img id="img-2" onclick="abrirModal(2)">
-<input type="file" onchange="subirImagen(event, 2)">
-
-  </div>
-
-  <div class="bloque-imagen">
-    <img id="img-3" onclick="abrirModal(3)">
-<input type="file" onchange="subirImagen(event, 3)">
-
-  </div>
-
-  <div class="bloque-imagen">
-    <img id="img-4" onclick="abrirModal(4)">
-<input type="file" onchange="subirImagen(event, 4)">
-
-  </div>
-</div>
+</main>
 
 
       <div id="visorImagen" class="modal oculto" >
