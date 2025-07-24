@@ -2,7 +2,6 @@
 html, body, button, input, select, textarea, table, th, td {
   touch-action: manipulation;
 }
-
 /* 🧱 Estilo base */
 body {
   margin: 0;
@@ -10,18 +9,16 @@ body {
   background: transparent;
   color: #333;
 }
-
 /* 📦 Layout general */
 .container {
   display: flex;
-  min-height: 100vh;
+  min-height: 60vh;
 }
 .content {
   flex: 1;
-  padding: 20px;
+  padding: 0px;
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 .sidebar {
   width: 80px;
@@ -37,26 +34,21 @@ body {
   color: white;
   text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
 }
-
 /* 🏷️ Título */
 h1 {
   text-align: center;
   color: #ffffff;
-  margin-bottom: 20px;
+  margin: 2px;
 }
-
 /* 🔍 Buscador */
 #buscador {
   display: block;
-  margin: 1em auto;
+  margin: 2px;
   padding: 0.5em;
   font-size: 1em;
   width: 80%;
   max-width: 400px;
 }
-
-
-
 /* 📦 Item */
 .item {
   background-color: rgb(255, 255, 255);
@@ -78,7 +70,6 @@ h1 {
   flex-basis: auto;
   box-sizing: border-box;
 }
-
 /* 🌟 Vista normal */
 .vista-normal {
   display: flex;
@@ -101,7 +92,6 @@ h1 {
   font-size: 0.8em;
   margin-top: 0em;
 }
-
 /* 🪄 Vista detalles */
 .vista-detalles {
   position: absolute;
@@ -141,18 +131,11 @@ h1 {
   cursor: pointer;
   font-size: 0.9em;
 }
-
-@keyframes aparecer {
-  from { opacity: 0; transform: scale(0.9); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
 /* #️⃣ Código simple */
 .codigo {
   font-weight: bold;
   color: #333;
 }
-
 /* 📱 Móvil */
 @media (max-width: 480px) {
   .sidebar {
@@ -163,9 +146,6 @@ h1 {
   }
   .sidebar .logo {
     display: none;
-  }
-  .content {
-    padding: 10px;
   }
   table, th, td {
     font-size: 0.85em;
@@ -180,14 +160,12 @@ h1 {
   padding-right: 30px; /* espacio para la X */
   background-color: white;
 }
-
 /* Botón X visible solo cuando hay texto */
 #buscador::-webkit-search-cancel-button {
   -webkit-appearance: none;
   appearance: none;
   display: none;
 }
-
 /* Personalizamos la X con un pseudo-elemento */
 #buscador.clearable::after {
   content: '✖';
@@ -211,10 +189,9 @@ input.clearable {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 1em;
+  margin: 4px;
   flex-wrap: wrap;
 }
-
 .filtros-rapidos button {
   background-color: #ff4d4d;
   color: white;
@@ -222,14 +199,12 @@ input.clearable {
   border-radius: 20px;
   padding: 0.5em 1em;
   cursor: pointer;
-  font-size: 0.9em;
+  font-size: 0.7em;
   transition: background 0.2s ease;
 }
-
 .filtros-rapidos button:hover {
   background-color: #cc0000;
 }
-
 .modal {
   display: flex;
   position: fixed;
@@ -237,16 +212,14 @@ input.clearable {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 1000px;
   background: rgba(0, 0, 0, 0.4);
   justify-content: center;
   align-items: center;
 }
-
 .modal.oculto {
   display: none;
 }
-
 .modal-contenido {
   background: white;
   padding: 1rem;
@@ -271,14 +244,12 @@ input.clearable {
   font-size: 0.95em;
   box-sizing: border-box;
 }
-
 .modal-contenido label {
   font-weight: bold;
   margin-bottom: 0.2em;
   font-size: 0.85em;
   color: #333;
 }
-
 .acciones {
   display: flex;
   flex-wrap: wrap;
@@ -286,7 +257,6 @@ input.clearable {
   justify-content: space-between;
   margin-top: 0.5rem;
 }
-
 .acciones button {
   padding: 0.5em;
   border: none;
@@ -294,18 +264,15 @@ input.clearable {
   font-size: 0.85em;
   cursor: pointer;
 }
-
 #guardar-edicion { background: #28a745; color: white; }
 #toggle-visible  { background: #ffc107; color: black; }
 #btn-eliminar    { background: #dc3545; color: white; }
 .acciones button:last-child { background: #6c757d; color: white; }
-
 @media (max-width: 480px) {
   .modal-contenido {
     padding: 1rem;
     font-size: 0.9em;
   }
-
   .modal-contenido input,
   .modal-contenido select,
   .modal-contenido textarea {
@@ -315,12 +282,10 @@ input.clearable {
     display: flex;
     flex-direction: column 2fr;
   }
-
   .acciones {
     flex-direction: column;
     
   }
-
   .acciones button {
     width: 100%;
   }
@@ -338,7 +303,6 @@ input.clearable {
   align-items: center;
   overflow: hidden; /* <-- bloquea scroll general */
 }
-
 .modal-contenido {
   background: rgb(255, 255, 255);
   padding: 1rem;
@@ -353,8 +317,6 @@ input.clearable {
   font-size: 0.95em;
   box-sizing: border-box;
 }
-
-
 /* 🎯 Botones de acción */
 .acciones {
   display: grid;
@@ -369,7 +331,6 @@ h3 {
   color: #333;
   margin-bottom: 2px;
 }
-
 .acciones button {
   padding: 0.6em 1.2em;
   border: none;
@@ -379,7 +340,6 @@ h3 {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.637);
   transition: background-color 0.2s ease;
 }
-
 /* 💾 Guardar */
 #guardar-edicion {
   background-color: #28a745;
@@ -388,7 +348,6 @@ h3 {
 #guardar-edicion:hover {
   background-color: #218838;
 }
-
 /* 👁️ Ocultar/mostrar */
 #toggle-visible {
   background-color: #ffc107;
@@ -397,7 +356,6 @@ h3 {
 #toggle-visible:hover {
   background-color: #e0a800;
 }
-
 /* 🗑️ Eliminar */
 #btn-eliminar {
   background-color: #dc3545;
@@ -406,7 +364,6 @@ h3 {
 #btn-eliminar:hover {
   background-color: #c82333;
 }
-
 /* ❌ Cancelar */
 .acciones button:last-child {
   background-color: #6c757d;
@@ -415,26 +372,15 @@ h3 {
 .acciones button:last-child:hover {
   background-color: #5a6268;
 }
-
-
 /* 🔲 Tarjetas pequeñas para galería */
-
-
-
 .tarjeta-producto:hover {
   transform: scale(1.05);
 }
-
-
-
-
-
 .tarjeta-producto p {
   font-size: 0.7em;
   margin: 0.1em 0;
   color: #444;
 }
-
 /* 🧊 Botón editar */
 .tarjeta-producto button {
   font-size: 0.7em;
@@ -450,43 +396,16 @@ h3 {
 .tarjeta-producto button:hover {
   background-color: #0056b3;
 }
-
-/* 🙈 Ocultos en gris claro */
-.tarjeta-producto.oculto {
-  opacity: 0.4;
-  pointer-events: none;
-}
-
-
-
-
-.tarjeta-producto img {
-  display: block;
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 4px;
-    pointer-events: none;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-
 .vista-simple h4 {
   margin: 0;
   font-size: 12px;
   font-weight: bold;
 }
-
-
 .vista-simple p {
   margin: 0;
   font-size: 16px;
   color: #333;
 }
-
 .btn-editar {
   position: absolute;
   top: 4px;
@@ -504,7 +423,6 @@ h3 {
 .btn-editar.oculto {
   display: none;
 }
-
 .vista-detalles {
   position: absolute;
   inset: 0;
@@ -521,7 +439,6 @@ h3 {
 .vista-detalles.oculto {
   display: none;
 }
-
 .vista-detalles p {
   margin: 2px 0;
 }
@@ -536,14 +453,11 @@ h3 {
   grid-template-columns: repeat(2, 1fr);
   gap: 0.7rem 1rem;
 }
-
 .campo {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
-
-
 .campo input,
 .campo select,
 .campo textarea {
@@ -566,7 +480,7 @@ div#botones-edit {
   gap: 0.5rem;
   margin-top: 1rem;
 }
-
+/*👇👇👇👇👇👇👇👇👇👇👇👇👇*/
 /* Galería como lista vertical */
 /* Contenedor en modo lista vertical */
 .galeria {
@@ -578,49 +492,42 @@ div#botones-edit {
     align-items: stretch;
     justify-items: center;
 }
-
 /* Tarjeta de código estilo lista a pantalla completa */
 .tarjeta-producto {
-    background-color: white;
-    flex-direction: column;
-    text-align: center;
-    border-radius: 6px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    padding: 1em;
-    width: 350px; 
-    height: 20px;
-    margin: 0;                  /* sin margen lateral */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background 0.2s ease;
-    box-sizing: border-box;     /* importante para respetar padding */
-    position: relative;
-    overflow: hidden;
-    font-size: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8em 1em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: white;
+  margin-bottom: 1px;
+  position: relative;
+  height: 5px;
+  width: 340px;
 }
-
 /* Contenido textual a la izquierda */
 .tarjeta-producto .info {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
-
 /* Nombre destacado */
 .tarjeta-producto h4 {
-  font-size: 1.1em;
+  font-size: 16px;
   font-weight: bold;
   margin: 0;
 }
-
 /* Código */
-.tarjeta-producto p {
-  font-size: 0.95em;
+.tarjeta-producto .info p {
   margin: 0;
-  color: #555;
+  font-size: 0.9em;
+  text-align: right;
+  flex-shrink: 0;
+  width: auto;
+  min-width: 90px;
 }
-
 /* Botón editar a la derecha */
 .tarjeta-producto button {
   background-color: #007bff;
@@ -634,7 +541,6 @@ div#botones-edit {
 .tarjeta-producto button:hover {
   background-color: #0056b3;
 }
-
 /* Estado oculto (grisado) */
 .tarjeta-producto.oculto {
   opacity: 0.4;

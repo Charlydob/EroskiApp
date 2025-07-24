@@ -31,7 +31,7 @@ function renderizarCodigos() {
     tarjeta.innerHTML = `
       <div class="info">
         <h4>${cod.nombre}</h4>
-        <p>Código: ${cod.balanza}</p>
+        <p>Ord.: ${cod.balanza}</p>
       </div>
       <button class="btn-editar oculto" onclick="abrirModalEdicion('${id}')">✏️</button>
     `;
