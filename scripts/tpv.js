@@ -32,6 +32,7 @@ function renderizarCodigos() {
       <div class="info">
         <h4>${cod.nombre}</h4>
         <p>Ord.: ${cod.balanza}</p>
+        <p>Pist.: ${cod.merma}</p>
       </div>
       <button class="btn-editar oculto" onclick="abrirModalEdicion('${id}')">✏️</button>
     `;

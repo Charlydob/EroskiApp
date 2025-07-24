@@ -509,8 +509,9 @@ div#botones-edit {
 /* Contenido textual a la izquierda */
 .tarjeta-producto .info {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column 3fr;
+  justify-content: start;
+  align-items: start;
   width: 100%;
 }
 /* Nombre destacado */
