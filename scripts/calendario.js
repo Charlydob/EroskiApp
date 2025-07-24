@@ -112,7 +112,7 @@ function subirImagen(event, indice) {
   const archivo = event.target.files[0];
   if (!archivo) return;
 
-  subirAImgBB(archivo, url => {
+  subirACloudinary(archivo, url => {
     // Mostrar en miniatura
     const img = document.getElementById(`img-${indice}`);
     img.src = url;
@@ -127,10 +127,11 @@ function subirImagen(event, indice) {
   });
 }
 
+  const totalImagenes = 5; // ajusta según necesites
+
 
 // Al iniciar, intenta cargar imágenes desde Firebase
 window.addEventListener("DOMContentLoaded", () => {
-  const totalImagenes = 5; // ajusta según necesites
   for (let i = 0; i < totalImagenes; i++) {
     const img = document.getElementById(`img-${i}`);
     firebase.database().ref(`horarios/imagen${i}`).once("value")
@@ -146,29 +147,31 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 
-function subirAImgBB(file, callback) {
-  const apiKey = "aa88487ab04700365dbd8e33bb98ce72"; // 👈 cambia esto por la tuya
+function subirACloudinary(file, callback) {
+  const cloudName = "dgdavibcx"; // tu cloud_name
+  const uploadPreset = "publico"; // tu upload_preset (creado como "unsigned")
 
   const formData = new FormData();
-  formData.append("image", file);
+  formData.append("file", file);
+  formData.append("upload_preset", uploadPreset);
 
-  fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+  fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
     method: "POST",
     body: formData
   })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      const url = data.data.url;
-      console.log("✅ Imagen subida:", url);
-      if (typeof callback === "function") callback(url);
-    } else {
-      console.error("❌ Error al subir:", data);
+    .then(res => res.json())
+    .then(data => {
+      if (data.secure_url) {
+        console.log("✅ Imagen subida:", data.secure_url);
+        if (typeof callback === "function") callback(data.secure_url);
+      } else {
+        console.error("❌ Fallo Cloudinary:", data);
+        alert("No se pudo subir la imagen.");
+      }
+    })
+    .catch(err => {
+      console.error("❌ Error al conectar con Cloudinary:", err);
       alert("Error al subir la imagen.");
-    }
-  })
-  .catch(err => {
-    console.error("❌ Error de red:", err);
-    alert("Error al conectar con ImgBB.");
-  });
+    });
 }
+
