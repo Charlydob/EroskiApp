@@ -5,6 +5,9 @@ let currentX = 0, currentY = 0;
 let translateX = 0, translateY = 0;
 let scale = 1;
 let initialDistance = 0;
+  const totalImagenes = 5; // ajusta según necesites
+
+
 firebase.database().ref("horarios/imagen0").once("value").then(snapshot => {
   document.getElementById("imagenGrande").src = snapshot.val();
 });
@@ -127,7 +130,6 @@ function subirImagen(event, indice) {
   });
 }
 
-  const totalImagenes = 5; // ajusta según necesites
 
 
 // Al iniciar, intenta cargar imágenes desde Firebase
@@ -156,22 +158,24 @@ function subirACloudinary(file, callback) {
   formData.append("upload_preset", uploadPreset);
 
   fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-    method: "POST",
-    body: formData
+  method: "POST",
+  body: formData
+})
+  .then(async res => {
+    if (!res.ok) throw new Error(`Error HTTP: ${res.status}`);
+    const data = await res.json();
+    if (data.secure_url) {
+      console.log("✅ Imagen subida:", data.secure_url);
+      if (typeof callback === "function") callback(data.secure_url);
+    } else {
+      console.error("❌ Fallo Cloudinary:", data);
+      alert("No se pudo subir la imagen.");
+    }
   })
-    .then(res => res.json())
-    .then(data => {
-      if (data.secure_url) {
-        console.log("✅ Imagen subida:", data.secure_url);
-        if (typeof callback === "function") callback(data.secure_url);
-      } else {
-        console.error("❌ Fallo Cloudinary:", data);
-        alert("No se pudo subir la imagen.");
-      }
-    })
-    .catch(err => {
-      console.error("❌ Error al conectar con Cloudinary:", err);
-      alert("Error al subir la imagen.");
-    });
+  .catch(err => {
+    console.error("❌ Error al conectar con Cloudinary:", err);
+    alert("Error al subir la imagen.");
+  });
+
 }
 
