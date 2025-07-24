@@ -623,3 +623,28 @@ div#botones-edit {
   gap: 0.5rem;
   margin-top: 1rem;
 }
+
+.contador.previa-contador {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 8px;
+  padding: 2px 6px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #333;
+  z-index: 2;
+}
+.tarjeta-producto {
+  position: relative; /* Necesario para posicionar el contador */
+}
+#btn-sumar,
+#btn-restar {
+  background-color: rgba(66, 252, 243, 0.644);
+  margin: 0;
+  border-radius: 10px;
+  font-size: 0.9em;
+  padding: 0.3em 0.8em;
+
+}
