@@ -88,7 +88,7 @@ window.renderizarProductos = function () {
 
     let contenido = `
       <div class="vista-simple">
-        <img src="${prod.img || ''}" alt="Imagen del producto" />
+<img src="${prod.img || ''}" alt="Imagen del producto" onerror="this.style.border='2px solid red'; this.alt='No encontrada'; console.warn('❌ Imagen no cargada:', this.src)" />
         <h4>${prod.nombre || 'Sin nombre'}</h4>
     `;
 
