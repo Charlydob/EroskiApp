@@ -117,11 +117,18 @@ window.renderizarProductos = function () {
   } else if (window.modoEspecial === "caja") {
     lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === "fruta");
   } else if (window.modoEspecial === "previa") {
-    lista = lista.filter(([_, prod]) => {
-      const cat = prod.categoria?.toLowerCase();
-      return cat === "bolleria" || cat === "pan";
-    });
-  } else {
+  lista = lista.filter(([_, prod]) => {
+    const cat = prod.categoria?.toLowerCase();
+    const filtroActivo = document.getElementById("filtro-categoria").value.toLowerCase();
+
+    if (filtroActivo === "bolleria" || filtroActivo === "pan") {
+      return cat === filtroActivo;
+    }
+
+    return cat === "bolleria" || cat === "pan";
+  });
+}
+ else {
     if (filtro) lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === filtro);
     if (busqueda) lista = lista.filter(([_, prod]) => prod.nombre?.toLowerCase().includes(busqueda));
   }
@@ -239,15 +246,16 @@ window.renderizarProductos = function () {
 
   // Guardar estado final de contadores después de renderizar
   if (window.modoEspecial === "previa") {
-    window.contadoresPreviosCache = {};
-    document.querySelectorAll(".tarjeta-producto").forEach(tarjeta => {
-      const id = tarjeta.dataset.id;
-      const contador = tarjeta.querySelector(".contador")?.textContent;
-      if (id && contador) {
-        window.contadoresPreviosCache[id] = parseInt(contador);
-      }
-    });
-  }
+  window.contadoresPreviosCache = window.contadoresPreviosCache || {};
+  document.querySelectorAll(".tarjeta-producto").forEach(tarjeta => {
+    const id = tarjeta.dataset.id;
+    const contador = tarjeta.querySelector(".contador")?.textContent;
+    if (id && contador) {
+      window.contadoresPreviosCache[id] = parseInt(contador);
+    }
+  });
+}
+
 };
 
 
