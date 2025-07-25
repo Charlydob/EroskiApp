@@ -659,3 +659,11 @@ div#botones-edit {
   height: 86px;
   width: 100px;
 }
+* {
+  box-sizing: border-box;
+  max-width: 100vw;
+}
+.galeria {
+  overflow-x: hidden;
+  flex-wrap: wrap;
+}
