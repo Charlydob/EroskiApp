@@ -448,11 +448,9 @@ h3 {
   padding: 0.5rem;
   transition: transform 0.2s ease;
   position: relative;
+  box-sizing: content-box;
 }
 
-.tarjeta-producto:hover {
-  transform: scale(1.05);
-}
 
 
 
@@ -627,7 +625,7 @@ div#botones-edit {
 .contador.previa-contador {
   position: absolute;
   top: 6px;
-  left: 6px;
+  left: 2px;
   background: rgba(255, 255, 255, 0.85);
   border-radius: 8px;
   padding: 2px 6px;
@@ -635,9 +633,12 @@ div#botones-edit {
   font-weight: bold;
   color: #333;
   z-index: 2;
+  width: 15px;
+  height: 23px;
 }
 .tarjeta-producto {
   position: relative; /* Necesario para posicionar el contador */
+  margin: 5px;
 }
 #btn-sumar,
 #btn-restar {
@@ -646,5 +647,15 @@ div#botones-edit {
   border-radius: 10px;
   font-size: 0.9em;
   padding: 0.3em 0.8em;
-
+}
+#btn-sumar.boton-activo,
+#btn-restar.boton-activo {
+  color: white;
+  border: 2px solid #ff0000;
+}
+.tarjeta-activa {
+  border: 2px solid red;
+  background-color: rgb(255, 113, 113);
+  height: 86px;
+  width: 100px;
 }

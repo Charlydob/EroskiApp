@@ -18,14 +18,16 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("filtro-categoria")?.addEventListener("change", () => {
-    window.modoEspecial = null;
-    window.cargarProductos();
-  });
+  // No resetear modoEspecial si estamos en previa
+  if (window.modoEspecial !== "previa") window.modoEspecial = null;
+  window.cargarProductos();
+});
 
-  document.getElementById("buscador")?.addEventListener("input", () => {
-    window.modoEspecial = null;
-    window.cargarProductos();
-  });
+document.getElementById("buscador")?.addEventListener("input", () => {
+  if (window.modoEspecial !== "previa") window.modoEspecial = null;
+  window.cargarProductos();
+});
+
 
   document.getElementById("btn-merma")?.addEventListener("click", () => {
     window.modoEspecial = (window.modoEspecial === "merma") ? null : "merma";
@@ -46,20 +48,39 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnSumar = document.getElementById("btn-sumar");
 const btnRestar = document.getElementById("btn-restar");
 
-btnSumar.addEventListener("click", () => window.contadorModo = "sumar");
-btnRestar.addEventListener("click", () => window.contadorModo = "restar");
+btnSumar.addEventListener("click", () => {
+  window.contadorModo = "sumar";
+  btnSumar.classList.add("boton-activo");
+  btnRestar.classList.remove("boton-activo");
+});
+
+btnRestar.addEventListener("click", () => {
+  window.contadorModo = "restar";
+  btnRestar.classList.add("boton-activo");
+  btnSumar.classList.remove("boton-activo");
+});
 
 document.getElementById("btn-previa")?.addEventListener("click", () => {
   const activando = window.modoEspecial !== "previa";
   window.modoEspecial = activando ? "previa" : null;
   window.contadorModo = "sumar";
 
-  // Mostrar u ocultar botones de suma/resta
+  // Mostrar u ocultar botones
   btnSumar.style.display = activando ? "inline-block" : "none";
   btnRestar.style.display = activando ? "inline-block" : "none";
 
+  // Estilo visual
+  if (activando) {
+    btnSumar.classList.add("boton-activo");
+    btnRestar.classList.remove("boton-activo");
+  } else {
+    btnSumar.classList.remove("boton-activo");
+    btnRestar.classList.remove("boton-activo");
+  }
+
   window.cargarProductos();
 });
+
 
 });
 
@@ -89,109 +110,147 @@ window.renderizarProductos = function () {
 
   console.log("🧪 Filtro aplicado:", filtro, " | Búsqueda:", busqueda, " | Modo especial:", window.modoEspecial);
 
-if (window.modoEspecial === "merma") {
-  lista = lista.filter(([_, prod]) => prod.merma);
-} else if (window.modoEspecial === "envasar") {
-  lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === "bolleria");
-} else if (window.modoEspecial === "caja") {
-  lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === "fruta");
-} else if (window.modoEspecial === "previa") {
-  lista = lista.filter(([_, prod]) => {
-    const cat = prod.categoria?.toLowerCase();
-    return cat === "bolleria" || cat === "pan";
-  });
-} else {
-  if (filtro) lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === filtro);
-  if (busqueda) lista = lista.filter(([_, prod]) => prod.nombre?.toLowerCase().includes(busqueda));
-}
-
-
-  lista.sort((a, b) => (a[1].nombre || '').localeCompare(b[1].nombre || ''));
-  console.log(`📦 ${lista.length} productos a mostrar`);
-
-lista.forEach(([id, prod]) => {
-  const tarjeta = document.createElement("div");
-  tarjeta.className = "tarjeta-producto";
-  tarjeta.dataset.id = id;
-  if (prod.oculto) tarjeta.classList.add("oculto");
-
-  let contenido = `
-    <div class="vista-simple">
-      <img src="${prod.img || ''}" alt="Imagen del producto" 
-        onerror="this.style.border='2px solid red'; this.alt='No encontrada'; console.warn('❌ Imagen no cargada:', this.src)" />
-      <h4>${prod.nombre || 'Sin nombre'}</h4>
-  `;
-
-  contenido += (window.modoEspecial === "merma")
-    ? `<p>${prod.merma || '-'}</p>`
-    : `<p>${prod.balanza || '-'}</p>`;
-
-  contenido += `<button class="btn-editar oculto">✏️</button></div>`;
-
-  if (!window.modoEspecial) {
-    contenido += `
-      <div class="vista-detalles oculto">
-        <p><strong>Merma:</strong> ${prod.merma || '-'}</p>
-        <p><strong>Ref:</strong> ${prod.ref || '-'}</p>
-        <p><strong>Cat:</strong> ${prod.categoria || '-'}</p>
-        <span class="cerrar-detalle">✖</span>
-      </div>`;
-  }
-
-  tarjeta.innerHTML = contenido;
-
-  // Activar long press para editar
-  let longPressTimeout;
-
-  ["mousedown", "touchstart"].forEach(eventoInicio => {
-    tarjeta.addEventListener(eventoInicio, (e) => {
-      e.stopPropagation();
-      longPressTimeout = setTimeout(() => {
-        tarjeta.querySelector(".btn-editar").classList.remove("oculto");
-      }, 500);
-    });
-
-    const eventoFin = eventoInicio === "mousedown" ? "mouseup" : "touchend";
-    tarjeta.addEventListener(eventoFin, () => clearTimeout(longPressTimeout));
-  });
-
-  tarjeta.addEventListener("mouseleave", () => clearTimeout(longPressTimeout));
-
-  if (window.modoEspecial === "previa") {
-    // Añadir contador dentro de la tarjeta
-    const contador = tarjeta.querySelector(".contador.previa-contador") || document.createElement("span");
-    contador.className = "contador previa-contador";
-    contador.textContent = "0";
-    tarjeta.querySelector(".vista-simple").appendChild(contador);
-
-    tarjeta.addEventListener("click", (e) => {
-      e.stopPropagation();
-      let valor = parseInt(contador.textContent);
-      if (window.contadorModo === "sumar") valor++;
-      else if (window.contadorModo === "restar" && valor > 0) valor--;
-      contador.textContent = valor;
+  if (window.modoEspecial === "merma") {
+    lista = lista.filter(([_, prod]) => prod.merma);
+  } else if (window.modoEspecial === "envasar") {
+    lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === "bolleria");
+  } else if (window.modoEspecial === "caja") {
+    lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === "fruta");
+  } else if (window.modoEspecial === "previa") {
+    lista = lista.filter(([_, prod]) => {
+      const cat = prod.categoria?.toLowerCase();
+      return cat === "bolleria" || cat === "pan";
     });
   } else {
-    // Mostrar/ocultar detalles en modo normal
-    tarjeta.addEventListener("click", () => {
-      tarjeta.querySelector(".vista-detalles")?.classList.toggle("oculto");
-    });
-
-    tarjeta.querySelector(".cerrar-detalle")?.addEventListener("click", (e) => {
-      e.stopPropagation();
-      tarjeta.querySelector(".vista-detalles").classList.add("oculto");
-    });
+    if (filtro) lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === filtro);
+    if (busqueda) lista = lista.filter(([_, prod]) => prod.nombre?.toLowerCase().includes(busqueda));
   }
 
-  tarjeta.querySelector(".btn-editar").addEventListener("click", (e) => {
-    e.stopPropagation();
-    window.editarProducto(id);
+  // Recuperar contadores previos si los hubiera
+  const contadoresPrevios = {};
+  if (window.modoEspecial === "previa" && window.contadoresPreviosCache) {
+    Object.assign(contadoresPrevios, window.contadoresPreviosCache);
+  }
+
+  // Ordenar: primero por contador descendente, luego alfabético
+  lista.sort((a, b) => {
+    if (window.modoEspecial === "previa") {
+      const aCont = contadoresPrevios[a[0]] || 0;
+      const bCont = contadoresPrevios[b[0]] || 0;
+      if (aCont !== bCont) return bCont - aCont;
+    }
+    return (a[1].nombre || '').localeCompare(b[1].nombre || '');
   });
 
-  galeria.appendChild(tarjeta);
-});
+  console.log(`📦 ${lista.length} productos a mostrar`);
 
+  lista.forEach(([id, prod]) => {
+    const tarjeta = document.createElement("div");
+    tarjeta.className = "tarjeta-producto";
+    tarjeta.dataset.id = id;
+    if (prod.oculto) tarjeta.classList.add("oculto");
+
+    let contenido = `
+      <div class="vista-simple">
+        <img src="${prod.img || ''}" alt="Imagen del producto" 
+          onerror="this.style.border='2px solid red'; this.alt='No encontrada'; console.warn('❌ Imagen no cargada:', this.src)" />
+        <h4>${prod.nombre || 'Sin nombre'}</h4>
+    `;
+
+    contenido += (window.modoEspecial === "merma")
+      ? `<p>${prod.merma || '-'}</p>`
+      : `<p>${prod.balanza || '-'}</p>`;
+
+    contenido += `<button class="btn-editar oculto">✏️</button></div>`;
+
+    if (!window.modoEspecial) {
+      contenido += `
+        <div class="vista-detalles oculto">
+          <p><strong>Merma:</strong> ${prod.merma || '-'}</p>
+          <p><strong>Ref:</strong> ${prod.ref || '-'}</p>
+          <p><strong>Cat:</strong> ${prod.categoria || '-'}</p>
+          <span class="cerrar-detalle">✖</span>
+        </div>`;
+    }
+
+    tarjeta.innerHTML = contenido;
+
+    let longPressTimeout;
+    ["mousedown", "touchstart"].forEach(eventoInicio => {
+      tarjeta.addEventListener(eventoInicio, (e) => {
+        e.stopPropagation();
+        longPressTimeout = setTimeout(() => {
+          tarjeta.querySelector(".btn-editar").classList.remove("oculto");
+        }, 500);
+      });
+      const eventoFin = eventoInicio === "mousedown" ? "mouseup" : "touchend";
+      tarjeta.addEventListener(eventoFin, () => clearTimeout(longPressTimeout));
+    });
+    tarjeta.addEventListener("mouseleave", () => clearTimeout(longPressTimeout));
+
+    if (window.modoEspecial === "previa") {
+      const contador = document.createElement("span");
+      contador.className = "contador previa-contador";
+      const valorPrevio = contadoresPrevios[id] || 0;
+      contador.textContent = valorPrevio;
+      tarjeta.querySelector(".vista-simple").appendChild(contador);
+
+      if (valorPrevio > 0) {
+        tarjeta.classList.add("tarjeta-activa");
+      }
+
+      tarjeta.addEventListener("click", (e) => {
+        e.stopPropagation();
+        let valor = parseInt(contador.textContent);
+        if (window.contadorModo === "sumar") valor++;
+        else if (window.contadorModo === "restar" && valor > 0) valor--;
+
+        contador.textContent = valor;
+
+        if (valor > 0) {
+          tarjeta.classList.add("tarjeta-activa");
+        } else {
+          tarjeta.classList.remove("tarjeta-activa");
+        }
+
+        // Actualizar el cache con el nuevo valor y volver a renderizar
+        window.contadoresPreviosCache = window.contadoresPreviosCache || {};
+        window.contadoresPreviosCache[id] = valor;
+        window.renderizarProductos(); // Reordenar automáticamente tras clic
+      });
+    } else {
+      tarjeta.addEventListener("click", () => {
+        tarjeta.querySelector(".vista-detalles")?.classList.toggle("oculto");
+      });
+
+      tarjeta.querySelector(".cerrar-detalle")?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        tarjeta.querySelector(".vista-detalles").classList.add("oculto");
+      });
+    }
+
+    tarjeta.querySelector(".btn-editar").addEventListener("click", (e) => {
+      e.stopPropagation();
+      window.editarProducto(id);
+    });
+
+    galeria.appendChild(tarjeta);
+  });
+
+  // Guardar estado final de contadores después de renderizar
+  if (window.modoEspecial === "previa") {
+    window.contadoresPreviosCache = {};
+    document.querySelectorAll(".tarjeta-producto").forEach(tarjeta => {
+      const id = tarjeta.dataset.id;
+      const contador = tarjeta.querySelector(".contador")?.textContent;
+      if (id && contador) {
+        window.contadoresPreviosCache[id] = parseInt(contador);
+      }
+    });
+  }
 };
+
+
 
 
 
