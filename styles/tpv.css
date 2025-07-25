@@ -480,69 +480,65 @@ div#botones-edit {
   gap: 0.5rem;
   margin-top: 1rem;
 }
-/*👇👇👇👇👇👇👇👇👇👇👇👇👇*/
-/* Galería como lista vertical */
-/* Contenedor en modo lista vertical */
-.galeria {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 0;
-    max-height: fit-content;
-    align-items: stretch;
-    justify-items: center;
-}
-/* Tarjeta de código estilo lista a pantalla completa */
 .tarjeta-producto {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 90px 60px; /* nombre | códigos | botón */
+  gap: 10px;
   align-items: center;
-  padding: 0.8em 1em;
+  padding: 0.5em 1em;
+  width: 340px;
+  background: white;
   border: 1px solid #ccc;
   border-radius: 8px;
-  background: white;
-  margin-bottom: 1px;
+  margin-bottom: 5px;
+  box-sizing: border-box;
   position: relative;
-  height: 5px;
-  width: 340px;
 }
-/* Contenido textual a la izquierda */
-.tarjeta-producto .info {
-  display: flex;
-  flex-direction: column 3fr;
-  justify-content: start;
-  align-items: start;
-  width: 100%;
-}
-/* Nombre destacado */
-.tarjeta-producto h4 {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0;
-}
-/* Código */
-.tarjeta-producto .info p {
+
+.col-nombre h4,
+.col-codigo p {
   margin: 0;
   font-size: 0.9em;
-  text-align: right;
-  flex-shrink: 0;
-  width: auto;
-  min-width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-/* Botón editar a la derecha */
-.tarjeta-producto button {
-  background-color: #007bff;
-  color: white;
+
+.col-nombre h4 {
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.col-nombre, .col-codigo, .col-boton {
+  overflow: hidden;
+  justify-self: start;
+}
+
+.col-codigo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.col-boton button {
+  font-size: 0.75em;
+  padding: 0.3em 0.6em;
   border: none;
   border-radius: 4px;
-  padding: 0.4em 0.8em;
+  background-color: #007bff;
+  color: white;
   cursor: pointer;
-  font-size: 0.85em;
+  white-space: nowrap;
 }
-.tarjeta-producto button:hover {
+
+.col-boton button:hover {
   background-color: #0056b3;
 }
-/* Estado oculto (grisado) */
+
+.btn-editar.oculto {
+  display: none;
+}
+
 .tarjeta-producto.oculto {
   opacity: 0.4;
   pointer-events: none;

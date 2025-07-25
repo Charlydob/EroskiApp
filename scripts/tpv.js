@@ -29,13 +29,18 @@ function renderizarCodigos() {
     const tarjeta = document.createElement("div");
     tarjeta.className = "tarjeta-producto";
     tarjeta.innerHTML = `
-      <div class="info">
+      <div class="col-nombre">
         <h4>${cod.nombre}</h4>
-        <p>Ord.: ${cod.balanza}</p>
-        <p>Pist.: ${cod.merma}</p>
       </div>
-      <button class="btn-editar oculto" onclick="abrirModalEdicion('${id}')">✏️</button>
+      <div class="col-codigo">
+        <p>Ord.: ${cod.balanza || "-"}</p>
+        <p>Pist.: ${cod.merma || "-"}</p>
+      </div>
+      <div class="col-boton">
+        <button class="btn-editar oculto" onclick="abrirModalEdicion('${id}')">✏️</button>
+      </div>
     `;
+
 
     let longPressTimeout;
     let longPressActivado = false;
