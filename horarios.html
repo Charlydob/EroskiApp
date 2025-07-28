@@ -57,7 +57,7 @@
     <select id="selectorSemana"></select>
     
     <!-- Solo visible para jefa -->
-    <div id="zonaEdicion">
+    <div class="zona-edicion">
       <button onclick="crearNuevaSemana()">➕ Nueva semana</button>
       <button onclick="eliminarSemanaActual()" style="background-color: crimson;">🗑️ Eliminar semana</button>
     </div>
@@ -84,33 +84,31 @@
     <button onclick="setModo('verde')" style="background-color: green;">🟩</button>
     <button onclick="setModo('borrar')" style="background-color: grey;">🗑️</button>
   </div>
-<div id="zonaEdicion">
-<h3>🔁 Intercambiar turno</h3>
-<div id="intercambioTurno" style="margin-top: 10px;">
-  <label for="semanaIntercambio">Semana:</label>
-  <select id="semanaIntercambio"></select>
+<div class="zona-edicion">
+    <h3>🔁 Intercambiar turno</h3>
+    <div id="intercambioTurno" style="margin-top: 10px;">
+    <label for="semanaIntercambio">Semana:</label>
+    <select id="semanaIntercambio"></select>
 
-  <label for="diaIntercambio">Día:</label>
-  <select id="diaIntercambio">
-    <option value="lunes">Lunes</option>
-    <option value="martes">Martes</option>
-    <option value="miércoles">Miércoles</option>
-    <option value="jueves">Jueves</option>
-    <option value="viernes">Viernes</option>
-    <option value="sábado">Sábado</option>
-    <option value="domingo">Domingo</option>
-  </select>
+    <label for="diaIntercambio">Día:</label>
+    <select id="diaIntercambio">
+        <option value="lunes">Lunes</option>
+        <option value="martes">Martes</option>
+        <option value="miércoles">Miércoles</option>
+        <option value="jueves">Jueves</option>
+        <option value="viernes">Viernes</option>
+        <option value="sábado">Sábado</option>
+        <option value="domingo">Domingo</option>
+    </select>
 
-  <label for="empleadoOrigen">De:</label>
-  <select id="empleadoOrigen"></select>
+    <label for="empleadoOrigen">De:</label>
+    <select id="empleadoOrigen"></select>
 
-  <label for="empleadoDestino">A:</label>
-  <select id="empleadoDestino"></select>
+    <label for="empleadoDestino">A:</label>
+    <select id="empleadoDestino"></select>
 
-  <button onclick="intercambiarTurno()" style="margin-top: 10px;">Intercambiar</button>
-</div>
-
-
+    <button onclick="intercambiarTurno()" style="margin-top: 10px;">Intercambiar</button>
+    </div>
 </div>
   <hr>
 

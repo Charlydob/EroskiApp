@@ -175,21 +175,22 @@
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  font-size: 13px;
+  font-size: 10px;
+  padding: 0px;
 }
 
 .mini-turno-empleado th,
 .mini-turno-empleado td {
   border: 1px solid #ccc;
   text-align: center;
-  padding: 6px;
+  padding: 0px;
   font-size: 13px;
   white-space: nowrap;
-  text-overflow: ellipsis;
+  text-overflow: clip;
   overflow: hidden;
 }
 .mini-turno-empleado tr{
-    height: 10px;
+    height: 0px;
 }
 .mini-turno-empleado tr:first-child,
 .mini-turno-empleado td:first-child {
@@ -197,7 +198,7 @@
   text-align: center;
   background-color: whitesmoke;
   padding: 6px;
-  font-size: 13px;
+  font-size: 10px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -215,10 +216,17 @@
 
 .mini-turno-empleado tr.dia-libre td {
   background-color: #c8f7c5;
+  padding: 4px;
 }
+.mini-turno-empleado td:not(.trabajo):empty {
+  padding: 1px;
+  height: 0px;
+}
+
 /* Títulos */
 #pagina-horarios h2 {
   font-size: 24px;
+  margin-top: 40px;
   margin-bottom: 15px;
   color: #ffffff;
   font-weight: 600;

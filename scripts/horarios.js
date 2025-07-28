@@ -300,7 +300,9 @@ window.addEventListener("DOMContentLoaded", () => {
   const esJefa = rol === "jefa" || nombre?.toLowerCase() === "charly";
 
   if (!esJefa) {
-    document.getElementById("zonaEdicion").style.display = "none";
+document.querySelectorAll(".zona-edicion").forEach(el => {
+  el.style.display = "none";
+});
     document.getElementById("modoSeleccion").style.display = "none";
     modoSeleccion = null;
   }
