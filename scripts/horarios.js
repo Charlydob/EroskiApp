@@ -207,7 +207,10 @@ document.addEventListener("mouseup", () => {
 
   tablaContainer.appendChild(tabla);
 
+  cargarSelectorEmpleado();
 
+  // ✅ Añade esto
+  renderizarResumenEmpleado();
 }
 
 
