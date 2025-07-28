@@ -18,6 +18,14 @@ const tablaContainer = document.getElementById("tablaHorarioContainer");
 const selectorSemana = document.getElementById("selectorSemana");
 const selectorDia = document.getElementById("selectorDia");
 
+// Establecer día actual al cargar
+const diasSemana = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+const hoy = new Date();
+const diaActualNombre = diasSemana[hoy.getDay()];
+selectorDia.value = diaActualNombre;
+diaActual = diaActualNombre; // actualiza también la variable global
+
+
 selectorDia.addEventListener("change", () => {
   diaActual = selectorDia.value;
   renderizarTabla();
