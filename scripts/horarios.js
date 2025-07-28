@@ -251,25 +251,47 @@ function aplicarModo(td, celdaID) {
 function cargarSemanasExistentes() {
   db.ref().once("value", (snap) => {
     const data = snap.val();
-    selectorSemana.innerHTML = ""; // Limpia el selector antes de rellenar
+    const semanas = [];
 
     for (let key in data) {
       if (key.startsWith("horario_semana_")) {
-        const fecha = key.replace("horario_semana_", "").replaceAll("-", "/");
-        const opt = document.createElement("option");
-        opt.value = key; // sigue usando el nombre real como valor
-        opt.textContent = fecha; // muestra bonito en el desplegable
-        selectorSemana.appendChild(opt);
+        const fecha = data[key]._fecha;
+        if (!fecha) continue;
+        semanas.push({ key, fecha });
       }
     }
 
-    if (selectorSemana.options.length > 0) {
-      selectorSemana.selectedIndex = 0;
-      semanaActual = selectorSemana.value;
-      renderizarTabla();
+    // Ordenar por fecha cronológica (ascendente)
+    semanas.sort((a, b) => {
+      const [d1, m1, y1] = a.fecha.split("/").map(Number);
+      const [d2, m2, y2] = b.fecha.split("/").map(Number);
+      return new Date(y1, m1 - 1, d1) - new Date(y2, m2 - 1, d2);
+    });
+
+    selectorSemana.innerHTML = "";
+    for (let { key, fecha } of semanas) {
+      const opt = document.createElement("option");
+      opt.value = key;
+      opt.textContent = fecha;
+      selectorSemana.appendChild(opt);
     }
+
+    // Recuperar selección previa
+    const ultimaSeleccion = localStorage.getItem("semanaSeleccionada");
+
+    if (ultimaSeleccion && [...selectorSemana.options].some(opt => opt.value === ultimaSeleccion)) {
+      selectorSemana.value = ultimaSeleccion;
+    } else if (semanas.length > 0) {
+      // Seleccionar la más reciente si no hay guardada
+      selectorSemana.value = semanas[semanas.length - 1].key;
+    }
+
+    semanaActual = selectorSemana.value;
+    renderizarTabla();
+    renderizarResumenEmpleado();
   });
 }
+
 function eliminarSemanaActual() {
   if (!semanaActual) return;
 
