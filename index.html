@@ -6,8 +6,17 @@
   <title>La app de Charly</title>
   <link rel="stylesheet" href="styles/login.css" />
   <link rel="apple-touch-icon" href="recursos/img/eroski.png">
-
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#007bff">
 </head>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js")
+      .then(() => console.log("✅ Service Worker registrado"))
+      .catch(err => console.error("❌ Error al registrar el SW", err));
+  }
+</script>
+
 <body>
 
   <!-- LOGIN SUPERPUESTO -->
