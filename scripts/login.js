@@ -30,29 +30,29 @@ const mensajesPersonalizados = {
 };
 
 loginBtn.addEventListener("click", () => {
-  if (!usuariosCargados) {
-    errorMsg.textContent = "⏳ Cargando empleados, intenta en unos segundos...";
-    return;
-  }
+  console.log("Login button clicked");
 
-  const codigo = codigoInput.value.trim();
+  const codigo = parseInt(codigoInput.value.trim(), 10);
+  console.log("Código introducido:", codigo);
+
   if (!usuarios[codigo]) {
     errorMsg.textContent = "❌ Código no válido o no asignado.";
+    console.log("Código inválido");
     return;
   }
 
   const nombre = usuarios[codigo];
-  const rol = codigo === "1306" ? "jefa" : "empleado";
+  console.log("Usuario válido:", nombre);
+
+  const rol = codigo === 1306 ? "jefa" : "empleado";
 
   // Guardar sesión
   localStorage.setItem("nombre", nombre);
   localStorage.setItem("rol", rol);
   localStorage.setItem("codigo", codigo);
 
-  // Ocultar login
-  loginSection.style.display = "none";
-
   // Mostrar bienvenida
+  loginSection.style.display = "none";
   const mensaje = mensajesPersonalizados[nombre] || `¡Bienvenido, ${nombre.toUpperCase()}!`;
   bienvenida.textContent = mensaje;
   bienvenida.classList.remove("oculto");
@@ -63,6 +63,7 @@ loginBtn.addEventListener("click", () => {
     appContent.style.pointerEvents = "auto";
   }, 2000);
 });
+
 
 
 codigoInput.addEventListener("keypress", (e) => {
