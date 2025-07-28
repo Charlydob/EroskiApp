@@ -348,13 +348,14 @@ function renderizarResumenEmpleado() {
   }
 
   const fechaSemana = selectorSemana.selectedOptions[0]?.textContent;
-  const [_, mesSeleccionado, anioSeleccionado] = fechaSemana.split("/");
+  const [diaInicio, mesSeleccionado, anioSeleccionado] = fechaSemana.split("/");
 
   let totalSemana = 0;
   let diasLibres = 0;
   let resumenDiario = [];
   let totalMes = 0;
   let totalAnio = 0;
+  let totalGeneral = 0;
   let mañanasMes = 0;
   let tardesMes = 0;
 
@@ -368,8 +369,8 @@ function renderizarResumenEmpleado() {
       const fechaGuardada = datosSemana._fecha;
       if (!fechaGuardada) continue;
 
-      const [__, mm, aaaa] = fechaGuardada.split("/");
-      const mismaPersona = nombre;
+      const [diaInicioStr, mm, aaaa] = fechaGuardada.split("/");
+      const baseDate = new Date(`${aaaa}-${mm}-${diaInicioStr}`);
       const datosDias = Object.entries(datosSemana).filter(([k]) => !k.startsWith("_"));
 
       for (let [dia, celdas] of datosDias) {
@@ -379,7 +380,7 @@ function renderizarResumenEmpleado() {
         let ultimaHora = null;
 
         for (let hora of horas) {
-          const celdaID = `${mismaPersona}_${hora}`;
+          const celdaID = `${nombre}_${hora}`;
           const valor = celdas[celdaID];
           if (valor === "1" || valor === "0.5") {
             horasDia += parseFloat(valor);
@@ -387,20 +388,27 @@ function renderizarResumenEmpleado() {
           }
         }
 
-        if (aaaa === anioSeleccionado) totalAnio += horasDia;
-        if (mm === mesSeleccionado && aaaa === anioSeleccionado) {
-          totalMes += horasDia;
+        const indexDia = ["lunes","martes","miércoles","jueves","viernes","sábado","domingo"].indexOf(dia);
+        const fechaReal = new Date(baseDate);
+        fechaReal.setDate(baseDate.getDate() + indexDia);
 
+        if (fechaReal.getFullYear() === parseInt(anioSeleccionado)) totalAnio += horasDia;
+        if (
+          fechaReal.getMonth() + 1 === parseInt(mesSeleccionado) &&
+          fechaReal.getFullYear() === parseInt(anioSeleccionado)
+        ) {
+          totalMes += horasDia;
           if (ultimaHora) {
             const horaFin = parseInt(ultimaHora.split("-")[1]);
             if (horaFin <= 16) mañanasMes++;
             else tardesMes++;
           }
         }
+
+        totalGeneral += horasDia;
       }
     }
 
-    // 🧠 Ahora renderizamos solo la semana actual (ya que ahora tenemos totales)
     const datosSemanaActual = semanas[semanaActual];
     if (!datosSemanaActual) return;
 
@@ -427,30 +435,26 @@ function renderizarResumenEmpleado() {
       if (verdes === totalCeldas && totalCeldas > 0) diasLibres++;
       if (horasDia > 0) totalSemana += horasDia;
 
-if (horasDia > 3) {
-  for (let hora of horas) {
-    const celdaID = `${nombre}_${hora}`;
-    const valor = celdas[celdaID];
-    if (valor === "1" || valor === "0.5") {
-      for (let key in celdas) {
-        if (key !== celdaID && key.endsWith(`_${hora}`)) {
-          const otro = key.split("_")[0];
-          const valorOtro = celdas[key];
-          if (
-            otro !== nombre &&
-            (valorOtro === "1" || valorOtro === "0.5")
-          ) {
-            compañeros[otro] = (compañeros[otro] || 0) + 1;
+      if (horasDia > 3) {
+        for (let hora of horas) {
+          const celdaID = `${nombre}_${hora}`;
+          const valor = celdas[celdaID];
+          if (valor === "1" || valor === "0.5") {
+            for (let key in celdas) {
+              if (key !== celdaID && key.endsWith(`_${hora}`)) {
+                const otro = key.split("_")[0];
+                const valorOtro = celdas[key];
+                if (otro !== nombre && (valorOtro === "1" || valorOtro === "0.5")) {
+                  compañeros[otro] = (compañeros[otro] || 0) + 1;
+                }
+              }
+            }
           }
         }
       }
-    }
-  }
-}
-
 
       const coincidenciasFiltradas = Object.entries(compañeros)
-        .filter(([_, horasCoincididas]) => horasCoincididas >= 2)
+        .filter(([_, horasCoincididas]) => horasCoincididas > 2)
         .map(([nombre]) => nombre);
 
       resumenDiario.push(`• ${dia}: ${horasDia}h ${coincidenciasFiltradas.length > 0 ? `(con: ${coincidenciasFiltradas.join(", ")})` : ""}`);
@@ -460,56 +464,57 @@ if (horasDia > 3) {
       <strong>${nombre}</strong><br>
       🕓 Horas esta semana: <strong>${totalSemana}</strong><br>
       📆 Total mes: ${totalMes}h / año: ${totalAnio}h<br>
+      🧮 Total acumulado: ${totalGeneral}h<br>
       🌅 Mañanas este mes: ${mañanasMes} / 🌇 Tardes: ${tardesMes}<br>
       🤝 Trabaja con:<br>${resumenDiario.join("<br>")}<br>
       💤 Días libres (toda la fila verde): ${diasLibres}
     `;
 
-    // Mini tabla visual
     let tablaMini = "<table><tr><th>Día</th>" + horas.map(h => `<th>${h}</th>`).join("") + "</tr>";
 
-for (let dia of diasValidos) {
-  const celdas = datosSemanaActual[dia];
-  if (!celdas) continue;
+    for (let dia of diasValidos) {
+      const celdas = datosSemanaActual[dia];
+      if (!celdas) continue;
 
-  let total = 0;
-  let verdes = 0;
+      let total = 0;
+      let verdes = 0;
 
-  for (let hora of horas) {
-    const celdaID = `${nombre}_${hora}`;
-    const valor = celdas?.[celdaID];
-    if (valor) total++;
-    if (valor === "verde") verdes++;
-  }
+      for (let hora of horas) {
+        const celdaID = `${nombre}_${hora}`;
+        const valor = celdas?.[celdaID];
+        if (valor) total++;
+        if (valor === "verde") verdes++;
+      }
 
-  const esDiaLibre = total > 0 && verdes === total;
-  const inicialesDias = {
-  lunes: "L",
-  martes: "M",
-  miércoles: "X",
-  jueves: "J",
-  viernes: "V",
-  sábado: "S",
-  domingo: "D"
-};
+      const esDiaLibre = total > 0 && verdes === total;
+      const inicialesDias = {
+        lunes: "L",
+        martes: "M",
+        miércoles: "X",
+        jueves: "J",
+        viernes: "V",
+        sábado: "S",
+        domingo: "D"
+      };
 
-tablaMini += `<tr class="${esDiaLibre ? "dia-libre" : ""}"><td>${inicialesDias[dia]}</td>`;
+      tablaMini += `<tr class="${esDiaLibre ? "dia-libre" : ""}"><td>${inicialesDias[dia]}</td>`;
 
-  for (let hora of horas) {
-    const celdaID = `${nombre}_${hora}`;
-    const valor = celdas?.[celdaID];
-    let clase = "";
-    if (valor === "1" || valor === "0.5") clase = "trabajo";
-tablaMini += `<td class="${clase}">${(valor === "1" || valor === "0.5") ? valor : ""}</td>`;
-  }
+      for (let hora of horas) {
+        const celdaID = `${nombre}_${hora}`;
+        const valor = celdas?.[celdaID];
+        let clase = "";
+        if (valor === "1" || valor === "0.5") clase = "trabajo";
+        tablaMini += `<td class="${clase}">${(valor === "1" || valor === "0.5") ? valor : ""}</td>`;
+      }
 
-  tablaMini += "</tr>";
-}
+      tablaMini += "</tr>";
+    }
 
     tablaMini += "</table>";
     document.getElementById("miniTurnoEmpleado").innerHTML = tablaMini;
   });
 }
+
 
 
 function renderizarResumenGeneral() {
@@ -619,3 +624,103 @@ document.getElementById("miniTurnoEmpleado").innerHTML = "";
 
   });
 }
+
+function cargarIntercambioTurno() {
+  const semanaSel = document.getElementById("semanaIntercambio");
+  const origenSel = document.getElementById("empleadoOrigen");
+  const destinoSel = document.getElementById("empleadoDestino");
+
+  // Cargar semanas
+  db.ref().once("value", (snap) => {
+    const data = snap.val();
+    semanaSel.innerHTML = "";
+    for (let key in data) {
+      if (key.startsWith("horario_semana_")) {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = data[key]._fecha || key.replace("horario_semana_", "").replaceAll("-", "/");
+        semanaSel.appendChild(opt);
+      }
+    }
+  });
+
+  // Cargar empleados
+  [origenSel, destinoSel].forEach(sel => {
+    sel.innerHTML = "";
+    for (let e of empleados) {
+      const opt = document.createElement("option");
+      opt.value = e;
+      opt.textContent = e;
+      sel.appendChild(opt);
+    }
+  });
+}
+
+function intercambiarTurno() {
+  const semana = document.getElementById("semanaIntercambio").value;
+  const dia = document.getElementById("diaIntercambio").value;
+  const de = document.getElementById("empleadoOrigen").value;
+  const a = document.getElementById("empleadoDestino").value;
+
+  if (!semana || !dia || !de || !a || de === a) {
+    alert("Selecciona empleados distintos y todos los campos.");
+    return;
+  }
+
+  db.ref(`${semana}/${dia}`).once("value", (snap) => {
+    const datos = snap.val();
+    if (!datos) return;
+
+    const nuevosDatos = {};
+    for (let hora of horas) {
+      const fromID = `${de}_${hora}`;
+      const toID = `${a}_${hora}`;
+      nuevosDatos[fromID] = "";
+      nuevosDatos[toID] = datos[fromID] || "";
+    }
+
+    db.ref(`${semana}/${dia}`).update(nuevosDatos).then(() => {
+      alert("✅ Turno intercambiado.");
+      renderizarTabla();
+    });
+  });
+}
+
+// Llama a esta función en tu DOMContentLoaded o setup
+window.addEventListener("DOMContentLoaded", cargarIntercambioTurno);
+
+function intercambiarTurno() {
+  const semana = document.getElementById("semanaIntercambio").value;
+  const dia = document.getElementById("diaIntercambio").value;
+  const de = document.getElementById("empleadoOrigen").value;
+  const a = document.getElementById("empleadoDestino").value;
+
+  if (!semana || !dia || !de || !a || de === a) {
+    alert("Selecciona empleados distintos y todos los campos.");
+    return;
+  }
+
+  db.ref(`${semana}/${dia}`).once("value", (snap) => {
+    const datos = snap.val();
+    if (!datos) return;
+
+    const actualizaciones = {};
+
+    for (let hora of horas) {
+      const idDe = `${de}_${hora}`;
+      const idA = `${a}_${hora}`;
+      const valorDe = datos[idDe] || "";
+      const valorA = datos[idA] || "";
+
+      // Intercambio
+      actualizaciones[idDe] = valorA;
+      actualizaciones[idA] = valorDe;
+    }
+
+    db.ref(`${semana}/${dia}`).update(actualizaciones).then(() => {
+      alert("🔁 Turno intercambiado correctamente.");
+      renderizarTabla();
+    });
+  });
+}
+
