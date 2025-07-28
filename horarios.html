@@ -62,7 +62,7 @@
       <button onclick="eliminarSemanaActual()" style="background-color: crimson;">🗑️ Eliminar semana</button>
     </div>
 <!-- Botón que abre el modal -->
-<div class="zonaEdicion">
+<div class="zona-edicion">
   <h3>👥 Gestión de empleados</h3>
   <button onclick="abrirModalEmpleado()">➕ Añadir nuevo empleado</button>
 </div>
@@ -71,11 +71,33 @@
 <div id="modalEmpleado" class="modal">
   <div class="modal-contenido">
     <span class="cerrar" onclick="cerrarModalEmpleado()">&times;</span>
+    <h3>👥 Empleados actuales</h3>
+
+    <table id="tablaEmpleados" class="tabla-empleados">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Código</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Filas generadas dinámicamente -->
+      </tbody>
+    </table>
+
+    <h4 style="margin-top:15px;">➕ Añadir nuevo</h4>
     <input type="text" id="nuevoNombre" placeholder="Nombre del empleado nuevo" />
-    <input type="number" id="nuevoCodigo" placeholder="En caso de no tener poner el 7" />
+    <input type="number" id="nuevoCodigo" placeholder="Código del empleado nuevo" />
+
     <button onclick="agregarDesdeInput()">Añadir empleado</button>
+    <button onclick="guardarCambiosTabla()" style="margin-top:10px;">💾 Guardar modificaciones</button>
   </div>
 </div>
+
+<!-- Modal para editar empleado -->
+
+
+
 
     <select id="selectorDia">
       <option value="lunes">Lunes</option>

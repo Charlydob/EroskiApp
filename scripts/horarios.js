@@ -776,14 +776,14 @@ function agregarNuevoEmpleado(nombre) {
     selectorEmpleado.appendChild(opt);
   }
 
-  // 3. Añadir al login si usas un objeto tipo usuarios
-  if (typeof usuarios !== 'undefined' && Object.values(usuarios).indexOf(nombre) === -1) {
+  // 3. Añadir al login si no existe
+  if (!Object.values(usuarios).includes(nombre)) {
     const nuevoCodigo = generarCodigoLibre();
     usuarios[nuevoCodigo] = nombre;
-    // Aquí deberías guardar esto en la base de datos o localStorage si es necesario
+    db.ref(`empleados/${nuevoCodigo}`).set(nombre);
   }
 
-  // 4. Recargar tablas si ya está montada una semana
+  // 4. Recargar tabla si existe
   if (typeof renderizarTabla === 'function') {
     renderizarTabla();
   }
@@ -796,6 +796,7 @@ function generarCodigoLibre() {
   }
   return nuevoCodigo;
 }
+
 function agregarDesdeInput() {
   const nombre = document.getElementById("nuevoNombre").value.trim();
   const codigo = document.getElementById("nuevoCodigo").value.trim();
@@ -805,39 +806,101 @@ function agregarDesdeInput() {
     return;
   }
 
-  if (empleados.includes(nombre)) {
-    alert("Ese empleado ya existe.");
+  if (usuarios[codigo]) {
+    alert("Ese código ya está en uso.");
     return;
   }
 
-  // Guardar en Firebase
   db.ref(`empleados/${codigo}`).set(nombre).then(() => {
     alert("Empleado añadido correctamente.");
-
-    empleados.push(nombre);
-    localStorage.setItem("empleados", JSON.stringify(empleados));
-
-    // Recargar componentes visibles
+    usuarios[codigo] = nombre;
+    if (!empleados.includes(nombre)) empleados.push(nombre);
     cargarSelectorEmpleado?.();
     renderizarTabla?.();
-
     cerrarModalEmpleado();
   }).catch(err => {
     alert("Error al guardar en Firebase: " + err.message);
   });
 }
 
-
 function abrirModalEmpleado() {
-  document.getElementById("modalEmpleado").style.display = "block";
+  const modal = document.getElementById("modalEmpleado");
+  const tbody = document.getElementById("tablaEmpleados").querySelector("tbody");
+  tbody.innerHTML = "";
+
+  for (const [codigo, nombre] of Object.entries(usuarios)) {
+    if (parseInt(codigo) === 1306) continue; // Ocultar jefa
+
+    const fila = document.createElement("tr");
+
+    const celdaNombre = document.createElement("td");
+    const inputNombre = document.createElement("input");
+    inputNombre.type = "text";
+    inputNombre.value = nombre;
+    celdaNombre.appendChild(inputNombre);
+
+    const celdaCodigo = document.createElement("td");
+    const inputCodigo = document.createElement("input");
+    inputCodigo.type = "number";
+    inputCodigo.value = codigo;
+    celdaCodigo.appendChild(inputCodigo);
+
+    fila.appendChild(celdaNombre);
+    fila.appendChild(celdaCodigo);
+
+    tbody.appendChild(fila);
+  }
+
+  modal.style.display = "block";
+}
+
+function guardarCambiosTabla() {
+  const filas = document.querySelectorAll("#tablaEmpleados tbody tr");
+  const nuevosDatos = {};
+
+  for (let fila of filas) {
+    const nombre = fila.children[0].querySelector("input").value.trim();
+    const codigo = fila.children[1].querySelector("input").value.trim();
+
+    if (!nombre || !codigo) {
+      alert("Hay campos vacíos.");
+      return;
+    }
+
+    if (nuevosDatos[codigo]) {
+      alert(`El código ${codigo} está duplicado.`);
+      return;
+    }
+
+    nuevosDatos[codigo] = nombre;
+  }
+
+  // Actualizar Firebase y memoria local
+  db.ref("empleados").set(nuevosDatos).then(() => {
+    alert("Cambios guardados correctamente.");
+    usuarios = nuevosDatos;
+    empleados = Object.values(nuevosDatos);
+    cargarSelectorEmpleado?.();
+    renderizarTabla?.();
+    cerrarModalEmpleado();
+  }).catch(err => {
+    alert("Error al guardar: " + err.message);
+  });
 }
 
 function cerrarModalEmpleado() {
   document.getElementById("modalEmpleado").style.display = "none";
 }
+
 window.addEventListener("click", function (e) {
   const modal = document.getElementById("modalEmpleado");
   if (e.target === modal) {
     cerrarModalEmpleado();
   }
 });
+
+// 👇 Asegura que los botones con onclick funcionen
+window.abrirModalEmpleado = abrirModalEmpleado;
+window.agregarDesdeInput = agregarDesdeInput;
+window.guardarCambiosTabla = guardarCambiosTabla;
+window.cerrarModalEmpleado = cerrarModalEmpleado;

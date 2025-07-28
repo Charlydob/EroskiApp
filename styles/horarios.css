@@ -378,3 +378,22 @@
   font-weight: bold;
   cursor: pointer;
 }
+.tabla-empleados {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.tabla-empleados th,
+.tabla-empleados td {
+  border: 1px solid #ccc;
+  padding: 4px;
+  text-align: center;
+}
+
+.tabla-empleados input {
+  width: 90%;
+  padding: 2px;
+  font-size: 14px;
+}

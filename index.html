@@ -9,6 +9,30 @@
   <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#007bff">
 </head>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDN8KAiad5vmKNwhtfd9EUzVgTt2uUapno",
+    authDomain: "eroskiapp.firebaseapp.com",
+    databaseURL: "https://eroskiapp-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "eroskiapp",
+    storageBucket: "eroskiapp.appspot.com",
+    messagingSenderId: "1033463841470",
+    appId: "1:1033463841470:web:ec92569dd7dabe8a93d4ef"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+   // TEST DE CONEXIÓN
+  db.ref().once("value")
+    .then(snapshot => {
+      console.log("🔥 Firebase raíz:", snapshot.val());
+    })
+    .catch(err => {
+      console.error("❌ Error al conectar con Firebase:", err);
+    });
+</script>
 <script>
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js")
