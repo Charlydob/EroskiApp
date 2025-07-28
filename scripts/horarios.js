@@ -149,23 +149,19 @@ fila.appendChild(tdNombre);
         }
       });
 
+// MÓVIL
 td.addEventListener("touchstart", (e) => {
   e.preventDefault();
   tocando = true;
   celdasTocadas.clear();
-
-  const empleado = celdaID.split("_")[0];
-  empleadoPintando = empleado;
-
+  empleadoPintando = celdaID.split("_")[0];
   aplicarModo(td, celdaID);
 });
 
 td.addEventListener("touchmove", (e) => {
   if (!tocando) return;
-
   const touch = e.touches[0];
   const elem = document.elementFromPoint(touch.clientX, touch.clientY);
-
   if (elem && elem.tagName === "TD" && elem.dataset.celdaId) {
     const celdaEmpleado = elem.dataset.celdaId.split("_")[0];
     if (celdaEmpleado === empleadoPintando) {
@@ -178,6 +174,29 @@ td.addEventListener("touchend", () => {
   tocando = false;
   empleadoPintando = null;
 });
+
+// PC
+td.addEventListener("mousedown", (e) => {
+  e.preventDefault();
+  tocando = true;
+  celdasTocadas.clear();
+  empleadoPintando = celdaID.split("_")[0];
+  aplicarModo(td, celdaID);
+});
+
+td.addEventListener("mousemove", (e) => {
+  if (!tocando) return;
+  const celdaEmpleado = celdaID.split("_")[0];
+  if (celdaEmpleado === empleadoPintando) {
+    aplicarModo(td, celdaID);
+  }
+});
+
+document.addEventListener("mouseup", () => {
+  tocando = false;
+  empleadoPintando = null;
+});
+
 
 
       fila.appendChild(td);
