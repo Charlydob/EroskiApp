@@ -5,15 +5,20 @@ const bienvenida = document.getElementById("bienvenida");
 const loginSection = document.getElementById("loginSection");
 const appContent = document.getElementById("appContent");
 
-const usuarios = {
-  1: "Bryant",
-  2: "Charly",
-  6: "Leti",
-  7: "Lorena",
-  8: "Rocío",
-  10: "Juan",
-  1306: "Jefa"
-};
+let usuarios = {};
+let usuariosCargados = false;
+
+// ✅ Cargar usuarios con claves como strings
+db.ref("empleados").once("value", (snap) => {
+  const data = snap.val();
+  if (!data) return;
+  Object.entries(data).forEach(([codigo, nombre]) => {
+    usuarios[String(codigo)] = nombre;
+  });
+  usuariosCargados = true;
+});
+
+
 const mensajesPersonalizados = {
   "Charly": "Hola Yo",
   "Bryant": "¿Aún trabajas aquí pordiosero?",
@@ -25,37 +30,40 @@ const mensajesPersonalizados = {
 };
 
 loginBtn.addEventListener("click", () => {
-  const codigo = parseInt(codigoInput.value.trim());
+  if (!usuariosCargados) {
+    errorMsg.textContent = "⏳ Cargando empleados, intenta en unos segundos...";
+    return;
+  }
 
+  const codigo = codigoInput.value.trim();
   if (!usuarios[codigo]) {
     errorMsg.textContent = "❌ Código no válido o no asignado.";
     return;
   }
 
   const nombre = usuarios[codigo];
-  const rol = codigo === 1306 ? "jefa" : "empleado";
+  const rol = codigo === "1306" ? "jefa" : "empleado";
 
   // Guardar sesión
   localStorage.setItem("nombre", nombre);
   localStorage.setItem("rol", rol);
   localStorage.setItem("codigo", codigo);
 
-  // Paso 1: Oculta login
+  // Ocultar login
   loginSection.style.display = "none";
 
-  // Paso 2: Muestra bienvenida
-const mensaje = mensajesPersonalizados[nombre] || `¡Bienvenido, ${nombre.toUpperCase()}!`;
-bienvenida.textContent = mensaje;
-
+  // Mostrar bienvenida
+  const mensaje = mensajesPersonalizados[nombre] || `¡Bienvenido, ${nombre.toUpperCase()}!`;
+  bienvenida.textContent = mensaje;
   bienvenida.classList.remove("oculto");
 
-  // Paso 3: Espera 2s y luego oculta bienvenida + quita blur
   setTimeout(() => {
     bienvenida.classList.add("oculto");
     appContent.classList.remove("blur");
     appContent.style.pointerEvents = "auto";
   }, 2000);
 });
+
 
 codigoInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") loginBtn.click();
@@ -66,7 +74,6 @@ function cerrarSesion() {
   location.reload();
 }
 
-// Autologin si ya hay sesión
 window.addEventListener("DOMContentLoaded", () => {
   const nombre = localStorage.getItem("nombre");
   if (nombre) {

@@ -61,6 +61,21 @@
       <button onclick="crearNuevaSemana()">➕ Nueva semana</button>
       <button onclick="eliminarSemanaActual()" style="background-color: crimson;">🗑️ Eliminar semana</button>
     </div>
+<!-- Botón que abre el modal -->
+<div class="zonaEdicion">
+  <h3>👥 Gestión de empleados</h3>
+  <button onclick="abrirModalEmpleado()">➕ Añadir nuevo empleado</button>
+</div>
+
+<!-- Modal oculto por defecto -->
+<div id="modalEmpleado" class="modal">
+  <div class="modal-contenido">
+    <span class="cerrar" onclick="cerrarModalEmpleado()">&times;</span>
+    <input type="text" id="nuevoNombre" placeholder="Nombre del empleado nuevo" />
+    <input type="number" id="nuevoCodigo" placeholder="En caso de no tener poner el 7" />
+    <button onclick="agregarDesdeInput()">Añadir empleado</button>
+  </div>
+</div>
 
     <select id="selectorDia">
       <option value="lunes">Lunes</option>

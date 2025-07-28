@@ -759,3 +759,85 @@ function intercambiarTurno() {
   });
 }
 
+function agregarNuevoEmpleado(nombre) {
+  if (!nombre || typeof nombre !== 'string') return;
+
+  // 1. Añadir al array global de empleados si no existe ya
+  if (!empleados.includes(nombre)) {
+    empleados.push(nombre);
+  }
+
+  // 2. Añadir opción al selector de empleado
+  const selectorEmpleado = document.getElementById("selectorEmpleado");
+  if (selectorEmpleado && ![...selectorEmpleado.options].some(opt => opt.value === nombre)) {
+    const opt = document.createElement("option");
+    opt.value = nombre;
+    opt.textContent = nombre;
+    selectorEmpleado.appendChild(opt);
+  }
+
+  // 3. Añadir al login si usas un objeto tipo usuarios
+  if (typeof usuarios !== 'undefined' && Object.values(usuarios).indexOf(nombre) === -1) {
+    const nuevoCodigo = generarCodigoLibre();
+    usuarios[nuevoCodigo] = nombre;
+    // Aquí deberías guardar esto en la base de datos o localStorage si es necesario
+  }
+
+  // 4. Recargar tablas si ya está montada una semana
+  if (typeof renderizarTabla === 'function') {
+    renderizarTabla();
+  }
+}
+
+function generarCodigoLibre() {
+  let nuevoCodigo = 1000;
+  while (usuarios[nuevoCodigo]) {
+    nuevoCodigo++;
+  }
+  return nuevoCodigo;
+}
+function agregarDesdeInput() {
+  const nombre = document.getElementById("nuevoNombre").value.trim();
+  const codigo = document.getElementById("nuevoCodigo").value.trim();
+
+  if (!nombre || !codigo) {
+    alert("Por favor, introduce nombre y código.");
+    return;
+  }
+
+  if (empleados.includes(nombre)) {
+    alert("Ese empleado ya existe.");
+    return;
+  }
+
+  // Guardar en Firebase
+  db.ref(`empleados/${codigo}`).set(nombre).then(() => {
+    alert("Empleado añadido correctamente.");
+
+    empleados.push(nombre);
+    localStorage.setItem("empleados", JSON.stringify(empleados));
+
+    // Recargar componentes visibles
+    cargarSelectorEmpleado?.();
+    renderizarTabla?.();
+
+    cerrarModalEmpleado();
+  }).catch(err => {
+    alert("Error al guardar en Firebase: " + err.message);
+  });
+}
+
+
+function abrirModalEmpleado() {
+  document.getElementById("modalEmpleado").style.display = "block";
+}
+
+function cerrarModalEmpleado() {
+  document.getElementById("modalEmpleado").style.display = "none";
+}
+window.addEventListener("click", function (e) {
+  const modal = document.getElementById("modalEmpleado");
+  if (e.target === modal) {
+    cerrarModalEmpleado();
+  }
+});
