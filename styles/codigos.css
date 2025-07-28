@@ -5,7 +5,7 @@ html, body, button, input, select, textarea, table, th, td {
 
 /* 🧱 Estilo base */
 body {
-  margin: 0;
+  margin: 20px;
   font-family: Arial, sans-serif;
   background: transparent;
   color: #333;
