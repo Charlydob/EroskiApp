@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Calendario</title>
   <link rel="stylesheet" href="styles/style.css">
-  <link rel="stylesheet" href="styles/calendario.css">
+  <link rel="stylesheet" href="styles/horarios.css">
 
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
@@ -39,7 +39,7 @@
   <div class="container">
     <nav class="sidebar">
 
-           <a href="index.html"><img src="recursos/img/iniciologo.png" alt="Inicio" class="icon" /></a>
+        <a href="index.html"><img src="recursos/img/iniciologo.png" alt="Inicio" class="icon" /></a>
         <a href="balanza.html"><img src="recursos/img/balanzalogo.png" alt="Balanza" class="icon" /></a>
         <a href="checklist.html"><img src="recursos/img/Checklist.png" alt="Checklist" class="icon" /></a>
         <a href="calendario.html"><img src="recursos/img/imagenes.png" alt="Calendario" class="icon" /></a>
@@ -48,57 +48,55 @@
         <a href="horarios.html"><img src="recursos/img/calendario.png" alt="Horarios" class="icon" /></a>
     </nav>
 
-<main class="content">
-  <div class="galeria-horarios">
-    <div class="bloque-imagen">
-      <img id="img-0" onclick="abrirModal(0)">
-      <label>
-        Cambiar imagen
-        <input type="file" onchange="subirImagen(event, 0)">
-      </label>
+<!-- horarios.html -->
+<section id="pagina-horarios" class="pagina-app">
+  <h2>🕒 Horarios</h2>
+
+  <div id="controles-superiores">
+    <select id="selectorSemana"></select>
+    
+    <!-- Solo visible para jefa -->
+    <div id="zonaEdicion">
+      <button onclick="crearNuevaSemana()">➕ Nueva semana</button>
+      <button onclick="eliminarSemanaActual()" style="background-color: crimson;">🗑️ Eliminar semana</button>
     </div>
 
-    <div class="bloque-imagen">
-      <img id="img-1" onclick="abrirModal(1)">
-      <label>
-        Cambiar imagen
-        <input type="file" onchange="subirImagen(event, 1)">
-      </label>
-    </div>
-
-    <div class="bloque-imagen">
-      <img id="img-2" onclick="abrirModal(2)">
-      <label>
-        Cambiar imagen
-        <input type="file" onchange="subirImagen(event, 2)">
-      </label>
-    </div>
-
-    <div class="bloque-imagen">
-      <img id="img-3" onclick="abrirModal(3)">
-      <label>
-        Cambiar imagen
-        <input type="file" onchange="subirImagen(event, 3)">
-      </label>
-    </div>
-
-    <div class="bloque-imagen">
-      <img id="img-4" onclick="abrirModal(4)">
-      <label>
-        Cambiar imagen
-        <input type="file" onchange="subirImagen(event, 4)">
-      </label>
-    </div>
-  </div>
-</main>
-
-
-      <div id="visorImagen" class="modal oculto" >
-        <img id="imagenGrande" src="" >
-      </div>
-    </main>
+    <select id="selectorDia">
+      <option value="lunes">Lunes</option>
+      <option value="martes">Martes</option>
+      <option value="miércoles">Miércoles</option>
+      <option value="jueves">Jueves</option>
+      <option value="viernes">Viernes</option>
+      <option value="sábado">Sábado</option>
+      <option value="domingo">Domingo</option>
+    </select>
   </div>
 
-  <script src="scripts/calendario.js"></script>
+  <div id="tablaHorarioContainer">
+    <!-- Tabla generada dinámicamente -->
+  </div>
+
+  <!-- Solo visible para jefa -->
+  <div id="modoSeleccion">
+    <button onclick="setModo('uno')" style="background-color: orange;">1</button>
+    <button onclick="setModo('ceroCinco')" style="background-color: orange;">0.5</button>
+    <button onclick="setModo('verde')" style="background-color: green;">🟩</button>
+    <button onclick="setModo('borrar')" style="background-color: grey;">🗑️</button>
+  </div>
+
+  <hr>
+
+  <h3>🧾 Resumen personal</h3>
+  <select id="selectorEmpleado"></select>
+
+  <div id="resumenEmpleado" class="resumen-empleado">
+    <!-- Aquí se rellenará el resumen -->
+  </div>
+
+  <div id="miniTurnoEmpleado" class="mini-turno-empleado"></div>
+</section>
+
+
+  <script src="scripts/horarios.js"></script>
 </body>
 </html>

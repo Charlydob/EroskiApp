@@ -1,0 +1,601 @@
+// horarios.js
+window.addEventListener("DOMContentLoaded", () => {
+const rol = localStorage.getItem("rol");
+const nombre = localStorage.getItem("nombre");
+
+const esJefa = rol === "jefa" || nombre?.toLowerCase() === "charly";
+
+if (!esJefa) {
+  document.getElementById("zonaEdicion").style.display = "none";
+  document.getElementById("modoSeleccion").style.display = "none";
+  modoSeleccion = null;
+}
+
+});
+
+const empleados = ["Lorena", "Juan", "Leti", "Charly", "Bryant", "Rocio", "Natalia"];
+const horas = [
+  "6-7", "7-8", "8-9", "9-10", "10-11", "11-12", "12-13", "13-14",
+  "14-15", "15-16", "16-17", "17-18", "18-19", "19-20", "20-21", "21-22"
+];
+let modoSeleccion = null;
+let semanaActual = null;
+let diaActual = "lunes";
+let celdasTocadas = new Set();
+let tocando = false;
+let empleadoPintando = null;
+
+
+const tablaContainer = document.getElementById("tablaHorarioContainer");
+const selectorSemana = document.getElementById("selectorSemana");
+const selectorDia = document.getElementById("selectorDia");
+
+selectorDia.addEventListener("change", () => {
+  diaActual = selectorDia.value;
+  renderizarTabla();
+});
+
+function setModo(modo) {
+  modoSeleccion = modo;
+
+  // Quitar la clase activa de todos los botones
+  const botones = document.querySelectorAll("#modoSeleccion button");
+  botones.forEach(btn => btn.classList.remove("modo-activo"));
+
+  // Añadirla solo al botón activo
+  const botonActivo = [...botones].find(btn => btn.textContent.includes(modo === "uno" ? "1" :modo === "ceroCinco" ? "0.5" :modo === "verde" ? "🟩" :"🗑️"));
+  if (botonActivo) botonActivo.classList.add("modo-activo");
+}
+
+
+function crearNuevaSemana() {
+  let fecha = prompt("Introduce la fecha de inicio de semana (dd/mm/aaaa):");
+  if (!fecha) return;
+
+  const fechaNormalizada = fecha.replaceAll("/", "-"); // clave segura para Firebase
+  const nombreSemana = `horario_semana_${fechaNormalizada}`;
+
+  // Verificar si ya existe
+  if ([...selectorSemana.options].some(opt => opt.value === nombreSemana)) {
+    alert("Ya existe un horario para esa semana.");
+    return;
+  }
+
+  // Añadir al selector
+  const nuevaOpcion = document.createElement("option");
+  nuevaOpcion.value = nombreSemana;
+  nuevaOpcion.textContent = fecha;
+  selectorSemana.appendChild(nuevaOpcion);
+  selectorSemana.value = nombreSemana;
+
+  semanaActual = nombreSemana;
+  inicializarSemana(nombreSemana);
+
+  // Guardar la fecha real en Firebase
+  db.ref(`${nombreSemana}/_fecha`).set(fecha);
+
+  renderizarTabla();
+  renderizarResumenEmpleado();
+}
+
+
+
+
+function inicializarSemana(nombreSemana) {
+  const dias = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
+  for (let dia of dias) {
+    for (let empleado of empleados) {
+      for (let hora of horas) {
+        const celdaID = `${empleado}_${hora}`;
+        db.ref(`${nombreSemana}/${dia}/${celdaID}`).set("");
+      }
+    }
+  }
+}
+
+selectorSemana.addEventListener("change", () => {
+  semanaActual = selectorSemana.value;
+  renderizarTabla();
+});
+
+function renderizarTabla() {
+  if (!semanaActual) return;
+  tablaContainer.innerHTML = "";
+
+  const tabla = document.createElement("table");
+  tabla.className = "tabla-horarios";
+
+  const filaHoras = document.createElement("tr");
+  filaHoras.innerHTML = `<th>Empleado</th>`;
+  for (let hora of horas) {
+    const th = document.createElement("th");
+    th.textContent = hora;
+    filaHoras.appendChild(th);
+  }
+  tabla.appendChild(filaHoras);
+
+  for (let empleado of empleados) {
+    const fila = document.createElement("tr");
+    const tdNombre = document.createElement("td");
+tdNombre.textContent = empleado;
+tdNombre.style.cursor = "pointer";
+
+tdNombre.addEventListener("click", () => {
+  if (!semanaActual || !diaActual) return;
+
+  if (modoSeleccion === "verde" || modoSeleccion === "borrar") {
+    const color = modoSeleccion === "verde" ? "green" : "transparent";
+    const valor = modoSeleccion === "verde" ? "verde" : "";
+
+    for (let hora of horas) {
+      const celdaID = `${empleado}_${hora}`;
+      const celda = tabla.querySelector(`[data-celda-id='${celdaID}']`);
+      if (celda) {
+        celda.style.backgroundColor = color;
+        celda.textContent = "";
+        db.ref(`${semanaActual}/${diaActual}/${celdaID}`).set(valor);
+      }
+    }
+  }
+});
+
+fila.appendChild(tdNombre);
+
+
+
+    for (let hora of horas) {
+      const td = document.createElement("td");
+      const celdaID = `${empleado}_${hora}`;
+      td.dataset.celdaId = celdaID;
+
+      db.ref(`${semanaActual}/${diaActual}/${celdaID}`).once("value", (snap) => {
+        const valor = snap.val();
+        if (valor === "1") {
+          td.style.backgroundColor = "orange";
+          td.textContent = "1";
+        } else if (valor === "0.5") {
+          td.style.backgroundColor = "orange";
+          td.textContent = "0.5";
+        } else if (valor === "verde") {
+          td.style.backgroundColor = "green";
+        }
+      });
+
+td.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  tocando = true;
+  celdasTocadas.clear();
+
+  const empleado = celdaID.split("_")[0];
+  empleadoPintando = empleado;
+
+  aplicarModo(td, celdaID);
+});
+
+td.addEventListener("touchmove", (e) => {
+  if (!tocando) return;
+
+  const touch = e.touches[0];
+  const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+
+  if (elem && elem.tagName === "TD" && elem.dataset.celdaId) {
+    const celdaEmpleado = elem.dataset.celdaId.split("_")[0];
+    if (celdaEmpleado === empleadoPintando) {
+      aplicarModo(elem, elem.dataset.celdaId);
+    }
+  }
+});
+
+td.addEventListener("touchend", () => {
+  tocando = false;
+  empleadoPintando = null;
+});
+
+
+      fila.appendChild(td);
+    }
+
+    tabla.appendChild(fila);
+  }
+
+  tablaContainer.appendChild(tabla);
+
+  cargarSelectorEmpleado();
+}
+
+
+function aplicarModo(td, celdaID) {
+  if (!semanaActual || !diaActual || !modoSeleccion || celdasTocadas.has(celdaID)) return;
+
+  let valor = "";
+  let color = "transparent";
+
+  switch (modoSeleccion) {
+    case "uno":
+      valor = "1";
+      color = "orange";
+      break;
+    case "ceroCinco":
+      valor = "0.5";
+      color = "orange";
+      break;
+    case "verde":
+      valor = "verde";
+      color = "green";
+      break;
+    case "borrar":
+      valor = "";
+      color = "transparent";
+      break;
+  }
+
+  td.textContent = ["1", "0.5"].includes(valor) ? valor : "";
+  td.style.backgroundColor = color;
+  db.ref(`${semanaActual}/${diaActual}/${celdaID}`).set(valor);
+
+  celdasTocadas.add(celdaID);
+}
+
+
+// Inicializar si hay semanas previas
+function cargarSemanasExistentes() {
+  db.ref().once("value", (snap) => {
+    const data = snap.val();
+    selectorSemana.innerHTML = ""; // Limpia el selector antes de rellenar
+
+    for (let key in data) {
+      if (key.startsWith("horario_semana_")) {
+        const fecha = key.replace("horario_semana_", "").replaceAll("-", "/");
+        const opt = document.createElement("option");
+        opt.value = key; // sigue usando el nombre real como valor
+        opt.textContent = fecha; // muestra bonito en el desplegable
+        selectorSemana.appendChild(opt);
+      }
+    }
+
+    if (selectorSemana.options.length > 0) {
+      selectorSemana.selectedIndex = 0;
+      semanaActual = selectorSemana.value;
+      renderizarTabla();
+    }
+  });
+}
+function eliminarSemanaActual() {
+  if (!semanaActual) return;
+
+  const confirmacion = confirm("¿Seguro que quieres eliminar esta semana?");
+  if (!confirmacion) return;
+db.ref().once("value", (snapTodas) => {
+  const semanas = snapTodas.val();
+
+
+});
+
+  db.ref(semanaActual).remove().then(() => {
+    // Eliminar del selector
+    const opcion = [...selectorSemana.options].find(opt => opt.value === semanaActual);
+    if (opcion) opcion.remove();
+
+    semanaActual = null;
+    tablaContainer.innerHTML = "";
+    alert("Semana eliminada correctamente.");
+  });
+}
+
+
+window.addEventListener("DOMContentLoaded", () => {
+  cargarSemanasExistentes();
+});
+const selectorEmpleado = document.getElementById("selectorEmpleado");
+const resumenEmpleado = document.getElementById("resumenEmpleado");
+
+function cargarSelectorEmpleado() {
+  const nombreUsuario = localStorage.getItem("nombre");
+
+  selectorEmpleado.innerHTML = ""; // Limpiar
+
+  // Añadir "Resumen general" siempre
+  const general = document.createElement("option");
+  general.value = "__general__";
+  general.textContent = "Resumen general";
+  selectorEmpleado.appendChild(general);
+
+  empleados.forEach(nombre => {
+    const opt = document.createElement("option");
+    opt.value = nombre;
+    opt.textContent = nombre;
+    selectorEmpleado.appendChild(opt);
+  });
+
+  // Selección automática del usuario logueado si existe en la lista
+  if (nombreUsuario && empleados.includes(nombreUsuario)) {
+    selectorEmpleado.value = nombreUsuario;
+  }
+
+  renderizarResumenEmpleado();
+}
+
+selectorEmpleado.addEventListener("change", renderizarResumenEmpleado);
+selectorSemana.addEventListener("change", renderizarResumenEmpleado);
+
+function renderizarResumenEmpleado() {
+  const nombre = selectorEmpleado.value;
+  if (!semanaActual || !nombre) return;
+
+  if (nombre === "__general__") {
+    renderizarResumenGeneral();
+    return;
+  }
+
+  const fechaSemana = selectorSemana.selectedOptions[0]?.textContent;
+  const [_, mesSeleccionado, anioSeleccionado] = fechaSemana.split("/");
+
+  let totalSemana = 0;
+  let diasLibres = 0;
+  let resumenDiario = [];
+  let totalMes = 0;
+  let totalAnio = 0;
+  let mañanasMes = 0;
+  let tardesMes = 0;
+
+  db.ref().once("value", (snapTodas) => {
+    const semanas = snapTodas.val();
+
+    for (let key in semanas) {
+      if (!key.startsWith("horario_semana_")) continue;
+
+      const datosSemana = semanas[key];
+      const fechaGuardada = datosSemana._fecha;
+      if (!fechaGuardada) continue;
+
+      const [__, mm, aaaa] = fechaGuardada.split("/");
+      const mismaPersona = nombre;
+      const datosDias = Object.entries(datosSemana).filter(([k]) => !k.startsWith("_"));
+
+      for (let [dia, celdas] of datosDias) {
+        if (!celdas) continue;
+
+        let horasDia = 0;
+        let ultimaHora = null;
+
+        for (let hora of horas) {
+          const celdaID = `${mismaPersona}_${hora}`;
+          const valor = celdas[celdaID];
+          if (valor === "1" || valor === "0.5") {
+            horasDia += parseFloat(valor);
+            ultimaHora = hora;
+          }
+        }
+
+        if (aaaa === anioSeleccionado) totalAnio += horasDia;
+        if (mm === mesSeleccionado && aaaa === anioSeleccionado) {
+          totalMes += horasDia;
+
+          if (ultimaHora) {
+            const horaFin = parseInt(ultimaHora.split("-")[1]);
+            if (horaFin <= 16) mañanasMes++;
+            else tardesMes++;
+          }
+        }
+      }
+    }
+
+    // 🧠 Ahora renderizamos solo la semana actual (ya que ahora tenemos totales)
+    const datosSemanaActual = semanas[semanaActual];
+    if (!datosSemanaActual) return;
+
+    const diasValidos = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
+    for (let dia of diasValidos) {
+      const celdas = datosSemanaActual[dia];
+      if (!celdas) continue;
+
+      let horasDia = 0;
+      let compañeros = {};
+      let verdes = 0;
+      let totalCeldas = 0;
+
+      for (let key in celdas) {
+        if (key.startsWith(nombre + "_")) {
+          totalCeldas++;
+          const valor = celdas[key];
+          if (valor === "1") horasDia += 1;
+          else if (valor === "0.5") horasDia += 0.5;
+          if (valor === "verde") verdes++;
+        }
+      }
+
+      if (verdes === totalCeldas && totalCeldas > 0) diasLibres++;
+      if (horasDia > 0) totalSemana += horasDia;
+
+if (horasDia > 3) {
+  for (let hora of horas) {
+    const celdaID = `${nombre}_${hora}`;
+    const valor = celdas[celdaID];
+    if (valor === "1" || valor === "0.5") {
+      for (let key in celdas) {
+        if (key !== celdaID && key.endsWith(`_${hora}`)) {
+          const otro = key.split("_")[0];
+          const valorOtro = celdas[key];
+          if (
+            otro !== nombre &&
+            (valorOtro === "1" || valorOtro === "0.5")
+          ) {
+            compañeros[otro] = (compañeros[otro] || 0) + 1;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+      const coincidenciasFiltradas = Object.entries(compañeros)
+        .filter(([_, horasCoincididas]) => horasCoincididas >= 2)
+        .map(([nombre]) => nombre);
+
+      resumenDiario.push(`• ${dia}: ${horasDia}h ${coincidenciasFiltradas.length > 0 ? `(con: ${coincidenciasFiltradas.join(", ")})` : ""}`);
+    }
+
+    resumenEmpleado.innerHTML = `
+      <strong>${nombre}</strong><br>
+      🕓 Horas esta semana: <strong>${totalSemana}</strong><br>
+      📆 Total mes: ${totalMes}h / año: ${totalAnio}h<br>
+      🌅 Mañanas este mes: ${mañanasMes} / 🌇 Tardes: ${tardesMes}<br>
+      🤝 Trabaja con:<br>${resumenDiario.join("<br>")}<br>
+      💤 Días libres (toda la fila verde): ${diasLibres}
+    `;
+
+    // Mini tabla visual
+    let tablaMini = "<table><tr><th>Día</th>" + horas.map(h => `<th>${h}</th>`).join("") + "</tr>";
+
+for (let dia of diasValidos) {
+  const celdas = datosSemanaActual[dia];
+  if (!celdas) continue;
+
+  let total = 0;
+  let verdes = 0;
+
+  for (let hora of horas) {
+    const celdaID = `${nombre}_${hora}`;
+    const valor = celdas?.[celdaID];
+    if (valor) total++;
+    if (valor === "verde") verdes++;
+  }
+
+  const esDiaLibre = total > 0 && verdes === total;
+  const inicialesDias = {
+  lunes: "L",
+  martes: "M",
+  miércoles: "X",
+  jueves: "J",
+  viernes: "V",
+  sábado: "S",
+  domingo: "D"
+};
+
+tablaMini += `<tr class="${esDiaLibre ? "dia-libre" : ""}"><td>${inicialesDias[dia]}</td>`;
+
+  for (let hora of horas) {
+    const celdaID = `${nombre}_${hora}`;
+    const valor = celdas?.[celdaID];
+    let clase = "";
+    if (valor === "1" || valor === "0.5") clase = "trabajo";
+tablaMini += `<td class="${clase}">${(valor === "1" || valor === "0.5") ? valor : ""}</td>`;
+  }
+
+  tablaMini += "</tr>";
+}
+
+    tablaMini += "</table>";
+    document.getElementById("miniTurnoEmpleado").innerHTML = tablaMini;
+  });
+}
+
+
+function renderizarResumenGeneral() {
+  const fechaSemana = selectorSemana.selectedOptions[0]?.textContent;
+  const [_, mesActual, anioActual] = fechaSemana.split("/");
+
+  db.ref().once("value", (snap) => {
+    const todasLasSemanas = snap.val();
+    const resumen = {};
+
+    for (let empleado of empleados) {
+      resumen[empleado] = {
+        semana: 0,
+        mes: 0,
+        mañanas: 0,
+        tardes: 0,
+        diasLibres: 0
+      };
+    }
+
+    for (let key in todasLasSemanas) {
+      if (!key.startsWith("horario_semana_")) continue;
+      const semana = todasLasSemanas[key];
+      const fecha = semana._fecha;
+      if (!fecha) continue;
+
+      const [__, mm, aaaa] = fecha.split("/");
+      const esMismaSemana = key === semanaActual;
+      const esMismoMes = mm === mesActual && aaaa === anioActual;
+
+      const dias = Object.entries(semana).filter(([k]) => !k.startsWith("_"));
+      for (let [dia, celdas] of dias) {
+        for (let empleado of empleados) {
+          let horasDia = 0;
+          let verdes = 0;
+          let total = 0;
+          let ultimaHora = null;
+
+for (let hora of horas) {
+  const celdaID = `${empleado}_${hora}`;
+  const valor = celdas?.[celdaID];
+  if (valor === "1" || valor === "0.5") {
+    horasDia += parseFloat(valor);
+    ultimaHora = hora;
+  } else if (valor === "verde") {
+    verdes++;
+  }
+  if (valor) total++;
+}
+
+
+          if (esMismaSemana) resumen[empleado].semana += horasDia;
+          if (esMismoMes) resumen[empleado].mes += horasDia;
+
+          if (esMismoMes && total === verdes && total > 0) {
+            resumen[empleado].diasLibres++;
+          }
+
+if (esMismoMes && ultimaHora && horasDia > 0) {
+  const fin = parseInt(ultimaHora.split("-")[1]);
+  if (fin <= 16) resumen[empleado].mañanas++;
+  else resumen[empleado].tardes++;
+}
+
+        }
+      }
+    }
+
+    // Mostrar tabla
+let tabla = `
+  <table class="tabla-resumen-general">
+    <thead>
+      <tr>
+        <th>👤 Empleado</th>
+        <th>🕓 Semana</th>
+        <th>📆 Mes</th>
+        <th>🌅 Mañanas</th>
+        <th>🌇 Tardes</th>
+        <th>💤 Libres</th>
+      </tr>
+    </thead>
+    <tbody>
+`;
+
+for (let empleado of empleados) {
+  const r = resumen[empleado];
+  tabla += `
+    <tr>
+      <td><strong>${empleado}</strong></td>
+      <td>${r.semana}</td>
+      <td>${r.mes}</td>
+      <td>${r.mañanas}</td>
+      <td>${r.tardes}</td>
+      <td>${r.diasLibres}</td>
+    </tr>
+  `;
+}
+
+tabla += `
+    </tbody>
+  </table>
+`;
+
+resumenEmpleado.innerHTML = tabla;
+document.getElementById("miniTurnoEmpleado").innerHTML = "";
+
+
+  });
+}

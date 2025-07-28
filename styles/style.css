@@ -6,6 +6,7 @@
 
 html {
     min-height: 100%;
+    max-width: 2000px;
     background: linear-gradient(to bottom, #1b1b1b, #1d1d1d);
     background-repeat: no-repeat;
     background-attachment: scroll;
@@ -27,20 +28,20 @@ html {
     }
 
     /* NAV DEFAULT: ESTILO PARA MÓVILES (MENU SUPERIOR) */
-    nav.sidebar {
-    position: fixed;
-    left: 0;
-    right: 0;
-    height: 40px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0)); /* aquí está la magia */
-    backdrop-filter: blur(10px);
-    backdrop-filter: saturate(180%) grayscale(10%);
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    align-items: center;
-    padding: 0 10px;
-    z-index: 1000;
+nav.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: rgba(20, 20, 20, 0.75);
+  backdrop-filter: blur(12px) saturate(150%);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 

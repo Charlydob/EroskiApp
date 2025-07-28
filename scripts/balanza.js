@@ -22,7 +22,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
         const pesoTotal = parseFloat(pesoInput.value);
         if (!isNaN(pesoTotal) && pesoTotal > 0) {
-            const cantidad = Math.floor((pesoTotal + 2) / moneda.peso);
+            const cantidad = Math.floor(pesoTotal / moneda.peso);
+
             cantidadSpan.textContent = cantidad;
             total += cantidad * moneda.valor;
             localStorage.setItem(`peso-${i}`, pesoInput.value);
