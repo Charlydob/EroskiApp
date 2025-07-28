@@ -1,17 +1,5 @@
 // horarios.js
-window.addEventListener("DOMContentLoaded", () => {
-const rol = localStorage.getItem("rol");
-const nombre = localStorage.getItem("nombre");
 
-const esJefa = rol === "jefa" || nombre?.toLowerCase() === "charly";
-
-if (!esJefa) {
-  document.getElementById("zonaEdicion").style.display = "none";
-  document.getElementById("modoSeleccion").style.display = "none";
-  modoSeleccion = null;
-}
-
-});
 
 const empleados = ["Lorena", "Juan", "Leti", "Charly", "Bryant", "Rocio", "Natalia", "Sergio"];
 const horas = [
@@ -200,7 +188,7 @@ td.addEventListener("touchend", () => {
 
   tablaContainer.appendChild(tabla);
 
-  cargarSelectorEmpleado();
+
 }
 
 
@@ -284,8 +272,21 @@ db.ref().once("value", (snapTodas) => {
 
 
 window.addEventListener("DOMContentLoaded", () => {
+  const rol = localStorage.getItem("rol");
+  const nombre = localStorage.getItem("nombre");
+
+  const esJefa = rol === "jefa" || nombre?.toLowerCase() === "charly";
+
+  if (!esJefa) {
+    document.getElementById("zonaEdicion").style.display = "none";
+    document.getElementById("modoSeleccion").style.display = "none";
+    modoSeleccion = null;
+  }
+
   cargarSemanasExistentes();
+  cargarSelectorEmpleado();
 });
+
 const selectorEmpleado = document.getElementById("selectorEmpleado");
 const resumenEmpleado = document.getElementById("resumenEmpleado");
 
