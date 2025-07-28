@@ -1,11 +1,14 @@
 const usuarios = window.usuarios || {};
 window.usuarios = {};
+window.empleados = [];
 
 db.ref("empleados").once("value", (snap) => {
   const data = snap.val();
   if (!data) return;
 
   window.usuarios = data;
+    empleados = Object.values(data).filter(nombre => nombre.toLowerCase() !== "jefa");
+
 console.log("📋 Nombres en Firebase:", Object.values(data));
 
   // ✅ ORDEN PERSONALIZADO
@@ -25,6 +28,7 @@ console.log("📋 Nombres en Firebase:", Object.values(data));
   // 🔁 Renderiza después de tener usuarios + empleados correctos
   cargarSelectorEmpleado?.();
   renderizarTabla?.();
+  cargarIntercambioTurno?.();
 });
 
 const horas = [
@@ -704,16 +708,18 @@ function cargarIntercambioTurno() {
     }
   });
 
-  // Cargar empleados
-  [origenSel, destinoSel].forEach(sel => {
-    sel.innerHTML = "";
-    for (let e of empleados) {
-      const opt = document.createElement("option");
-      opt.value = e;
-      opt.textContent = e;
-      sel.appendChild(opt);
-    }
-  });
+  // Cargar empleados actualizados
+  if (typeof empleados !== "undefined") {
+    [origenSel, destinoSel].forEach(sel => {
+      sel.innerHTML = "";
+      empleados.forEach(nombre => {
+        const opt = document.createElement("option");
+        opt.value = nombre;
+        opt.textContent = nombre;
+        sel.appendChild(opt);
+      });
+    });
+  }
 }
 
 function intercambiarTurno() {
@@ -787,12 +793,10 @@ function intercambiarTurno() {
 function agregarNuevoEmpleado(nombre) {
   if (!nombre || typeof nombre !== 'string') return;
 
-  // 1. Añadir al array global de empleados si no existe ya
   if (!empleados.includes(nombre)) {
     empleados.push(nombre);
   }
 
-  // 2. Añadir opción al selector de empleado
   const selectorEmpleado = document.getElementById("selectorEmpleado");
   if (selectorEmpleado && ![...selectorEmpleado.options].some(opt => opt.value === nombre)) {
     const opt = document.createElement("option");
@@ -801,24 +805,18 @@ function agregarNuevoEmpleado(nombre) {
     selectorEmpleado.appendChild(opt);
   }
 
-  // 3. Añadir al login si no existe
   if (!Object.values(usuarios).includes(nombre)) {
     const nuevoCodigo = generarCodigoLibre();
     usuarios[nuevoCodigo] = nombre;
     db.ref(`empleados/${nuevoCodigo}`).set(nombre);
   }
 
-  // 4. Recargar tabla si existe
-  if (typeof renderizarTabla === 'function') {
-    renderizarTabla();
-  }
+  renderizarTabla?.();
 }
 
 function generarCodigoLibre() {
   let nuevoCodigo = 1000;
-  while (usuarios[nuevoCodigo]) {
-    nuevoCodigo++;
-  }
+  while (usuarios[nuevoCodigo]) nuevoCodigo++;
   return nuevoCodigo;
 }
 
@@ -850,34 +848,46 @@ function agregarDesdeInput() {
 
 function abrirModalEmpleado() {
   const modal = document.getElementById("modalEmpleado");
-  const tbody = document.getElementById("tablaEmpleados").querySelector("tbody");
+  const tabla = document.getElementById("tablaEmpleados");
+  if (!modal || !tabla || !window.usuarios) return;
+
+  const tbody = tabla.querySelector("tbody");
   tbody.innerHTML = "";
 
-  for (const [codigo, nombre] of Object.entries(usuarios)) {
-    if (parseInt(codigo) === 1306) continue; // Ocultar jefa
+  const ordenDeseado = ["Lorena", "Juan", "Leti", "Charly", "Bryant", "Rocio", "Natalia", "Sergio"];
 
+  const entradas = Object.entries(window.usuarios).filter(([codigo]) => parseInt(codigo) !== 1306);
+
+  entradas.sort(([, nombreA], [, nombreB]) => {
+    const iA = ordenDeseado.indexOf(nombreA);
+    const iB = ordenDeseado.indexOf(nombreB);
+    return (iA === -1 ? Infinity : iA) - (iB === -1 ? Infinity : iB);
+  });
+
+  for (const [codigo, nombre] of entradas) {
     const fila = document.createElement("tr");
 
-    const celdaNombre = document.createElement("td");
+    const tdNombre = document.createElement("td");
     const inputNombre = document.createElement("input");
     inputNombre.type = "text";
     inputNombre.value = nombre;
-    celdaNombre.appendChild(inputNombre);
+    tdNombre.appendChild(inputNombre);
 
-    const celdaCodigo = document.createElement("td");
+    const tdCodigo = document.createElement("td");
     const inputCodigo = document.createElement("input");
     inputCodigo.type = "number";
     inputCodigo.value = codigo;
-    celdaCodigo.appendChild(inputCodigo);
+    tdCodigo.appendChild(inputCodigo);
 
-    fila.appendChild(celdaNombre);
-    fila.appendChild(celdaCodigo);
-
+    fila.appendChild(tdNombre);
+    fila.appendChild(tdCodigo);
     tbody.appendChild(fila);
   }
 
   modal.style.display = "block";
 }
+
+
 
 function guardarCambiosTabla() {
   const filas = document.querySelectorAll("#tablaEmpleados tbody tr");
@@ -900,11 +910,10 @@ function guardarCambiosTabla() {
     nuevosDatos[codigo] = nombre;
   }
 
-  // Actualizar Firebase y memoria local
   db.ref("empleados").set(nuevosDatos).then(() => {
     alert("Cambios guardados correctamente.");
     usuarios = nuevosDatos;
-    empleados = Object.values(nuevosDatos);
+    empleados = Object.values(nuevosDatos).filter(n => n.toLowerCase() !== "jefa");
     cargarSelectorEmpleado?.();
     renderizarTabla?.();
     cerrarModalEmpleado();
@@ -919,10 +928,9 @@ function cerrarModalEmpleado() {
 
 window.addEventListener("click", function (e) {
   const modal = document.getElementById("modalEmpleado");
-  if (e.target === modal) {
-    cerrarModalEmpleado();
-  }
+  if (e.target === modal) cerrarModalEmpleado();
 });
+
 
 // 👇 Asegura que los botones con onclick funcionen
 window.abrirModalEmpleado = abrirModalEmpleado;

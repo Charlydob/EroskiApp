@@ -25,7 +25,7 @@ const mensajesPersonalizados = {
   "Charly": "Hola Yo",
   "Bryant": "¿Aún trabajas aquí pordiosero?",
   "Leti": "Sea usted muy bienvenida Doña Leticia ",
-  "Lorena": "",
+  "Lorena": "¡Bienvenida Jefa🫡!",
   "Rocío": "Rocio deja el movil. 🤔",
   "Juan": "¿Cuantas copas tenés?",
   "Jefa": "Bienvenida Jefa🫡",
@@ -55,7 +55,7 @@ loginBtn.addEventListener("click", () => {
 
   // Mostrar bienvenida
   loginSection.style.display = "none";
-  const mensaje = mensajesPersonalizados[nombre] || `¡Bienvenido, ${nombre.toUpperCase()}!`;
+  const mensaje = mensajesPersonalizados[nombre] || `¡Bienvenid@, ${nombre.toUpperCase()}!`;
   bienvenida.textContent = mensaje;
   bienvenida.classList.remove("oculto");
 
