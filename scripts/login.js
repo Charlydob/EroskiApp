@@ -85,3 +85,4 @@ window.addEventListener("DOMContentLoaded", () => {
     appContent.style.pointerEvents = "auto";
   }
 });
+window.usuarios = usuarios;
