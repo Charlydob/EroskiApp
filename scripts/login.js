@@ -11,12 +11,14 @@ let usuariosCargados = false;
 // ✅ Cargar usuarios con claves como strings
 db.ref("empleados").once("value", (snap) => {
   const data = snap.val();
-  if (!data) return;
-  Object.entries(data).forEach(([codigo, nombre]) => {
-    usuarios[String(codigo)] = nombre;
-  });
-  usuariosCargados = true;
+  if (data) {
+    usuarios = data;
+    console.log("Usuarios cargados:", usuarios);
+  } else {
+    console.warn("No se encontraron usuarios en Firebase.");
+  }
 });
+
 
 
 const mensajesPersonalizados = {
