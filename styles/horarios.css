@@ -442,3 +442,6 @@
   background-color: #eee;
   cursor: pointer;
 }
+.columna-actual {
+  background-color: #e1fbe1 !important;
+}

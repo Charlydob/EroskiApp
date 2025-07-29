@@ -1042,6 +1042,7 @@ function generarTablaResumenHorariosPorDia(datosSemana) {
   console.log("🧩 Resumen diario ejecutado para semana:", semanaActual);
 
   const dias = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
+const diaSeleccionado = selectorDia?.value; // para colorear esa columna
 
   const contenedor = document.createElement("div");
   contenedor.id = "tablaResumenPorDia";
@@ -1052,7 +1053,10 @@ function generarTablaResumenHorariosPorDia(datosSemana) {
   // CABECERA: Día en columnas
   const thead = document.createElement("thead");
   const filaCabecera = document.createElement("tr");
-  filaCabecera.innerHTML = "<th>Empleado</th>" + dias.map(d => `<th>${d[0].toUpperCase() + d.slice(1)}</th>`).join("");
+filaCabecera.innerHTML = "<th>Empleado</th>" + dias.map(d => {
+  const clase = d === diaSeleccionado ? ' class="columna-actual"' : "";
+  return `<th${clase}>${d[0].toUpperCase() + d.slice(1)}</th>`;
+}).join("");
   thead.appendChild(filaCabecera);
   tabla.appendChild(thead);
 
@@ -1063,8 +1067,8 @@ function generarTablaResumenHorariosPorDia(datosSemana) {
     fila.appendChild(tdNombre);
 
     for (let dia of dias) {
-      const td = document.createElement("td");
-      const bloques = [];
+const td = document.createElement("td");
+if (dia === diaSeleccionado) td.classList.add("columna-actual");      const bloques = [];
 
       for (let i = 0; i < horas.length; i++) {
         const celdaID = `${empleado}_${horas[i]}`;
