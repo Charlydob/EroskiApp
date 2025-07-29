@@ -1186,6 +1186,7 @@ function cambiarDia(direccion) {
 
   console.log("➡️ Día cambiado a:", diaActual);
 }
+window.addEventListener("DOMContentLoaded", () => {
 let notificacionDePruebaProgramada = false;
 
 document.getElementById("testNotificacion").addEventListener("click", () => {
@@ -1245,3 +1246,4 @@ function reproducirSonido() {
   });
 }
 
+});
