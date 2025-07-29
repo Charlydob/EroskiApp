@@ -385,16 +385,7 @@ window.addEventListener("DOMContentLoaded", () => {
     console.warn("⚠️ Botones de navegación de día no encontrados en el DOM.");
   }
 
-  // Asignar botón guardar cuando el DOM ya está completo
-  requestAnimationFrame(() => {
-    const btnGuardar = document.getElementById("btnGuardarCambios");
-    if (btnGuardar) {
-      btnGuardar.addEventListener("click", window.guardarCambiosPendientes);
-      console.log("✅ Botón de guardar asignado correctamente.");
-    } else {
-      console.warn("❌ Botón de guardar no encontrado en el DOM.");
-    }
-  });
+
 
 });
 
@@ -1043,7 +1034,7 @@ const match = texto.match(/(\d{1,2}):?(\d{0,2})\s*[–-]\s*(\d{1,2}):?(\d{0,2})/
 if (!window.cambiosPendientes[`${dia}_${empleado}`]) {
   window.cambiosPendientes[`${dia}_${empleado}`] = {};
 }
-marcarCambioPendiente(dia, empleado, updates);
+window.marcarCambioPendiente(dia, empleado, updates);
 td.style.backgroundColor = "#fff3cd";
 
   });
@@ -1161,7 +1152,7 @@ const match = texto.match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
 if (!window.cambiosPendientes[`${dia}_${empleado}`]) {
   window.cambiosPendientes[`${dia}_${empleado}`] = {};
 }
-marcarCambioPendiente(dia, empleado, updates);
+window.marcarCambioPendiente(dia, empleado, updates);
 td.style.backgroundColor = "#fff3cd";
 
 
@@ -1258,10 +1249,9 @@ window.guardarCambiosPendientes = async function () {
   document.querySelectorAll("td[style*='background-color: #fff3cd']")
     .forEach(td => td.style.backgroundColor = "");
 };
+window.timeoutAutoGuardar = null;
 
-let timeoutAutoGuardar = null;
-
-function marcarCambioPendiente(dia, empleado, updates) {
+window.marcarCambioPendiente = function (dia, empleado, updates) {
   const clave = `${dia}_${empleado}`;
   if (!window.cambiosPendientes[clave]) {
     window.cambiosPendientes[clave] = {};
@@ -1269,8 +1259,8 @@ function marcarCambioPendiente(dia, empleado, updates) {
 
   Object.assign(window.cambiosPendientes[clave], updates);
 
-  clearTimeout(timeoutAutoGuardar);
-  timeoutAutoGuardar = setTimeout(() => {
-    guardarCambiosPendientes();
-  }, 1000); // Guarda después de 1s de inactividad
-}
+  clearTimeout(window.timeoutAutoGuardar);
+  window.timeoutAutoGuardar = setTimeout(() => {
+    window.guardarCambiosPendientes();
+  }, 1000);
+};
