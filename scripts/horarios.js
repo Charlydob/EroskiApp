@@ -480,6 +480,7 @@ function renderizarResumenEmpleado() {
   let totalGeneral = 0;
   let mañanasMes = 0;
   let tardesMes = 0;
+  let diasLibresListado = [];
 
   db.ref().once("value", (snapTodas) => {
     const semanas = snapTodas.val();
@@ -554,7 +555,13 @@ function renderizarResumenEmpleado() {
         }
       }
 
-      if (verdes === totalCeldas && totalCeldas > 0) diasLibres++;
+if (verdes === totalCeldas && totalCeldas > 0) {
+  diasLibres++;
+  if (!diasLibresListado.includes(dia)) {
+    diasLibresListado.push(dia);
+  }
+}
+
       if (horasDia > 0) totalSemana += horasDia;
 
       if (horasDia > 3) {
@@ -589,7 +596,7 @@ function renderizarResumenEmpleado() {
       🧮 Total acumulado: ${totalGeneral}h<br>
       🌅 Mañanas este mes: ${mañanasMes} / 🌇 Tardes: ${tardesMes}<br>
       🤝 Trabaja con:<br>${resumenDiario.join("<br>")}<br>
-      💤 Días libres (toda la fila verde): ${diasLibres}
+💤 Días libres (${diasLibres}): ${diasLibresListado.map(d => d[0].toUpperCase() + d.slice(1)).join(", ")}
     `;
 
     let tablaMini = "<table><tr><th>Día</th>" + horas.map(h => `<th>${h}</th>`).join("") + "</tr>";
