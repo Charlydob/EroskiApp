@@ -46,6 +46,21 @@ let celdasTocadas = new Set();
 let tocando = false;
 let empleadoPintando = null;
 
+window.timeoutAutoGuardar = null;
+
+window.marcarCambioPendiente = function (dia, empleado, updates) {
+  const clave = `${dia}_${empleado}`;
+  if (!window.cambiosPendientes[clave]) {
+    window.cambiosPendientes[clave] = {};
+  }
+
+  Object.assign(window.cambiosPendientes[clave], updates);
+
+  clearTimeout(window.timeoutAutoGuardar);
+  window.timeoutAutoGuardar = setTimeout(() => {
+    window.guardarCambiosPendientes();
+  }, 1000);
+};
 
 const tablaContainer = document.getElementById("tablaHorarioContainer");
 const selectorSemana = document.getElementById("selectorSemana");
@@ -1248,19 +1263,4 @@ window.guardarCambiosPendientes = async function () {
   // 🔄 Limpia visualmente las celdas modificadas (opcional)
   document.querySelectorAll("td[style*='background-color: #fff3cd']")
     .forEach(td => td.style.backgroundColor = "");
-};
-window.timeoutAutoGuardar = null;
-
-window.marcarCambioPendiente = function (dia, empleado, updates) {
-  const clave = `${dia}_${empleado}`;
-  if (!window.cambiosPendientes[clave]) {
-    window.cambiosPendientes[clave] = {};
-  }
-
-  Object.assign(window.cambiosPendientes[clave], updates);
-
-  clearTimeout(window.timeoutAutoGuardar);
-  window.timeoutAutoGuardar = setTimeout(() => {
-    window.guardarCambiosPendientes();
-  }, 1000);
 };
