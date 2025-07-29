@@ -399,3 +399,19 @@
   padding: 2px;
   font-size: 14px;
 }
+#tablaResumenPorDia {
+  margin-top: 30px;
+}
+
+.tabla-resumen-por-dia {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tabla-resumen-por-dia th,
+.tabla-resumen-por-dia td {
+  border: 1px solid #ccc;
+  padding: 6px 8px;
+  text-align: center;
+}

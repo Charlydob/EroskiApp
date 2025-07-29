@@ -357,6 +357,8 @@ window.addEventListener("DOMContentLoaded", () => {
   const nombre = localStorage.getItem("nombre");
 
   const esJefa = rol === "jefa" || nombre?.toLowerCase() === "charly";
+  window.esJefa = rol === "jefa" || nombre?.toLowerCase() === "charly";
+
 
   if (!esJefa) {
 document.querySelectorAll(".zona-edicion").forEach(el => {
@@ -683,6 +685,8 @@ tabla += `
 `;
 
 resumenEmpleado.innerHTML = tabla;
+generarTablaResumenHorariosPorDia(todasLasSemanas[semanaActual]);
+
 document.getElementById("miniTurnoEmpleado").innerHTML = "";
 
 
@@ -937,3 +941,184 @@ window.abrirModalEmpleado = abrirModalEmpleado;
 window.agregarDesdeInput = agregarDesdeInput;
 window.guardarCambiosTabla = guardarCambiosTabla;
 window.cerrarModalEmpleado = cerrarModalEmpleado;
+
+const td = document.createElement("td");
+
+if (bloques.length === 0) {
+  const verdes = horas.every(h => datosSemana?.[dia]?.[`${empleado}_${h}`] === "verde");
+  td.textContent = verdes ? "Libre" : "";
+} else {
+  const inicio = bloques[0].hora.split("-")[0];
+  let finRaw = bloques.at(-1).hora.split("-")[1];
+  if (bloques.at(-1).peso === 0.5) {
+    const [h] = finRaw.split(":");
+    finRaw = `${parseInt(h) - 1}:30`;
+  }
+
+  const texto = `${inicio === "7" ? "7:30" : inicio.padStart(2, "0")}:00–${finRaw}:00`;
+  td.textContent = texto.replace("--", "-");
+}
+
+// 👇 Hacer celdas editables solo para jefa o Charly
+if (window.esJefa) {
+  td.contentEditable = true;
+  td.style.backgroundColor = "#ffffe0";
+  td.dataset.dia = dia;
+  td.dataset.empleado = empleado;
+
+  td.addEventListener("blur", async () => {
+    const texto = td.textContent.trim().toLowerCase();
+    const dia = td.dataset.dia;
+    const empleado = td.dataset.empleado;
+    const ruta = `${semanaActual}/${dia}`;
+
+    const updates = {};
+
+    // Vacío o 'libre' => limpiar todas
+    if (texto === "" || texto === "libre") {
+      for (let hora of horas) {
+        updates[`${empleado}_${hora}`] = "verde";
+      }
+    } else {
+      // Parsear formato tipo "7:30–14:00"
+      const match = texto.match(/(\d{1,2}):(\d{2})–(\d{1,2}):(\d{2})/);
+      if (!match) {
+        alert("Formato inválido. Usa por ejemplo: 7:30–14:00");
+        return;
+      }
+
+      const [_, hInicio, mInicio, hFin, mFin] = match.map(Number);
+      const tInicio = hInicio + (mInicio === 30 ? 0.5 : 0);
+      const tFin = hFin + (mFin === 30 ? 0.5 : 0);
+
+      for (let hora of horas) {
+        const [h1, h2] = hora.split("-").map(Number);
+        const bloque = h1 + 0.5;
+
+        const celdaID = `${empleado}_${hora}`;
+        if (bloque > tInicio && bloque <= tFin) {
+          updates[celdaID] = "1";
+        } else if (bloque === tInicio) {
+          updates[celdaID] = "0.5";
+        } else {
+          updates[celdaID] = "";
+        }
+      }
+    }
+
+    await db.ref(ruta).update(updates);
+    renderizarTabla(); // para actualizar visual
+  });
+}
+
+function generarTablaResumenHorariosPorDia(datosSemana) {
+  if (!datosSemana) {
+    console.warn("⚠️ No hay datos para la semana actual");
+    return;
+  }
+
+  const contenedor = document.createElement("div");
+  contenedor.id = "tablaResumenPorDia";
+
+  const tabla = document.createElement("table");
+  tabla.className = "tabla-resumen-por-dia";
+
+  // Cabecera
+  const thead = document.createElement("thead");
+  const thFila = document.createElement("tr");
+  thFila.innerHTML = "<th>Día</th>" + empleados.map(e => `<th>${e}</th>`).join("");
+  thead.appendChild(thFila);
+  tabla.appendChild(thead);
+
+  const dias = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
+
+  for (let dia of dias) {
+    const fila = document.createElement("tr");
+    const tdDia = document.createElement("td");
+    tdDia.textContent = dia.charAt(0).toUpperCase() + dia.slice(1);
+    fila.appendChild(tdDia);
+
+    for (let empleado of empleados) {
+      const td = document.createElement("td");
+      const bloques = [];
+
+      for (let i = 0; i < horas.length; i++) {
+        const celdaID = `${empleado}_${horas[i]}`;
+        const valor = datosSemana?.[dia]?.[celdaID];
+        if (valor === "1" || valor === "0.5") {
+          bloques.push({ hora: horas[i], peso: parseFloat(valor) });
+        }
+      }
+
+      if (bloques.length === 0) {
+        const verdes = horas.every(h => datosSemana?.[dia]?.[`${empleado}_${h}`] === "verde");
+        td.textContent = verdes ? "Libre" : "";
+      } else {
+        const inicio = bloques[0].hora.split("-")[0];
+        let finRaw = bloques.at(-1).hora.split("-")[1];
+        if (bloques.at(-1).peso === 0.5) {
+          const finNum = parseInt(finRaw);
+          finRaw = `${finNum - 1}:30`;
+        }
+
+        const texto = `${inicio === "7" ? "7:30" : inicio.padStart(2, "0")}:00–${finRaw}:00`;
+        td.textContent = texto.replace("--", "-");
+      }
+
+      if (window.esJefa) {
+        td.contentEditable = true;
+        td.style.backgroundColor = "#ffffe0";
+        td.dataset.dia = dia;
+        td.dataset.empleado = empleado;
+
+        td.addEventListener("blur", async () => {
+          const texto = td.textContent.trim().toLowerCase();
+          const dia = td.dataset.dia;
+          const empleado = td.dataset.empleado;
+          const ruta = `${semanaActual}/${dia}`;
+          const updates = {};
+
+          if (texto === "" || texto === "libre") {
+            for (let hora of horas) {
+              updates[`${empleado}_${hora}`] = "verde";
+            }
+          } else {
+            const match = texto.match(/(\d{1,2}):(\d{2})–(\d{1,2}):(\d{2})/);
+            if (!match) {
+              alert("Formato inválido. Usa por ejemplo: 7:30–14:00");
+              return;
+            }
+
+            const [_, hInicio, mInicio, hFin, mFin] = match.map(Number);
+            const tInicio = hInicio + (mInicio === 30 ? 0.5 : 0);
+            const tFin = hFin + (mFin === 30 ? 0.5 : 0);
+
+            for (let hora of horas) {
+              const [h1, h2] = hora.split("-").map(Number);
+              const bloque = h1 + 0.5;
+
+              const celdaID = `${empleado}_${hora}`;
+              if (bloque > tInicio && bloque <= tFin) {
+                updates[celdaID] = "1";
+              } else if (bloque === tInicio) {
+                updates[celdaID] = "0.5";
+              } else {
+                updates[celdaID] = "";
+              }
+            }
+          }
+
+          await db.ref(ruta).update(updates);
+          renderizarTabla(); // reflejar cambios en la tabla superior
+        });
+      }
+
+      fila.appendChild(td);
+    }
+
+    tabla.appendChild(fila);
+  }
+
+  contenedor.appendChild(tabla);
+  document.getElementById("resumenEmpleado")?.appendChild(contenedor);
+}
