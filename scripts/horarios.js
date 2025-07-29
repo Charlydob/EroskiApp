@@ -685,7 +685,13 @@ tabla += `
 `;
 
 resumenEmpleado.innerHTML = tabla;
-generarTablaResumenHorariosPorDia(todasLasSemanas[semanaActual]);
+// ✅ Espera a que la semana actual esté completamente cargada
+const datosSemanaActual = todasLasSemanas[semanaActual];
+if (datosSemanaActual) {
+  generarTablaResumenHorariosPorDia(datosSemanaActual);
+} else {
+  console.warn("⚠️ Semana actual no encontrada para resumen diario");
+}
 
 document.getElementById("miniTurnoEmpleado").innerHTML = "";
 
@@ -1017,6 +1023,7 @@ function generarTablaResumenHorariosPorDia(datosSemana) {
     return;
   }
   console.log("🔍 Ejecutando generarTablaResumenHorariosPorDia", datosSemana);
+console.log("🧩 Resumen diario ejecutado para semana:", semanaActual);
 
 
   const contenedor = document.createElement("div");
