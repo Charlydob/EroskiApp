@@ -7,8 +7,11 @@
   <link rel="stylesheet" href="styles/style.css">
   <link rel="stylesheet" href="styles/horarios.css">
 
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"></script>
+
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDN8KAiad5vmKNwhtfd9EUzVgTt2uUapno",
@@ -19,10 +22,11 @@
     messagingSenderId: "1033463841470",
     appId: "1:1033463841470:web:ec92569dd7dabe8a93d4ef"
   };
+
+  // 🔥 Inicializar Firebase y DB
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-   // TEST DE CONEXIÓN
   db.ref().once("value")
     .then(snapshot => {
       console.log("🔥 Firebase raíz:", snapshot.val());
@@ -30,7 +34,38 @@
     .catch(err => {
       console.error("❌ Error al conectar con Firebase:", err);
     });
+
+  // 🔔 Inicializar Firebase Messaging
+  let messaging;
+  if ('serviceWorker' in navigator && 'PushManager' in window) {
+    navigator.serviceWorker.register("firebase-messaging-sw.js")
+      .then(async (registration) => {
+        console.log("✅ Service Worker registrado");
+
+        messaging = firebase.messaging();
+        messaging.useServiceWorker(registration);
+
+        const token = await messaging.getToken({
+          vapidKey: "BL5jXmLFLFoPnZlX4lJlJXVNB6HOppu5DnGUSUFnedH0tqomOSI5_zPIQzGxm0Dt4QXRPsINnlhrHP5Fx9rsnOg"
+        });
+
+        if (token) {
+          console.log("📲 Token de dispositivo:", token);
+          // Guardarlo si querés:
+          // const usuario = localStorage.getItem("nombre") || "anonimo";
+          // db.ref("tokens/" + usuario).set(token);
+        } else {
+          console.warn("⚠️ No se pudo obtener el token.");
+        }
+      })
+      .catch((err) => {
+        console.error("❌ Error registrando el Service Worker:", err);
+      });
+  } else {
+    console.warn("🚫 Este navegador no soporta notificaciones push.");
+  }
 </script>
+
 
     <script src="navbar.js"></script>
 
@@ -112,7 +147,6 @@
    <button id="diaAnterior">←</button>
 <button id="diaSiguiente">→</button>
   </div>
-  <button id="testNotificacion">🔔 Probar notificación (30s)</button>
 
 
 
