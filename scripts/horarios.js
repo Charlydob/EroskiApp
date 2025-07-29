@@ -1,5 +1,4 @@
 
-window.cambiosPendientes = {}; // { `${dia}_${empleado}`: { horaID: valor, ... } }
 const usuarios = window.usuarios || {};
 window.usuarios = {};
 window.empleados = [];
@@ -46,7 +45,41 @@ let celdasTocadas = new Set();
 let tocando = false;
 let empleadoPintando = null;
 
+const tablaContainer = document.getElementById("tablaHorarioContainer");
+const selectorSemana = document.getElementById("selectorSemana");
+const selectorDia = document.getElementById("selectorDia");
+
+// Establecer día actual al cargar
+const diasSemana = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+const hoy = new Date();
+const diaActualNombre = diasSemana[hoy.getDay()];
+selectorDia.value = diaActualNombre;
+diaActual = diaActualNombre; // actualiza también la variable global
+
+window.cambiosPendientes = {};
 window.timeoutAutoGuardar = null;
+
+window.guardarCambiosPendientes = async function () {
+  const entradas = Object.entries(window.cambiosPendientes);
+  if (entradas.length === 0) {
+    alert("No hay cambios pendientes.");
+    return;
+  }
+
+  console.log("💾 Guardando cambios:", entradas);
+
+  for (let [clave, cambios] of entradas) {
+    const [dia, empleado] = clave.split("_");
+    await db.ref(`${semanaActual}/${dia}`).update(cambios);
+  }
+
+  window.cambiosPendientes = {};
+  alert("✅ Cambios guardados.");
+  renderizarTabla();
+
+  document.querySelectorAll("td[style*='#fff3cd']")
+    .forEach(td => td.style.backgroundColor = "");
+};
 
 window.marcarCambioPendiente = function (dia, empleado, updates) {
   const clave = `${dia}_${empleado}`;
@@ -59,20 +92,8 @@ window.marcarCambioPendiente = function (dia, empleado, updates) {
   clearTimeout(window.timeoutAutoGuardar);
   window.timeoutAutoGuardar = setTimeout(() => {
     window.guardarCambiosPendientes();
-  }, 1000);
+  }, 60000);
 };
-
-const tablaContainer = document.getElementById("tablaHorarioContainer");
-const selectorSemana = document.getElementById("selectorSemana");
-const selectorDia = document.getElementById("selectorDia");
-
-// Establecer día actual al cargar
-const diasSemana = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
-const hoy = new Date();
-const diaActualNombre = diasSemana[hoy.getDay()];
-selectorDia.value = diaActualNombre;
-diaActual = diaActualNombre; // actualiza también la variable global
-
 
 selectorDia.addEventListener("change", () => {
   diaActual = selectorDia.value;
