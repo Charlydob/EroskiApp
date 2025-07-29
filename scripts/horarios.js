@@ -1186,3 +1186,45 @@ function cambiarDia(direccion) {
 
   console.log("➡️ Día cambiado a:", diaActual);
 }
+// ✅ Control para evitar notificaciones múltiples
+let notificacionDePruebaProgramada = false;
+
+document.getElementById("testNotificacion").addEventListener("click", () => {
+  if (notificacionDePruebaProgramada) {
+    alert("Ya hay una notificación de prueba programada.");
+    return;
+  }
+
+  Notification.requestPermission().then(permiso => {
+    if (permiso !== "granted") {
+      alert("Permiso denegado para mostrar notificaciones.");
+      return;
+    }
+
+    notificacionDePruebaProgramada = true;
+
+    alert("Notificación de prueba programada en 30 segundos.");
+    setTimeout(() => {
+      mostrarNotificacion("🔔 ¡Esto es una prueba!", "Tu sistema de notificaciones funciona.");
+      notificacionDePruebaProgramada = false;
+    }, 30000);
+  });
+});
+
+function mostrarNotificacion(titulo, cuerpo = "") {
+  if (Notification.permission !== "granted") return;
+
+  try {
+    navigator.vibrate?.([200, 100, 200]); // ✅ Vibración
+
+    new Notification(titulo, {
+      body: cuerpo,
+      vibrate: [200, 100, 200], // redundante pero bueno tenerlo
+      icon: "recursos/img/calendario.png", // podés usar un icono propio si querés
+      tag: "notificacion-prueba", // evita que se dupliquen
+      renotify: false
+    });
+  } catch (e) {
+    console.error("❌ Error al lanzar notificación:", e);
+  }
+}
