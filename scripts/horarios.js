@@ -1187,63 +1187,69 @@ function cambiarDia(direccion) {
   console.log("➡️ Día cambiado a:", diaActual);
 }
 window.addEventListener("DOMContentLoaded", () => {
-let notificacionDePruebaProgramada = false;
+  let notificacionDePruebaProgramada = false;
 
-document.getElementById("testNotificacion").addEventListener("click", () => {
-  if (notificacionDePruebaProgramada) {
-    alert("Ya hay una notificación de prueba programada.");
+  const btnPrueba = document.getElementById("testNotificacion");
+
+  if (!btnPrueba) {
+    console.warn("⚠️ Botón #testNotificacion no encontrado en el DOM.");
     return;
   }
 
-  console.log("🔔 Solicitando permiso de notificaciones...");
-
-  Notification.requestPermission().then(permiso => {
-    console.log("🔑 Permiso de notificación:", permiso);
-    if (permiso !== "granted") {
-      alert("Permiso denegado para mostrar notificaciones.");
+  btnPrueba.addEventListener("click", () => {
+    if (notificacionDePruebaProgramada) {
+      alert("Ya hay una notificación de prueba programada.");
       return;
     }
 
-    notificacionDePruebaProgramada = true;
+    console.log("🔔 Solicitando permiso de notificaciones...");
 
-    alert("Notificación de prueba programada en 30 segundos.");
-    setTimeout(() => {
-      reproducirSonido();
-      mostrarNotificacion("🔔 ¡Esto es una prueba!", "Tu sistema de notificaciones funciona.");
-      notificacionDePruebaProgramada = false;
-    }, 30000);
-  });
-});
+    Notification.requestPermission().then(permiso => {
+      console.log("🔑 Permiso de notificación:", permiso);
+      if (permiso !== "granted") {
+        alert("Permiso denegado para mostrar notificaciones.");
+        return;
+      }
 
-function mostrarNotificacion(titulo, cuerpo = "") {
-  if (Notification.permission !== "granted") {
-    console.warn("🚫 Notificación no lanzada: sin permisos");
-    return;
-  }
+      notificacionDePruebaProgramada = true;
 
-  console.log("📨 Lanzando notificación:", titulo, cuerpo);
-
-  try {
-    navigator.vibrate?.([200, 100, 200]);
-
-    new Notification(titulo, {
-      body: cuerpo,
-      icon: "recursos/img/calendario.png", // cambia por otro si no se muestra
-      tag: "notificacion-prueba",
-      renotify: false
+      alert("Notificación de prueba programada en 30 segundos.");
+      setTimeout(() => {
+        reproducirSonido();
+        mostrarNotificacion("🔔 ¡Esto es una prueba!", "Tu sistema de notificaciones funciona.");
+        notificacionDePruebaProgramada = false;
+      }, 30000);
     });
-  } catch (e) {
-    console.error("❌ Error al lanzar notificación:", e);
-  }
-}
-
-function reproducirSonido() {
-  const audio = new Audio("recursos/sonido.mp3"); // asegurate que existe
-  audio.play().then(() => {
-    console.log("🔊 Sonido reproducido");
-  }).catch((e) => {
-    console.warn("🔇 No se pudo reproducir sonido:", e);
   });
-}
 
+  function mostrarNotificacion(titulo, cuerpo = "") {
+    if (Notification.permission !== "granted") {
+      console.warn("🚫 Notificación no lanzada: sin permisos");
+      return;
+    }
+
+    console.log("📨 Lanzando notificación:", titulo, cuerpo);
+
+    try {
+      navigator.vibrate?.([200, 100, 200]);
+
+      new Notification(titulo, {
+        body: cuerpo,
+        icon: "recursos/img/calendario.png",
+        tag: "notificacion-prueba",
+        renotify: false
+      });
+    } catch (e) {
+      console.error("❌ Error al lanzar notificación:", e);
+    }
+  }
+
+  function reproducirSonido() {
+    const audio = new Audio("recursos/sonido.mp3");
+    audio.play().then(() => {
+      console.log("🔊 Sonido reproducido");
+    }).catch((e) => {
+      console.warn("🔇 No se pudo reproducir sonido:", e);
+    });
+  }
 });
