@@ -1,6 +1,9 @@
+
+window.cambiosPendientes = {}; // { `${dia}_${empleado}`: { horaID: valor, ... } }
 const usuarios = window.usuarios || {};
 window.usuarios = {};
 window.empleados = [];
+
 
 db.ref("empleados").once("value", (snap) => {
   const data = snap.val();
@@ -363,62 +366,39 @@ window.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".zona-edicion").forEach(el => {
       el.style.display = "none";
     });
-    document.getElementById("modoSeleccion").style.display = "none";
+    const modo = document.getElementById("modoSeleccion");
+    if (modo) modo.style.display = "none";
     modoSeleccion = null;
   }
 
   cargarSemanasExistentes();
   cargarSelectorEmpleado();
 
-  // ✅ Botones de navegación de día
-// ✅ Botones de navegación de día
-const btnAnterior = document.getElementById("diaAnterior");
-const btnSiguiente = document.getElementById("diaSiguiente");
+  // Botones de navegación de día
+  const btnAnterior = document.getElementById("diaAnterior");
+  const btnSiguiente = document.getElementById("diaSiguiente");
 
-if (btnAnterior && btnSiguiente) {
-  btnAnterior.addEventListener("click", () => cambiarDia(-1));
-  btnSiguiente.addEventListener("click", () => cambiarDia(1));
-} else {
-  console.warn("⚠️ Botones de navegación de día no encontrados en el DOM.");
-}
+  if (btnAnterior && btnSiguiente) {
+    btnAnterior.addEventListener("click", () => cambiarDia(-1));
+    btnSiguiente.addEventListener("click", () => cambiarDia(1));
+  } else {
+    console.warn("⚠️ Botones de navegación de día no encontrados en el DOM.");
+  }
 
-// 🔔 Botón de notificación de prueba
-let notificacionDePruebaProgramada = false;
-const btnPrueba = document.getElementById("testNotificacion");
-
-if (!btnPrueba) {
-  console.warn("⚠️ Botón #testNotificacion no encontrado en el DOM.");
-} else {
-  console.log("✅ Botón detectado. Asignando evento.");
-
-  btnPrueba.addEventListener("click", () => {
-    if (notificacionDePruebaProgramada) {
-      alert("Ya hay una notificación de prueba programada.");
-      return;
+  // Asignar botón guardar cuando el DOM ya está completo
+  requestAnimationFrame(() => {
+    const btnGuardar = document.getElementById("btnGuardarCambios");
+    if (btnGuardar) {
+      btnGuardar.addEventListener("click", window.guardarCambiosPendientes);
+      console.log("✅ Botón de guardar asignado correctamente.");
+    } else {
+      console.warn("❌ Botón de guardar no encontrado en el DOM.");
     }
-
-    console.log("🔔 Solicitando permiso de notificaciones...");
-
-    Notification.requestPermission().then(permiso => {
-      console.log("🔑 Permiso de notificación:", permiso);
-      if (permiso !== "granted") {
-        alert("Permiso denegado.");
-        return;
-      }
-
-      notificacionDePruebaProgramada = true;
-
-      alert("Notificación de prueba programada en 30 segundos.");
-      setTimeout(() => {
-        reproducirSonido();
-        mostrarNotificacion("🔔 ¡Esto es una prueba!", "Tu sistema de notificaciones funciona.");
-        notificacionDePruebaProgramada = false;
-      }, 30000);
-    });
   });
-}
 
 });
+
+
 
 
 const selectorEmpleado = document.getElementById("selectorEmpleado");
@@ -1035,7 +1015,7 @@ if (window.esJefa) {
       }
     } else {
       // Parsear formato tipo "7:30–14:00"
-      const match = texto.match(/(\d{1,2}):(\d{2})–(\d{1,2}):(\d{2})/);
+const match = texto.match(/(\d{1,2}):?(\d{0,2})\s*[–-]\s*(\d{1,2}):?(\d{0,2})/);
       if (!match) {
         alert("Formato inválido. Usa por ejemplo: 7:30–14:00");
         return;
@@ -1060,8 +1040,12 @@ if (window.esJefa) {
       }
     }
 
-    await db.ref(ruta).update(updates);
-    renderizarTabla(); // para actualizar visual
+if (!window.cambiosPendientes[`${dia}_${empleado}`]) {
+  window.cambiosPendientes[`${dia}_${empleado}`] = {};
+}
+marcarCambioPendiente(dia, empleado, updates);
+td.style.backgroundColor = "#fff3cd";
+
   });
 }
 
@@ -1144,7 +1128,7 @@ if (dia === diaSeleccionado) td.classList.add("columna-actual");      const bloq
               updates[`${empleado}_${hora}`] = "verde";
             }
           } else {
-            const match = texto.match(/(\d{1,2}):?(\d{0,2})–(\d{1,2}):?(\d{0,2})/);
+const match = texto.match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
             if (!match) {
               alert("Formato inválido. Usa por ejemplo: 7:30–14:00");
               return;
@@ -1174,8 +1158,13 @@ if (dia === diaSeleccionado) td.classList.add("columna-actual");      const bloq
             }
           }
 
-          await db.ref(ruta).update(updates);
-          renderizarTabla(); // actualiza tabla original
+if (!window.cambiosPendientes[`${dia}_${empleado}`]) {
+  window.cambiosPendientes[`${dia}_${empleado}`] = {};
+}
+marcarCambioPendiente(dia, empleado, updates);
+td.style.backgroundColor = "#fff3cd";
+
+
         });
       }
 
@@ -1248,3 +1237,40 @@ window.reproducirSonido = function() {
     console.warn("🔇 No se pudo reproducir sonido:", e);
   });
 };
+window.guardarCambiosPendientes = async function () {
+  const entradas = Object.entries(window.cambiosPendientes);
+  if (entradas.length === 0) {
+    console.log("➡️ Guardando", entradas)
+    alert("No hay cambios pendientes.");
+    return;
+  }
+
+  for (let [clave, cambios] of entradas) {
+    const [dia, empleado] = clave.split("_");
+    await db.ref(`${semanaActual}/${dia}`).update(cambios);
+  }
+
+  window.cambiosPendientes = {};
+  alert("✅ Cambios guardados.");
+  renderizarTabla();
+
+  // 🔄 Limpia visualmente las celdas modificadas (opcional)
+  document.querySelectorAll("td[style*='background-color: #fff3cd']")
+    .forEach(td => td.style.backgroundColor = "");
+};
+
+let timeoutAutoGuardar = null;
+
+function marcarCambioPendiente(dia, empleado, updates) {
+  const clave = `${dia}_${empleado}`;
+  if (!window.cambiosPendientes[clave]) {
+    window.cambiosPendientes[clave] = {};
+  }
+
+  Object.assign(window.cambiosPendientes[clave], updates);
+
+  clearTimeout(timeoutAutoGuardar);
+  timeoutAutoGuardar = setTimeout(() => {
+    guardarCambiosPendientes();
+  }, 1000); // Guarda después de 1s de inactividad
+}
