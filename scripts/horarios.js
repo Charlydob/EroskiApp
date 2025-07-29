@@ -1023,8 +1023,9 @@ function generarTablaResumenHorariosPorDia(datosSemana) {
     return;
   }
   console.log("🔍 Ejecutando generarTablaResumenHorariosPorDia", datosSemana);
-console.log("🧩 Resumen diario ejecutado para semana:", semanaActual);
+  console.log("🧩 Resumen diario ejecutado para semana:", semanaActual);
 
+  const dias = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
 
   const contenedor = document.createElement("div");
   contenedor.id = "tablaResumenPorDia";
@@ -1032,22 +1033,20 @@ console.log("🧩 Resumen diario ejecutado para semana:", semanaActual);
   const tabla = document.createElement("table");
   tabla.className = "tabla-resumen-por-dia";
 
-  // Cabecera
+  // CABECERA: Día en columnas
   const thead = document.createElement("thead");
-  const thFila = document.createElement("tr");
-  thFila.innerHTML = "<th>Día</th>" + empleados.map(e => `<th>${e}</th>`).join("");
-  thead.appendChild(thFila);
+  const filaCabecera = document.createElement("tr");
+  filaCabecera.innerHTML = "<th>Empleado</th>" + dias.map(d => `<th>${d[0].toUpperCase() + d.slice(1)}</th>`).join("");
+  thead.appendChild(filaCabecera);
   tabla.appendChild(thead);
 
-  const dias = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
-
-  for (let dia of dias) {
+  for (let empleado of empleados) {
     const fila = document.createElement("tr");
-    const tdDia = document.createElement("td");
-    tdDia.textContent = dia.charAt(0).toUpperCase() + dia.slice(1);
-    fila.appendChild(tdDia);
+    const tdNombre = document.createElement("td");
+    tdNombre.textContent = empleado;
+    fila.appendChild(tdNombre);
 
-    for (let empleado of empleados) {
+    for (let dia of dias) {
       const td = document.createElement("td");
       const bloques = [];
 
@@ -1070,8 +1069,9 @@ console.log("🧩 Resumen diario ejecutado para semana:", semanaActual);
           finRaw = `${finNum - 1}:30`;
         }
 
-        const texto = `${inicio === "7" ? "7:30" : inicio.padStart(2, "0")}:00–${finRaw}:00`;
-        td.textContent = texto.replace("--", "-");
+        const formatear = (h) => h.includes(":") ? h : h + ":00";
+        const texto = `${inicio === "7" ? "7:30" : formatear(inicio)}–${formatear(finRaw)}`;
+        td.textContent = texto.replace(":00", "").replace(":00", "");
       }
 
       if (window.esJefa) {
@@ -1092,21 +1092,26 @@ console.log("🧩 Resumen diario ejecutado para semana:", semanaActual);
               updates[`${empleado}_${hora}`] = "verde";
             }
           } else {
-            const match = texto.match(/(\d{1,2}):(\d{2})–(\d{1,2}):(\d{2})/);
+            const match = texto.match(/(\d{1,2}):?(\d{0,2})–(\d{1,2}):?(\d{0,2})/);
             if (!match) {
               alert("Formato inválido. Usa por ejemplo: 7:30–14:00");
               return;
             }
 
-            const [_, hInicio, mInicio, hFin, mFin] = match.map(Number);
+            let [_, hInicio, mInicio, hFin, mFin] = match;
+            hInicio = parseInt(hInicio);
+            hFin = parseInt(hFin);
+            mInicio = parseInt(mInicio || "0");
+            mFin = parseInt(mFin || "0");
+
             const tInicio = hInicio + (mInicio === 30 ? 0.5 : 0);
             const tFin = hFin + (mFin === 30 ? 0.5 : 0);
 
             for (let hora of horas) {
               const [h1, h2] = hora.split("-").map(Number);
               const bloque = h1 + 0.5;
-
               const celdaID = `${empleado}_${hora}`;
+
               if (bloque > tInicio && bloque <= tFin) {
                 updates[celdaID] = "1";
               } else if (bloque === tInicio) {
@@ -1118,7 +1123,7 @@ console.log("🧩 Resumen diario ejecutado para semana:", semanaActual);
           }
 
           await db.ref(ruta).update(updates);
-          renderizarTabla(); // reflejar cambios en la tabla superior
+          renderizarTabla(); // actualiza tabla original
         });
       }
 
@@ -1129,13 +1134,12 @@ console.log("🧩 Resumen diario ejecutado para semana:", semanaActual);
   }
 
   contenedor.appendChild(tabla);
-const resumenDiv = document.getElementById("resumenEmpleado");
-console.log("📦 Contenedor encontrado:", resumenDiv);
 
-if (!resumenDiv) {
-  alert("❌ No se encontró el contenedor resumenEmpleado");
-  return;
-}
+  const resumenDiv = document.getElementById("resumenEmpleado");
+  if (!resumenDiv) {
+    alert("❌ No se encontró el contenedor resumenEmpleado");
+    return;
+  }
 
-resumenDiv.appendChild(contenedor);
+  resumenDiv.appendChild(contenedor);
 }

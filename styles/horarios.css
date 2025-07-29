@@ -400,22 +400,35 @@
   font-size: 14px;
 }
 #tablaResumenPorDia {
-  display: block !important;
-  background: #f4f4f4;
   margin-top: 30px;
-  padding: 10px;
+  overflow-x: auto;
+  width: 100%;
 }
 
 #tablaResumenPorDia table {
   width: 100%;
-  border: 1px solid #ccc;
   border-collapse: collapse;
+  table-layout: fixed;
+  min-width: 600px; /* Evita que colapse si hay pocos días */
 }
 
 #tablaResumenPorDia th,
 #tablaResumenPorDia td {
-  border: 1px solid #999;
-  padding: 6px;
+  border: 1px solid #ccc;
+  padding: 6px 8px;
   font-size: 13px;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#tablaResumenPorDia th {
+  background-color: #f0f0f0;
+}
+
+#tablaResumenPorDia td:first-child {
+  font-weight: bold;
+  background-color: #fafafa;
+  text-align: left;
 }
