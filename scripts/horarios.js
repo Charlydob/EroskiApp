@@ -354,24 +354,39 @@ db.ref().once("value", (snapTodas) => {
 
 
 window.addEventListener("DOMContentLoaded", () => {
-const rol = localStorage.getItem("rol");
-const nombre = localStorage.getItem("nombre");
+  const rol = localStorage.getItem("rol");
+  const nombre = localStorage.getItem("nombre");
 
-window.esJefa = rol === "jefa" || ["charly", "lorena"].includes(nombre?.toLowerCase());
+  window.esJefa = rol === "jefa" || ["charly", "lorena"].includes(nombre?.toLowerCase());
 
-
-
-  if (!esJefa) {
-document.querySelectorAll(".zona-edicion").forEach(el => {
-  el.style.display = "none";
-});
+  if (!window.esJefa) {
+    document.querySelectorAll(".zona-edicion").forEach(el => {
+      el.style.display = "none";
+    });
     document.getElementById("modoSeleccion").style.display = "none";
     modoSeleccion = null;
   }
 
   cargarSemanasExistentes();
   cargarSelectorEmpleado();
+
+  // ✅ Botones de navegación de día
+  const btnAnterior = document.getElementById("diaAnterior");
+  const btnSiguiente = document.getElementById("diaSiguiente");
+
+  if (btnAnterior && btnSiguiente) {
+    btnAnterior.addEventListener("click", () => {
+      cambiarDia(-1);
+    });
+
+    btnSiguiente.addEventListener("click", () => {
+      cambiarDia(1);
+    });
+  } else {
+    console.warn("⚠️ Botones de navegación de día no encontrados en el DOM.");
+  }
 });
+
 
 const selectorEmpleado = document.getElementById("selectorEmpleado");
 const resumenEmpleado = document.getElementById("resumenEmpleado");
@@ -1143,4 +1158,27 @@ function generarTablaResumenHorariosPorDia(datosSemana) {
   }
 
   resumenDiv.appendChild(contenedor);
+}
+document.getElementById("diaAnterior").addEventListener("click", () => {
+  cambiarDia(-1);
+});
+document.getElementById("diaSiguiente").addEventListener("click", () => {
+  cambiarDia(1);
+});
+
+function cambiarDia(direccion) {
+  const dias = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
+  const actual = selectorDia.value;
+  const index = dias.indexOf(actual);
+  if (index === -1) return;
+
+  let nuevoIndex = index + direccion;
+  if (nuevoIndex < 0) nuevoIndex = dias.length - 1;
+  if (nuevoIndex >= dias.length) nuevoIndex = 0;
+
+  selectorDia.value = dias[nuevoIndex];
+  diaActual = dias[nuevoIndex];
+  renderizarTabla();
+
+  console.log("➡️ Día cambiado a:", diaActual);
 }
