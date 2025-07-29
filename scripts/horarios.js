@@ -7,23 +7,24 @@ db.ref("empleados").once("value", (snap) => {
   if (!data) return;
 
   window.usuarios = data;
-    empleados = Object.values(data).filter(nombre => nombre.toLowerCase() !== "jefa");
+empleados = Object.values(data); // ✅ incluye a todos, incluida Lorena
 
 console.log("📋 Nombres en Firebase:", Object.values(data));
 
   // ✅ ORDEN PERSONALIZADO
-  const ordenDeseado = ["Lorena", "Juan", "Leti", "Charly", "Bryant", "Rocio", "Natalia", "Sergio"];
+const ordenDeseado = ["Lorena", "Juan", "Leti", "Charly", "Bryant", "Rocio", "Natalia", "Sergio"];
 
-  const entradas = Object.entries(data).filter(([codigo, nombre]) => nombre.toLowerCase() !== "jefa");
+const entradas = Object.entries(data); // ✅ no excluye a nadie
 
-  entradas.sort(([, nombreA], [, nombreB]) => {
-    const iA = ordenDeseado.indexOf(nombreA);
-    const iB = ordenDeseado.indexOf(nombreB);
-    return (iA === -1 ? Infinity : iA) - (iB === -1 ? Infinity : iB);
-  });
+entradas.sort(([, nombreA], [, nombreB]) => {
+  const iA = ordenDeseado.indexOf(nombreA);
+  const iB = ordenDeseado.indexOf(nombreB);
+  return (iA === -1 ? Infinity : iA) - (iB === -1 ? Infinity : iB);
+});
 
-  window.usuarios = Object.fromEntries(entradas);
-  empleados = entradas.map(([, nombre]) => nombre);
+window.usuarios = Object.fromEntries(entradas);
+empleados = entradas.map(([, nombre]) => nombre);
+
 
   // 🔁 Renderiza después de tener usuarios + empleados correctos
   cargarSelectorEmpleado?.();
@@ -353,11 +354,11 @@ db.ref().once("value", (snapTodas) => {
 
 
 window.addEventListener("DOMContentLoaded", () => {
-  const rol = localStorage.getItem("rol");
-  const nombre = localStorage.getItem("nombre");
+const rol = localStorage.getItem("rol");
+const nombre = localStorage.getItem("nombre");
 
-  const esJefa = rol === "jefa" || nombre?.toLowerCase() === "charly";
-  window.esJefa = rol === "jefa" || nombre?.toLowerCase() === "charly";
+window.esJefa = rol === "jefa" || ["charly", "lorena"].includes(nombre?.toLowerCase());
+
 
 
   if (!esJefa) {
