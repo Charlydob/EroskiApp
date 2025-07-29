@@ -400,18 +400,22 @@
   font-size: 14px;
 }
 #tablaResumenPorDia {
+  display: block !important;
+  background: #f4f4f4;
   margin-top: 30px;
+  padding: 10px;
 }
 
-.tabla-resumen-por-dia {
+#tablaResumenPorDia table {
   width: 100%;
+  border: 1px solid #ccc;
   border-collapse: collapse;
-  font-size: 14px;
 }
 
-.tabla-resumen-por-dia th,
-.tabla-resumen-por-dia td {
-  border: 1px solid #ccc;
-  padding: 6px 8px;
+#tablaResumenPorDia th,
+#tablaResumenPorDia td {
+  border: 1px solid #999;
+  padding: 6px;
+  font-size: 13px;
   text-align: center;
 }

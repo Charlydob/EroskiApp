@@ -1016,6 +1016,8 @@ function generarTablaResumenHorariosPorDia(datosSemana) {
     console.warn("⚠️ No hay datos para la semana actual");
     return;
   }
+  console.log("🔍 Ejecutando generarTablaResumenHorariosPorDia", datosSemana);
+
 
   const contenedor = document.createElement("div");
   contenedor.id = "tablaResumenPorDia";
@@ -1120,5 +1122,13 @@ function generarTablaResumenHorariosPorDia(datosSemana) {
   }
 
   contenedor.appendChild(tabla);
-  document.getElementById("resumenEmpleado")?.appendChild(contenedor);
+const resumenDiv = document.getElementById("resumenEmpleado");
+console.log("📦 Contenedor encontrado:", resumenDiv);
+
+if (!resumenDiv) {
+  alert("❌ No se encontró el contenedor resumenEmpleado");
+  return;
+}
+
+resumenDiv.appendChild(contenedor);
 }
