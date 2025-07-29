@@ -1186,7 +1186,6 @@ function cambiarDia(direccion) {
 
   console.log("➡️ Día cambiado a:", diaActual);
 }
-// ✅ Control para evitar notificaciones múltiples
 let notificacionDePruebaProgramada = false;
 
 document.getElementById("testNotificacion").addEventListener("click", () => {
@@ -1195,7 +1194,10 @@ document.getElementById("testNotificacion").addEventListener("click", () => {
     return;
   }
 
+  console.log("🔔 Solicitando permiso de notificaciones...");
+
   Notification.requestPermission().then(permiso => {
+    console.log("🔑 Permiso de notificación:", permiso);
     if (permiso !== "granted") {
       alert("Permiso denegado para mostrar notificaciones.");
       return;
@@ -1205,6 +1207,7 @@ document.getElementById("testNotificacion").addEventListener("click", () => {
 
     alert("Notificación de prueba programada en 30 segundos.");
     setTimeout(() => {
+      reproducirSonido();
       mostrarNotificacion("🔔 ¡Esto es una prueba!", "Tu sistema de notificaciones funciona.");
       notificacionDePruebaProgramada = false;
     }, 30000);
@@ -1212,19 +1215,33 @@ document.getElementById("testNotificacion").addEventListener("click", () => {
 });
 
 function mostrarNotificacion(titulo, cuerpo = "") {
-  if (Notification.permission !== "granted") return;
+  if (Notification.permission !== "granted") {
+    console.warn("🚫 Notificación no lanzada: sin permisos");
+    return;
+  }
+
+  console.log("📨 Lanzando notificación:", titulo, cuerpo);
 
   try {
-    navigator.vibrate?.([200, 100, 200]); // ✅ Vibración
+    navigator.vibrate?.([200, 100, 200]);
 
     new Notification(titulo, {
       body: cuerpo,
-      vibrate: [200, 100, 200], // redundante pero bueno tenerlo
-      icon: "recursos/img/calendario.png", // podés usar un icono propio si querés
-      tag: "notificacion-prueba", // evita que se dupliquen
+      icon: "recursos/img/calendario.png", // cambia por otro si no se muestra
+      tag: "notificacion-prueba",
       renotify: false
     });
   } catch (e) {
     console.error("❌ Error al lanzar notificación:", e);
   }
 }
+
+function reproducirSonido() {
+  const audio = new Audio("recursos/sonido.mp3"); // asegurate que existe
+  audio.play().then(() => {
+    console.log("🔊 Sonido reproducido");
+  }).catch((e) => {
+    console.warn("🔇 No se pudo reproducir sonido:", e);
+  });
+}
+
