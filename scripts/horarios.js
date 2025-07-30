@@ -599,53 +599,45 @@ if (verdes === totalCeldas && totalCeldas > 0) {
 💤 Días libres (${diasLibres}): ${diasLibresListado.map(d => d[0].toUpperCase() + d.slice(1)).join(", ")}
     `;
 
+    let tablaMini = "<table><tr><th>Día</th>" + horas.map(h => `<th>${h}</th>`).join("") + "</tr>";
+
     for (let dia of diasValidos) {
-  const celdas = datosSemanaActual[dia];
-  if (!celdas) continue;
+      const celdas = datosSemanaActual[dia];
+      if (!celdas) continue;
 
-  let total = 0;
-  let verdes = 0;
+      let total = 0;
+      let verdes = 0;
 
-  for (let hora of horas) {
-    const celdaID = `${nombre}_${hora}`;
-    const valor = celdas?.[celdaID];
-    if (valor) total++;
-    if (valor === "verde") verdes++;
-  }
+      for (let hora of horas) {
+        const celdaID = `${nombre}_${hora}`;
+        const valor = celdas?.[celdaID];
+        if (valor) total++;
+        if (valor === "verde") verdes++;
+      }
 
-  const esDiaLibre = total > 0 && verdes === total;
+      const esDiaLibre = total > 0 && verdes === total;
+      const inicialesDias = {
+        lunes: "L",
+        martes: "M",
+        miércoles: "X",
+        jueves: "J",
+        viernes: "V",
+        sábado: "S",
+        domingo: "D"
+      };
 
-  const fechaActual = new Date();
-  const diaSemanaActual = fechaActual.toLocaleDateString("es-ES", { weekday: 'long' }).toLowerCase();
-  const esHoy = dia === diaSemanaActual;
+      tablaMini += `<tr class="${esDiaLibre ? "dia-libre" : ""}"><td>${inicialesDias[dia]}</td>`;
 
-  const claseDiaLibre = esDiaLibre ? "dia-libre" : "";
-  const claseHoy = esHoy ? "dia-hoy" : "";
-  const claseUsuario = "usuario-actual"; // ya es su resumen, así que siempre se aplica
+      for (let hora of horas) {
+        const celdaID = `${nombre}_${hora}`;
+        const valor = celdas?.[celdaID];
+        let clase = "";
+        if (valor === "1" || valor === "0.5") clase = "trabajo";
+        tablaMini += `<td class="${clase}">${(valor === "1" || valor === "0.5") ? valor : ""}</td>`;
+      }
 
-  const inicialesDias = {
-    lunes: "L",
-    martes: "M",
-    miércoles: "X",
-    jueves: "J",
-    viernes: "V",
-    sábado: "S",
-    domingo: "D"
-  };
-
-  tablaMini += `<tr class="${claseDiaLibre} ${claseHoy} ${claseUsuario}"><td>${inicialesDias[dia]}</td>`;
-
-  for (let hora of horas) {
-    const celdaID = `${nombre}_${hora}`;
-    const valor = celdas?.[celdaID];
-    let clase = "";
-    if (valor === "1" || valor === "0.5") clase = "trabajo";
-    tablaMini += `<td class="${clase}">${(valor === "1" || valor === "0.5") ? valor : ""}</td>`;
-  }
-
-  tablaMini += "</tr>";
-}
-
+      tablaMini += "</tr>";
+    }
 
     tablaMini += "</table>";
     document.getElementById("miniTurnoEmpleado").innerHTML = tablaMini;
