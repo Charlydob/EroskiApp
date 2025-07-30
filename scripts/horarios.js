@@ -1092,7 +1092,8 @@ function generarTablaResumenHorariosPorDia(datosSemana) {
   console.log("🧩 Resumen diario ejecutado para semana:", semanaActual);
 
   const dias = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
-const diaSeleccionado = selectorDia?.value; // para colorear esa columna
+  const diaSeleccionado = selectorDia?.value;
+  const usuarioLogueado = localStorage.getItem("nombre");
 
   const contenedor = document.createElement("div");
   contenedor.id = "tablaResumenPorDia";
@@ -1100,25 +1101,32 @@ const diaSeleccionado = selectorDia?.value; // para colorear esa columna
   const tabla = document.createElement("table");
   tabla.className = "tabla-resumen-por-dia";
 
-  // CABECERA: Día en columnas
   const thead = document.createElement("thead");
   const filaCabecera = document.createElement("tr");
-filaCabecera.innerHTML = "<th>Empleado</th>" + dias.map(d => {
-  const clase = d === diaSeleccionado ? ' class="columna-actual"' : "";
-  return `<th${clase}>${d[0].toUpperCase() + d.slice(1)}</th>`;
-}).join("");
+  filaCabecera.innerHTML = "<th>Empleado</th>" + dias.map(d => {
+    const clase = d === diaSeleccionado ? ' class="columna-actual"' : "";
+    return `<th${clase}>${d[0].toUpperCase() + d.slice(1)}</th>`;
+  }).join("");
   thead.appendChild(filaCabecera);
   tabla.appendChild(thead);
 
   for (let empleado of empleados) {
     const fila = document.createElement("tr");
+
+    // ✅ Añadido: resaltar fila del usuario logueado
+    if (empleado === usuarioLogueado) {
+      fila.classList.add("fila-usuario");
+    }
+
     const tdNombre = document.createElement("td");
     tdNombre.textContent = empleado;
     fila.appendChild(tdNombre);
 
     for (let dia of dias) {
-const td = document.createElement("td");
-if (dia === diaSeleccionado) td.classList.add("columna-actual");      const bloques = [];
+      const td = document.createElement("td");
+      if (dia === diaSeleccionado) td.classList.add("columna-actual");
+
+      const bloques = [];
 
       for (let i = 0; i < horas.length; i++) {
         const celdaID = `${empleado}_${horas[i]}`;
@@ -1162,7 +1170,7 @@ if (dia === diaSeleccionado) td.classList.add("columna-actual");      const bloq
               updates[`${empleado}_${hora}`] = "verde";
             }
           } else {
-const match = texto.match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
+            const match = texto.match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
             if (!match) {
               alert("Formato inválido. Usa por ejemplo: 7:30–14:00");
               return;
@@ -1192,13 +1200,11 @@ const match = texto.match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
             }
           }
 
-if (!window.cambiosPendientes[`${dia}_${empleado}`]) {
-  window.cambiosPendientes[`${dia}_${empleado}`] = {};
-}
-window.marcarCambioPendiente(dia, empleado, updates);
-td.style.backgroundColor = "#fff3cd";
-
-
+          if (!window.cambiosPendientes[`${dia}_${empleado}`]) {
+            window.cambiosPendientes[`${dia}_${empleado}`] = {};
+          }
+          window.marcarCambioPendiente(dia, empleado, updates);
+          td.style.backgroundColor = "#fff3cd";
         });
       }
 
