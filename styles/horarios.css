@@ -442,6 +442,14 @@
   background-color: #eee;
   cursor: pointer;
 }
-.columna-actual {
-  background-color: #e1fbe1 !important;
+.dia-libre {
+  background-color: #d4edda !important; /* verde suave */
 }
+.dia-hoy {
+  background-color: #ffeeba !important; /* amarillo claro */
+}
+.usuario-actual td {
+  font-weight: bold;
+  border: 2px solid #007bff;
+}
+
