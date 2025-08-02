@@ -37,7 +37,7 @@
 
 #tablaHorarioContainer table {
   width: 100%;
-  border: 1px solid #888;
+  border: 1px solid #ccc;
   border-collapse: separate;
   border-spacing: 0;
   margin-bottom: 5px;
@@ -46,7 +46,6 @@
 
 #tablaHorarioContainer th,
 #tablaHorarioContainer td {
-border: 1px solid #888;
   padding: 2px 3px;
   font-size: 8px;
   line-height: 1.1;
