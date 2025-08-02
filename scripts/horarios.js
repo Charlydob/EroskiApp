@@ -236,23 +236,38 @@ tdNombre.textContent = empleado;
 tdNombre.style.cursor = "pointer";
 
 tdNombre.addEventListener("click", () => {
-  if (!semanaActual || !diaActual) return;
+  if (!semanaActual || !diaActual || !modoSeleccion) return;
 
-  if (modoSeleccion === "verde" || modoSeleccion === "borrar") {
-    const color = modoSeleccion === "verde" ? "green" : "transparent";
-    const valor = modoSeleccion === "verde" ? "verde" : "";
+  let color, valor;
 
-    for (let hora of horas) {
-      const celdaID = `${empleado}_${hora}`;
-      const celda = tabla.querySelector(`[data-celda-id='${celdaID}']`);
-      if (celda) {
-        celda.style.backgroundColor = color;
-        celda.textContent = "";
-        db.ref(`${semanaActual}/${diaActual}/${celdaID}`).set(valor);
-      }
+  switch (modoSeleccion) {
+    case "verde":
+      color = "green";
+      valor = "verde";
+      break;
+    case "borrar":
+      color = "transparent";
+      valor = "";
+      break;
+    case "personalizado":
+      color = colorPersonalizado || "#00cc66";
+      valor = "personalizado";
+      break;
+    default:
+      return; // solo afecta a modos visuales, no texto
+  }
+
+  for (let hora of horas) {
+    const celdaID = `${empleado}_${hora}`;
+    const celda = tabla.querySelector(`[data-celda-id='${celdaID}']`);
+    if (celda) {
+      celda.style.backgroundColor = color;
+      celda.textContent = ""; // vaciamos texto solo si no es "1" o "0.5"
+      db.ref(`${semanaActual}/${diaActual}/${celdaID}`).set(valor);
     }
   }
 });
+
 
 fila.appendChild(tdNombre);
 
@@ -413,9 +428,7 @@ window.addEventListener("DOMContentLoaded", () => {
   window.esJefa = rol === "jefa" || ["charly", "lorena"].includes(nombre?.toLowerCase());
 
   if (!window.esJefa) {
-    document.querySelectorAll(".zona-edicion").forEach(el => {
-      el.style.display = "none";
-    });
+    document.querySelectorAll(".zona-edicion").forEach(el => el.style.display = "none");
     const modo = document.getElementById("modoSeleccion");
     if (modo) modo.style.display = "none";
     modoSeleccion = null;
@@ -426,12 +439,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
   const btnAnterior = document.getElementById("diaAnterior");
   const btnSiguiente = document.getElementById("diaSiguiente");
-
   if (btnAnterior && btnSiguiente) {
     btnAnterior.addEventListener("click", () => cambiarDia(-1));
     btnSiguiente.addEventListener("click", () => cambiarDia(1));
-  } else {
-    console.warn("⚠️ Botones de navegación de día no encontrados en el DOM.");
   }
 
   // 🎨 Selector de color personalizado
@@ -439,31 +449,24 @@ window.addEventListener("DOMContentLoaded", () => {
   const colorInput = document.getElementById("colorPicker");
 
   if (colorWrapper && colorInput) {
-    // Visual del color actual
     colorWrapper.style.backgroundColor = colorInput.value;
 
-    // Clic en el wrapper: activa modo
-colorWrapper.addEventListener("click", () => {
-  console.log("🖌️ [click] en colorWrapper");
-  setModo("personalizado");
-  colorInput.click();
-});
+    colorInput.addEventListener("change", () => {
+      colorPersonalizado = colorInput.value;
+      colorWrapper.style.backgroundColor = colorPersonalizado;
+      console.log("🎨 Nuevo color:", colorPersonalizado);
+      setModo("personalizado");
+    });
 
-
-    // Cambia el color visual al elegir otro
-colorInput.addEventListener("change", () => {
-  colorPersonalizado = colorInput.value;
-  colorWrapper.style.backgroundColor = colorPersonalizado;
-
-  console.log("🎨 [colorPicker.change] Nuevo color:", colorPersonalizado);
-
-  setModo("personalizado");
-});
-
+    colorWrapper.addEventListener("click", () => {
+      console.log("🖌️ Clic en wrapper");
+      setModo("personalizado");
+    });
   } else {
-    console.warn("⚠️ Selector de color no encontrado en el DOM.");
+    console.warn("⚠️ No se encontró el selector de color");
   }
 });
+
 
 
 
