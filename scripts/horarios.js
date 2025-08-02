@@ -445,6 +445,12 @@ function cargarSemanasExistentes() {
   });
 }
 
+function esVerde(valor) {
+  if (typeof valor !== "string") return false;
+  if (valor === "verde") return true;
+  // Detectar color hexadecimal verde común
+  return valor.startsWith("#00cc") || valor.startsWith("#00b3") || valor.startsWith("#0099");
+}
 
 
 function eliminarSemanaActual() {
@@ -694,8 +700,8 @@ function renderizarResumenEmpleado() {
           if (valor === "1") horasDia += 1;
           else if (valor === "0.5") horasDia += 0.5;
 
-          if (typeof valor === "string" &&
-              (valor.toLowerCase().includes("green") || valor.startsWith("#0"))) {
+          if (esVerde(valor))
+ {
             verdes++;
           }
         }
@@ -758,8 +764,8 @@ function renderizarResumenEmpleado() {
         const celdaID = `${nombre}_${hora}`;
         const valor = celdas?.[celdaID];
         if (valor) total++;
-        if (typeof valor === "string" &&
-            (valor.toLowerCase().includes("green") || valor.startsWith("#0"))) {
+        if (esVerde(valor))
+ {
           verdes++;
         }
       }
@@ -787,8 +793,6 @@ function renderizarResumenEmpleado() {
     document.getElementById("miniTurnoEmpleado").innerHTML = tablaMini;
   });
 }
-
-
 function renderizarResumenGeneral() {
   const fechaSemana = selectorSemana.selectedOptions[0]?.textContent;
   const [_, mesActual, anioActual] = fechaSemana.split("/");
