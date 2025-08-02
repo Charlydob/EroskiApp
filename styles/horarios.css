@@ -42,16 +42,11 @@
     table-layout: fixed;
   }
 
-  #tablaHorarioContainer th,
-  #tablaHorarioContainer td {
-    border: 1px solid #ccc;
-    text-align: center;
-    padding: 6px;
-    font-size: 14px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
+#tablaHorarioContainer th,
+#tablaHorarioContainer td {
+  padding: 2px 4px;
+  font-size: 12px;
+}
 
   #tablaHorarioContainer th {
     background-color: #f5f5f5;
