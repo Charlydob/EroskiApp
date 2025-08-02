@@ -93,10 +93,13 @@
     <select id="selectorSemana"></select>
     
     <!-- Solo visible para jefa -->
-    <div class="zona-edicion">
-      <button onclick="crearNuevaSemana()">➕ Nueva semana</button>
-      <button onclick="eliminarSemanaActual()" style="background-color: crimson;">🗑️ Eliminar semana</button>
-    </div>
+<div class="zona-edicion">
+  <button id="crearSemanaBtn">➕ Crear semana</button>
+<input type="date" id="fechaLunes" style="position: absolute; left: -9999px;" />
+  <button onclick="eliminarSemanaActual()" style="background-color: crimson;">🗑️ Eliminar semana</button>
+</div>
+
+
 <!-- Botón que abre el modal -->
 <div class="zona-edicion">
   <h3>👥 Gestión de empleados</h3>
