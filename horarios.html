@@ -168,19 +168,29 @@
 ">
 </div>
 
+<div id="colorModoContainer" style="display: flex; align-items: center; gap: 6px;">
+  <!-- Botón visible para seleccionar el modo color -->
+  <div id="colorWrapper"
+       style="width: 1px; height: 1px; border: 0px solid gray; border-radius: 20px; cursor: pointer;"
+       title="Modo color personalizado">
+  </div>
+
+  <!-- Pipeta que abre el selector de color -->
+  <label for="colorPicker" id="colorPickerIcon" style="cursor: pointer;" title="Elegir color personalizado">
+    🖌️
+  </label>
+
+  <!-- Selector oculto -->
 <input type="color" id="colorPicker" value="#00cc66" style="
-  opacity: 0;
   position: absolute;
-  width: 1px;
-  height: 1px;
+  opacity: 0;
   pointer-events: none;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
 ">
-
-
-
-
-
-
 
   <button onclick="setModo('borrar')">🗑️</button>
 </div>
