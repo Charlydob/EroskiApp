@@ -44,6 +44,12 @@ document.getElementById("buscador")?.addEventListener("input", () => {
     window.cargarProductos();
   });
 
+  document.getElementById("btn-tele")?.addEventListener("click", () => {
+  window.modoEspecial = (window.modoEspecial === "tele") ? null : "tele";
+  window.cargarProductos();
+});
+
+
   // Botones para el modo Previa
   const btnSumar = document.getElementById("btn-sumar");
 const btnRestar = document.getElementById("btn-restar");
@@ -116,7 +122,9 @@ window.renderizarProductos = function () {
     lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === "bolleria");
   } else if (window.modoEspecial === "caja") {
     lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === "fruta");
-  } else if (window.modoEspecial === "previa") {
+  } else if (window.modoEspecial === "tele") {
+  lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === "tele-recarga");
+} else if (window.modoEspecial === "previa") {
   lista = lista.filter(([_, prod]) => {
     const cat = prod.categoria?.toLowerCase();
     const filtroActivo = document.getElementById("filtro-categoria").value.toLowerCase();
@@ -140,14 +148,20 @@ window.renderizarProductos = function () {
   }
 
   // Ordenar: primero por contador descendente, luego alfabético
-  lista.sort((a, b) => {
-    if (window.modoEspecial === "previa") {
-      const aCont = contadoresPrevios[a[0]] || 0;
-      const bCont = contadoresPrevios[b[0]] || 0;
-      if (aCont !== bCont) return bCont - aCont;
-    }
-    return (a[1].nombre || '').localeCompare(b[1].nombre || '');
-  });
+lista.sort((a, b) => {
+  const aCont = window.contadoresPreviosCache?.[a[0]] || 0;
+  const bCont = window.contadoresPreviosCache?.[b[0]] || 0;
+
+  const aEsActivo = aCont > 0 ? 0 : 1;
+  const bEsActivo = bCont > 0 ? 0 : 1;
+
+  // Primero agrupamos: activos primero (contador > 0), luego inactivos
+  if (aEsActivo !== bEsActivo) return aEsActivo - bEsActivo;
+
+  // Dentro del grupo, orden alfabético por nombre
+  return (a[1].nombre || '').localeCompare(b[1].nombre || '');
+});
+
 
   console.log(`📦 ${lista.length} productos a mostrar`);
 
