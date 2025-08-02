@@ -386,14 +386,14 @@ function cargarSemanasExistentes() {
 
     console.log("📅 Semanas detectadas:", semanas.map(s => `${s.key} -> ${s.fecha}`));
 
-    // Ordenar cronológicamente
+    // Orden cronológico
     semanas.sort((a, b) => {
       const [d1, m1, y1] = a.fecha.split("/").map(Number);
       const [d2, m2, y2] = b.fecha.split("/").map(Number);
       return new Date(y1, m1 - 1, d1) - new Date(y2, m2 - 1, d2);
     });
 
-    console.log("📊 Semanas ordenadas:", semanas.map(s => `${s.fecha}`));
+    console.log("📊 Semanas ordenadas:", semanas.map(s => s.fecha));
 
     selectorSemana.innerHTML = "";
     for (let { key, fecha } of semanas) {
@@ -403,14 +403,22 @@ function cargarSemanasExistentes() {
       selectorSemana.appendChild(opt);
     }
 
-    // Fecha actual formateada
+    // 🗓️ Calcular el lunes de la semana actual
     const hoy = new Date();
-    const fechaHoy = hoy.toLocaleDateString("es-ES"); // "dd/mm/yyyy"
-    console.log("📍 Fecha actual:", fechaHoy);
+    const diaSemana = hoy.getDay(); // 0=domingo, 1=lunes, ..., 6=sábado
+    const offset = diaSemana === 0 ? -6 : 1 - diaSemana; // Si es domingo, retrocede 6 días
+    const lunes = new Date(hoy);
+    lunes.setDate(hoy.getDate() + offset);
 
-    // Buscar semana correspondiente a hoy
-    const semanaHoy = semanas.find(s => s.fecha === fechaHoy);
-    console.log("🔎 Semana con fecha actual encontrada:", semanaHoy?.key || "❌ No encontrada");
+    const dd = String(lunes.getDate()).padStart(2, "0");
+    const mm = String(lunes.getMonth() + 1).padStart(2, "0");
+    const yyyy = lunes.getFullYear();
+    const lunesStr = `${dd}/${mm}/${yyyy}`;
+    console.log("📍 Lunes de esta semana:", lunesStr);
+
+    // Buscar semana correspondiente
+    const semanaHoy = semanas.find(s => s.fecha === lunesStr);
+    console.log("🔎 Semana con lunes actual encontrada:", semanaHoy?.key || "❌ No encontrada");
 
     const ultimaSeleccion = localStorage.getItem("semanaSeleccionada");
     console.log("💾 Última semana seleccionada en localStorage:", ultimaSeleccion);
@@ -420,9 +428,9 @@ function cargarSemanasExistentes() {
       console.log("✅ Usando semana de localStorage:", ultimaSeleccion);
     } else if (semanaHoy) {
       selectorSemana.value = semanaHoy.key;
-      console.log("✅ Usando semana actual:", semanaHoy.key);
+      console.log("✅ Usando semana según lunes actual:", semanaHoy.key);
     } else if (semanas.length > 0) {
-      selectorSemana.value = semanas[semanas.length - 1].key;
+      selectorSemana.value = semanas.at(-1).key;
       console.log("✅ Usando última semana por defecto:", semanas.at(-1).key);
     } else {
       console.warn("❌ No hay semanas válidas en la base de datos.");
@@ -436,6 +444,7 @@ function cargarSemanasExistentes() {
     renderizarResumenEmpleado();
   });
 }
+
 
 
 function eliminarSemanaActual() {
