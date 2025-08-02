@@ -44,6 +44,7 @@
 
 #tablaHorarioContainer th,
 #tablaHorarioContainer td {
+  border: 1px solid #ccc;
   padding: 2px 3px;
   font-size: 8px;
   line-height: 1.1;
