@@ -1327,6 +1327,14 @@ window.mostrarNotificacion = function(titulo, cuerpo = "") {
     console.error("❌ Error al lanzar notificación:", e);
   }
 };
+window.reproducirSonido = function() {
+  const audio = new Audio("recursos/sonido.mp3");
+  audio.play().then(() => {
+    console.log("🔊 Sonido reproducido");
+  }).catch((e) => {
+    console.warn("🔇 No se pudo reproducir sonido:", e);
+  });
+};
 window.guardarCambiosPendientes = async function () {
   const entradas = Object.entries(window.cambiosPendientes);
   if (entradas.length === 0) {
