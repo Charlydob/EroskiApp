@@ -110,7 +110,7 @@
   width: 15px;
 }
 
-@media (max-width: 768px) {
+
   #tablaHorarioContainer th,
   #tablaHorarioContainer td {
     font-size: 10px;
@@ -121,7 +121,7 @@
     font-size: 14px;
     padding: 8px 10px;
   }
-}
+
 .modo-activo {
   outline: 2px solid rgb(255, 0, 0);
   outline-offset: 2px;
