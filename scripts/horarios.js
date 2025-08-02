@@ -1192,12 +1192,15 @@ if (tieneBloques) {
 } else if (todasVerdes) {
   td.textContent = "Libre";
   td.style.backgroundColor = "green";
+}
 
-} else if (colorPersonal) {
+// 👇 Nuevo bloque separado, no else if
+if (colorPersonal) {
   console.log(`✅ Aplicando color personalizado a ${empleado} -> ${colorPersonal}`);
   td.textContent = "";
   td.style.backgroundColor = colorPersonal;
 }
+
 
 
 
