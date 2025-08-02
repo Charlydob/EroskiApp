@@ -486,15 +486,27 @@ window.addEventListener("DOMContentLoaded", () => {
 const btnCrear = document.getElementById("crearSemanaBtn");
 const inputFecha = document.getElementById("fechaLunes");
 const modalFecha = document.getElementById("modalFecha");
-
+// 🧊 Cerrar el modal si se hace clic fuera de él
+document.addEventListener("click", (e) => {
+  if (
+    modalFecha.style.display === "block" &&
+    !modalFecha.contains(e.target) &&
+    !btnCrear.contains(e.target)
+  ) {
+    modalFecha.style.display = "none";
+    console.log("🧊 Modal de fecha cerrado por clic externo");
+  }
+});
 btnCrear.addEventListener("click", () => {
   console.log("🖱️ Botón de crear semana pulsado");
   modalFecha.style.display = "block"; // mostrar el modal
 });
 
-inputFecha.addEventListener("change", () => {
+inputFecha.addEventListener("input", () => {
   const fecha = new Date(inputFecha.value);
-  const diaSemana = fecha.getDay();
+  if (isNaN(fecha)) return;
+
+  const diaSemana = fecha.getDay(); // 1 = lunes
 
   if (diaSemana !== 1) {
     alert("🚫 La fecha seleccionada no es un lunes. Por favor elige un lunes.");
