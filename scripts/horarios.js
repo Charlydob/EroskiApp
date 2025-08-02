@@ -483,43 +483,46 @@ window.addEventListener("DOMContentLoaded", () => {
 
   cargarSemanasExistentes();
   cargarSelectorEmpleado();
-  const btnCrear = document.getElementById("crearSemanaBtn");
-  const inputFecha = document.getElementById("fechaLunes");
+const btnCrear = document.getElementById("crearSemanaBtn");
+const inputFecha = document.getElementById("fechaLunes");
+const modalFecha = document.getElementById("modalFecha");
 
-  btnCrear.addEventListener("click", () => {
-    console.log("🖱️ Botón de crear semana pulsado");
-    inputFecha.click();
-  });
+btnCrear.addEventListener("click", () => {
+  console.log("🖱️ Botón de crear semana pulsado");
+  modalFecha.style.display = "block"; // mostrar el modal
+});
 
-  inputFecha.addEventListener("change", () => {
-    const fecha = new Date(inputFecha.value);
-    const diaSemana = fecha.getDay();
+inputFecha.addEventListener("change", () => {
+  const fecha = new Date(inputFecha.value);
+  const diaSemana = fecha.getDay();
 
-    if (diaSemana !== 1) {
-      alert("🚫 La fecha seleccionada no es un lunes. Por favor elige un lunes.");
-      return;
-    }
+  if (diaSemana !== 1) {
+    alert("🚫 La fecha seleccionada no es un lunes. Por favor elige un lunes.");
+    return;
+  }
 
-    const dd = String(fecha.getDate()).padStart(2, '0');
-    const mm = String(fecha.getMonth() + 1).padStart(2, '0');
-    const yyyy = fecha.getFullYear();
+  const dd = String(fecha.getDate()).padStart(2, '0');
+  const mm = String(fecha.getMonth() + 1).padStart(2, '0');
+  const yyyy = fecha.getFullYear();
 
-    const fechaFormateada = `${dd}/${mm}/${yyyy}`;
-    const clave = `horario_semana_${dd}-${mm}-${yyyy}`;
+  const fechaFormateada = `${dd}/${mm}/${yyyy}`;
+  const clave = `horario_semana_${dd}-${mm}-${yyyy}`;
 
-    console.log("📅 Creando nueva semana:", clave, "| Fecha visible:", fechaFormateada);
+  console.log("📅 Creando nueva semana:", clave, "| Fecha visible:", fechaFormateada);
 
-    db.ref(clave).set({ _fecha: fechaFormateada })
-      .then(() => {
-        alert("✅ Semana creada con éxito.");
-        inputFecha.value = "";
-        cargarSemanasExistentes();
-      })
-      .catch((err) => {
-        console.error("❌ Error al crear la semana:", err);
-        alert("Error al crear la semana.");
-      });
-  });
+  db.ref(clave).set({ _fecha: fechaFormateada })
+    .then(() => {
+      alert("✅ Semana creada con éxito.");
+      inputFecha.value = "";
+      modalFecha.style.display = "none";
+      cargarSemanasExistentes();
+    })
+    .catch((err) => {
+      console.error("❌ Error al crear la semana:", err);
+      alert("Error al crear la semana.");
+    });
+});
+
 
   const btnAnterior = document.getElementById("diaAnterior");
   const btnSiguiente = document.getElementById("diaSiguiente");

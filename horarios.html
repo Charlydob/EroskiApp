@@ -94,8 +94,14 @@
     
     <!-- Solo visible para jefa -->
 <div class="zona-edicion">
-  <button id="crearSemanaBtn">➕ Crear semana</button>
-<input type="date" id="fechaLunes" style="position: absolute; left: -9999px;" />
+<button id="crearSemanaBtn">➕ Crear semana</button>
+
+  <!-- Modal flotante oculto inicialmente -->
+  <div id="modalFecha" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+       background: white; padding: 20px; border: 2px solid #ccc; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); z-index: 1000;">
+    <label for="fechaLunes">📅 Selecciona el lunes de la semana:</label><br>
+    <input type="date" id="fechaLunes" />
+  </div>
   <button onclick="eliminarSemanaActual()" style="background-color: crimson;">🗑️ Eliminar semana</button>
 </div>
 
