@@ -1,432 +1,445 @@
-/* horarios.css mejorado */
+@media (max-width: 768px) {
+  #pagina-horarios {
+    padding: 20px;
+    font-family: sans-serif;
+  }
 
-#pagina-horarios {
-  padding: 20px;
-  font-family: sans-serif;
-}
+  #controles-superiores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 5px;
+    align-items: center;
+  }
 
-#controles-superiores {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 5px;
-  align-items: center;
-}
+  #controles-superiores select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    background-color: #fdfdfd;
+    min-width: 130px;
+  }
 
-#controles-superiores select {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  background-color: #fdfdfd;
-  min-width: 130px;
-}
+  #controles-superiores button {
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+  }
 
-#controles-superiores button {
-  padding: 8px 12px;
-  font-size: 14px;
-  border-radius: 6px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-}
+  #tablaHorarioContainer {
+    overflow-x: auto;
+  }
 
-#tablaHorarioContainer {
-  overflow-x: auto;
-}
-
-#tablaHorarioContainer table {
+  #tablaHorarioContainer table {
     width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 5px;
-  table-layout: fixed;
-}
+    border-collapse: collapse;
+    margin-bottom: 5px;
+    table-layout: fixed;
+  }
 
-#tablaHorarioContainer th,
-#tablaHorarioContainer td {
-  border: 1px solid #ccc;
-  text-align: center;
-  padding: 6px;
-  font-size: 14px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
+  #tablaHorarioContainer th,
+  #tablaHorarioContainer td {
+    border: 1px solid #ccc;
+    text-align: center;
+    padding: 6px;
+    font-size: 14px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 
-#tablaHorarioContainer th {
-  background-color: #f5f5f5;
-  font-weight: bold;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
+  #tablaHorarioContainer th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
 
-#tablaHorarioContainer td:first-child,
-#tablaHorarioContainer th:first-child {
-  background-color: #e9e9e9;
-  font-weight: bold;
-  width: 35px;
-}
+  #tablaHorarioContainer td:first-child,
+  #tablaHorarioContainer th:first-child {
+    background-color: #e9e9e9;
+    font-weight: bold;
+    width: 35px;
+  }
 
-#tablaHorarioContainer td {
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
+  #tablaHorarioContainer td {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
 
-#modoSeleccion {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 5px;
-}
+  #modoSeleccion {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 5px;
+  }
 
-#modoSeleccion button {
-  padding: 8px 12px;
-  font-size: 14px;
-  min-width: 50px;
-  width: auto;
-  flex: none;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-}
+  #modoSeleccion button {
+    padding: 8px 12px;
+    font-size: 14px;
+    min-width: 50px;
+    width: auto;
+    flex: none;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  }
 
-#modoSeleccion button:nth-child(1),
-#modoSeleccion button:nth-child(2) {
-  background-color: orange;
-}
+  #modoSeleccion button:nth-child(1),
+  #modoSeleccion button:nth-child(2) {
+    background-color: orange;
+  }
 
-#modoSeleccion button:nth-child(3) {
-  background-color: green;
-}
+  #modoSeleccion button:nth-child(3) {
+    background-color: green;
+  }
 
-#modoSeleccion button:nth-child(4) {
-  background-color: gray;
-}}
+  #modoSeleccion button:nth-child(4) {
+    background-color: gray;
+  }
 
-.modo-activo {
-  outline: 2px solid rgb(255, 0, 0);
-  outline-offset: 2px;
-}
-.resumen-empleado {
-  margin-top: 10px;
-  background: #f8f8f8;
-  border: 1px solid #ccc;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  line-height: 1.5;
-}
+  .modo-activo {
+    outline: 2px solid rgb(255, 0, 0);
+    outline-offset: 2px;
+  }
 
-.tabla-resumen-general {
-  width: 10%;
-  max-width: 10%;
-  border-collapse: separate;
-  border-spacing: 0;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 1px;
-  font-size: 13px;
-}
+  .resumen-empleado {
+    margin-top: 10px;
+    background: #f8f8f8;
+    border: 1px solid #ccc;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
 
-.tabla-resumen-general thead {
-  background-color: #f0f0f0;
-}
+  .tabla-resumen-general {
+    width: 10%;
+    max-width: 10%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 1px;
+    font-size: 13px;
+  }
 
-.tabla-resumen-general th,
-.tabla-resumen-general td {
-  padding: 4px;
-  text-align: center;
-  border-bottom: 1px solid #eee;
-}
+  .tabla-resumen-general thead {
+    background-color: #f0f0f0;
+  }
 
-.tabla-resumen-general th:first-child,
-.tabla-resumen-general td:first-child {
-  text-align: left;
-}
-.mini-turno-empleado {
-  margin-top: 20px;
-  overflow-x: auto;
-  border-radius: 6px;
-  background: transparent;
-  border: 1px solid #ccc;
-}
+  .tabla-resumen-general th,
+  .tabla-resumen-general td {
+    padding: 4px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+  }
 
-.mini-turno-empleado table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  font-size: 10px;
-  padding: 0px;
-}
+  .tabla-resumen-general th:first-child,
+  .tabla-resumen-general td:first-child {
+    text-align: left;
+  }
 
-.mini-turno-empleado th,
-.mini-turno-empleado td {
-  border: 1px solid #ccc;
-  text-align: center;
-  padding: 0px;
-  font-size: 13px;
-  white-space: nowrap;
-  text-overflow: clip;
-  overflow: hidden;
-}
-.mini-turno-empleado tr{
+  .mini-turno-empleado {
+    margin-top: 20px;
+    overflow-x: auto;
+    border-radius: 6px;
+    background: transparent;
+    border: 1px solid #ccc;
+  }
+
+  .mini-turno-empleado table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 10px;
+    padding: 0px;
+  }
+
+  .mini-turno-empleado th,
+  .mini-turno-empleado td {
+    border: 1px solid #ccc;
+    text-align: center;
+    padding: 0px;
+    font-size: 13px;
+    white-space: nowrap;
+    text-overflow: clip;
+    overflow: hidden;
+  }
+
+  .mini-turno-empleado tr {
     height: 0px;
-}
-.mini-turno-empleado tr:first-child,
-.mini-turno-empleado td:first-child {
-  border: 1px solid #ccc;
-  text-align: center;
-  background-color: whitesmoke;
-  padding: 6px;
-  font-size: 10px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-.mini-turno-empleado th {
-  background-color: transparent;
-  font-weight: bold;
-}
+  }
 
-.mini-turno-empleado td.trabajo {
-  background-color: orange;
-  color: white;
-  font-weight: bold;
-}
+  .mini-turno-empleado tr:first-child,
+  .mini-turno-empleado td:first-child {
+    border: 1px solid #ccc;
+    text-align: center;
+    background-color: whitesmoke;
+    padding: 6px;
+    font-size: 10px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 
-.mini-turno-empleado tr.dia-libre td {
-  background-color: #c8f7c5;
-  padding: 4px;
-}
-.mini-turno-empleado td:not(.trabajo):empty {
-  padding: 1px;
-  height: 0px;
-}
+  .mini-turno-empleado th {
+    background-color: transparent;
+    font-weight: bold;
+  }
 
-/* Títulos */
-#pagina-horarios h2 {
-  font-size: 24px;
-  margin-top: 40px;
-  margin-bottom: 15px;
-  color: #ffffff;
-  font-weight: 600;
-  border-left: 4px solid #007bff;
-  padding-left: 10px;
-  align-items: center;
-}
+  .mini-turno-empleado td.trabajo {
+    background-color: orange;
+    color: white;
+    font-weight: bold;
+  }
 
-#pagina-horarios h3 {
-  font-size: 18px;
-  margin-top: 30px;
-  margin-bottom: 10px;
+  .mini-turno-empleado tr.dia-libre td {
+    background-color: #c8f7c5;
+    padding: 4px;
+  }
+
+  .mini-turno-empleado td:not(.trabajo):empty {
+    padding: 1px;
+    height: 0px;
+  }
+
+  #pagina-horarios h2 {
+    font-size: 24px;
+    margin-top: 40px;
+    margin-bottom: 15px;
+    color: #ffffff;
+    font-weight: 600;
     border-left: 4px solid #007bff;
+    padding-left: 10px;
+    align-items: center;
+  }
 
-  color: #ffffff;
-  font-weight: 500;
-}
+  #pagina-horarios h3 {
+    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    border-left: 4px solid #007bff;
+    color: #ffffff;
+    font-weight: 500;
+  }
 
-/* Separador */
-#pagina-horarios hr {
-  margin: 30px 0;
-  border: none;
-  height: 1px;
-  background-color: #ccc;
-}
+  #pagina-horarios hr {
+    margin: 30px 0;
+    border: none;
+    height: 1px;
+    background-color: #ccc;
+  }
 
-/* Etiquetas */
-#pagina-horarios label {
-  font-size: 14px;
-  font-weight: bold;
-  margin-right: 10px;
-  display: inline-block;
-  margin-top: 10px;
-}
+  #pagina-horarios label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 10px;
+    display: inline-block;
+    margin-top: 10px;
+  }
 
-/* Select del resumen de empleados */
-#selectorEmpleado {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  background-color: #fff;
-  margin-bottom: 15px;
-  min-width: 150px;
-}
+  #selectorEmpleado {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    background-color: #fff;
+    margin-bottom: 15px;
+    min-width: 150px;
+  }
 
-#intercambioTurno {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 8px;
-  background: #f4f4f4;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 13px;
-  align-items: flex-end;
-}
+  #intercambioTurno {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px;
+    background: #f4f4f4;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 13px;
+    align-items: flex-end;
+  }
 
-#intercambioTurno .campo {
-  display: flex;
-  flex-direction: column;
-  width: 48%;
-}
+  #intercambioTurno .campo {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
 
-#intercambioTurno label {
-  font-weight: 600;
-  margin-bottom: 2px;
-  font-size: 12px;
-}
+  #intercambioTurno label {
+    font-weight: 600;
+    margin-bottom: 2px;
+    font-size: 12px;
+  }
 
-#intercambioTurno select {
-  padding: 4px 6px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  background: #fff;
-  font-size: 13px;
-}
+  #intercambioTurno select {
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background: #fff;
+    font-size: 13px;
+  }
 
-#intercambioTurno button {
-  padding: 6px 10px;
-  font-size: 13px;
-  border-radius: 4px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  margin-left: auto;
-  box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-}
+  #intercambioTurno button {
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 4px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 4px;
+  }
 
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
 
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.5);
-}
+  .modal-contenido {
+    background-color: white;
+    margin: 20% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    font-family: sans-serif;
+  }
 
-.modal-contenido {
-  background-color: white;
-  margin: 20% auto;
-  padding: 20px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
-  font-family: sans-serif;
-}
+  .modal-contenido h3 {
+    margin-top: 0;
+    color: black;
+  }
 
-.modal-contenido h3 {
-  margin-top: 0;
-  color: black;
-}
+  .modal-contenido input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
 
-.modal-contenido input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
+  .modal-contenido button {
+    margin-top: 10px;
+    padding: 10px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
 
-.modal-contenido button {
-  margin-top: 10px;
-  padding: 10px 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
+  .cerrar {
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+  }
 
-.cerrar {
-  float: right;
-  font-size: 24px;
-  font-weight: bold;
-  cursor: pointer;
-}
-.tabla-empleados {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 10px;
-  font-size: 14px;
-}
+  .tabla-empleados {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
 
-.tabla-empleados th,
-.tabla-empleados td {
-  border: 1px solid #ccc;
-  padding: 4px;
-  text-align: center;
-}
+  .tabla-empleados th,
+  .tabla-empleados td {
+    border: 1px solid #ccc;
+    padding: 4px;
+    text-align: center;
+  }
 
-.tabla-empleados input {
-  width: 90%;
-  padding: 2px;
-  font-size: 14px;
-}
-#tablaResumenPorDia {
-  margin-top: 30px;
-  overflow-x: auto;
-  width: 100%;
-}
+  .tabla-empleados input {
+    width: 90%;
+    padding: 2px;
+    font-size: 14px;
+  }
 
-#tablaResumenPorDia table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  min-width: 600px; /* Evita que colapse si hay pocos días */
-}
+  #tablaResumenPorDia {
+    margin-top: 30px;
+    overflow-x: auto;
+    width: 100%;
+  }
 
-#tablaResumenPorDia th,
-#tablaResumenPorDia td {
-  border: 1px solid #ccc;
-  padding: 6px 8px;
-  font-size: 13px;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  #tablaResumenPorDia table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    min-width: 600px;
+  }
 
-#tablaResumenPorDia th {
-  background-color: #f0f0f0;
-}
+  #tablaResumenPorDia th,
+  #tablaResumenPorDia td {
+    border: 1px solid #ccc;
+    padding: 6px 8px;
+    font-size: 13px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-#tablaResumenPorDia td:first-child {
-  font-weight: bold;
-  background-color: #fafafa;
-  text-align: left;
-}
-#diaAnterior,
-#diaSiguiente {
-  padding: 4px 8px;
-  margin-left: 4px;
-  font-size: 16px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  background-color: #eee;
-  cursor: pointer;
-}
-.columna-actual {
-  background-color: #e1fbe1 !important;
-}
-#colorWrapper.modo-activo {
-  outline: 2px solid red;
-  border-radius: 6px;
-}
-#colorPicker {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none; /* <- evita que reciba toques directamente */
+  #tablaResumenPorDia th {
+    background-color: #f0f0f0;
+  }
+
+  #tablaResumenPorDia td:first-child {
+    font-weight: bold;
+    background-color: #fafafa;
+    text-align: left;
+  }
+
+  #diaAnterior,
+  #diaSiguiente {
+    padding: 4px 8px;
+    margin-left: 4px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #eee;
+    cursor: pointer;
+  }
+
+  .columna-actual {
+    background-color: #e1fbe1 !important;
+  }
+
+  #colorWrapper.modo-activo {
+    outline: 2px solid red;
+    border-radius: 6px;
+  }
+
+  #colorPicker {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
 }
