@@ -282,17 +282,23 @@ fila.appendChild(tdNombre);
       td.dataset.celdaId = celdaID;
 
       db.ref(`${semanaActual}/${diaActual}/${celdaID}`).once("value", (snap) => {
-        const valor = snap.val();
-        if (valor === "1") {
-          td.style.backgroundColor = "orange";
-          td.textContent = "1";
-        } else if (valor === "0.5") {
-          td.style.backgroundColor = "orange";
-          td.textContent = "0.5";
-        } else if (valor === "verde") {
-          td.style.backgroundColor = "green";
-        }
-      });
+  const valor = snap.val();
+  console.log(`📥 [CARGA CELDA] ${celdaID} ->`, valor); // ✅ LOG ÚTIL
+
+  if (valor === "1") {
+    td.style.backgroundColor = "orange";
+    td.textContent = "1";
+  } else if (valor === "0.5") {
+    td.style.backgroundColor = "orange";
+    td.textContent = "0.5";
+  } else if (valor === "verde") {
+    td.style.backgroundColor = "green";
+  } else if (typeof valor === "string" && valor.startsWith("#")) {
+    td.style.backgroundColor = valor;
+    td.textContent = ""; // o algún ícono si quieres
+  }
+});
+
 
 // MÓVIL
 td.addEventListener("touchstart", (e) => {
