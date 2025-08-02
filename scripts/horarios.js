@@ -604,10 +604,12 @@ selectorSemana.addEventListener("change", renderizarResumenEmpleado);
 function renderizarResumenEmpleado() {
   const nombre = selectorEmpleado.value;
   if (!semanaActual || !nombre) return;
+
   if (nombre === "__general__") {
     renderizarResumenGeneral();
     return;
   }
+
   const fechaSemana = selectorSemana.selectedOptions[0]?.textContent;
   const [diaInicio, mesSeleccionado, anioSeleccionado] = fechaSemana.split("/");
 
@@ -688,18 +690,23 @@ function renderizarResumenEmpleado() {
         if (key.startsWith(nombre + "_")) {
           totalCeldas++;
           const valor = celdas[key];
+
           if (valor === "1") horasDia += 1;
           else if (valor === "0.5") horasDia += 0.5;
-          if (valor === "verde") verdes++;
+
+          if (typeof valor === "string" &&
+              (valor.toLowerCase().includes("green") || valor.startsWith("#0"))) {
+            verdes++;
+          }
         }
       }
 
-if (verdes === totalCeldas && totalCeldas > 0) {
-  diasLibres++;
-  if (!diasLibresListado.includes(dia)) {
-    diasLibresListado.push(dia);
-  }
-}
+      if (verdes === totalCeldas && totalCeldas > 0) {
+        diasLibres++;
+        if (!diasLibresListado.includes(dia)) {
+          diasLibresListado.push(dia);
+        }
+      }
 
       if (horasDia > 0) totalSemana += horasDia;
 
@@ -735,7 +742,7 @@ if (verdes === totalCeldas && totalCeldas > 0) {
       🧮 Total acumulado: ${totalGeneral}h<br>
       🌅 Mañanas este mes: ${mañanasMes} / 🌇 Tardes: ${tardesMes}<br>
       🤝 Trabaja con:<br>${resumenDiario.join("<br>")}<br>
-💤 Días libres (${diasLibres}): ${diasLibresListado.map(d => d[0].toUpperCase() + d.slice(1)).join(", ")}
+      💤 Días libres (${diasLibres}): ${diasLibresListado.map(d => d[0].toUpperCase() + d.slice(1)).join(", ")}
     `;
 
     let tablaMini = "<table><tr><th>Día</th>" + horas.map(h => `<th>${h}</th>`).join("") + "</tr>";
@@ -751,18 +758,16 @@ if (verdes === totalCeldas && totalCeldas > 0) {
         const celdaID = `${nombre}_${hora}`;
         const valor = celdas?.[celdaID];
         if (valor) total++;
-        if (valor === "verde") verdes++;
+        if (typeof valor === "string" &&
+            (valor.toLowerCase().includes("green") || valor.startsWith("#0"))) {
+          verdes++;
+        }
       }
 
       const esDiaLibre = total > 0 && verdes === total;
       const inicialesDias = {
-        lunes: "L",
-        martes: "M",
-        miércoles: "X",
-        jueves: "J",
-        viernes: "V",
-        sábado: "S",
-        domingo: "D"
+        lunes: "L", martes: "M", miércoles: "X", jueves: "J",
+        viernes: "V", sábado: "S", domingo: "D"
       };
 
       tablaMini += `<tr class="${esDiaLibre ? "dia-libre" : ""}"><td>${inicialesDias[dia]}</td>`;
@@ -782,6 +787,8 @@ if (verdes === totalCeldas && totalCeldas > 0) {
     document.getElementById("miniTurnoEmpleado").innerHTML = tablaMini;
   });
 }
+
+
 function renderizarResumenGeneral() {
   const fechaSemana = selectorSemana.selectedOptions[0]?.textContent;
   const [_, mesActual, anioActual] = fechaSemana.split("/");
