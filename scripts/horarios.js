@@ -371,20 +371,29 @@ function cargarSemanasExistentes() {
     const data = snap.val();
     const semanas = [];
 
+    console.log("📦 Datos brutos desde Firebase:", data);
+
     for (let key in data) {
       if (key.startsWith("horario_semana_")) {
         const fecha = data[key]._fecha;
-        if (!fecha) continue;
+        if (!fecha) {
+          console.warn(`⚠️ Semana ${key} ignorada: no tiene fecha.`);
+          continue;
+        }
         semanas.push({ key, fecha });
       }
     }
 
-    // Ordenar por fecha cronológica (ascendente)
+    console.log("📅 Semanas detectadas:", semanas.map(s => `${s.key} -> ${s.fecha}`));
+
+    // Ordenar cronológicamente
     semanas.sort((a, b) => {
       const [d1, m1, y1] = a.fecha.split("/").map(Number);
       const [d2, m2, y2] = b.fecha.split("/").map(Number);
       return new Date(y1, m1 - 1, d1) - new Date(y2, m2 - 1, d2);
     });
+
+    console.log("📊 Semanas ordenadas:", semanas.map(s => `${s.fecha}`));
 
     selectorSemana.innerHTML = "";
     for (let { key, fecha } of semanas) {
@@ -394,21 +403,41 @@ function cargarSemanasExistentes() {
       selectorSemana.appendChild(opt);
     }
 
-    // Recuperar selección previa
+    // Fecha actual formateada
+    const hoy = new Date();
+    const fechaHoy = hoy.toLocaleDateString("es-ES"); // "dd/mm/yyyy"
+    console.log("📍 Fecha actual:", fechaHoy);
+
+    // Buscar semana correspondiente a hoy
+    const semanaHoy = semanas.find(s => s.fecha === fechaHoy);
+    console.log("🔎 Semana con fecha actual encontrada:", semanaHoy?.key || "❌ No encontrada");
+
     const ultimaSeleccion = localStorage.getItem("semanaSeleccionada");
+    console.log("💾 Última semana seleccionada en localStorage:", ultimaSeleccion);
 
     if (ultimaSeleccion && [...selectorSemana.options].some(opt => opt.value === ultimaSeleccion)) {
       selectorSemana.value = ultimaSeleccion;
+      console.log("✅ Usando semana de localStorage:", ultimaSeleccion);
+    } else if (semanaHoy) {
+      selectorSemana.value = semanaHoy.key;
+      console.log("✅ Usando semana actual:", semanaHoy.key);
     } else if (semanas.length > 0) {
-      // Seleccionar la más reciente si no hay guardada
       selectorSemana.value = semanas[semanas.length - 1].key;
+      console.log("✅ Usando última semana por defecto:", semanas.at(-1).key);
+    } else {
+      console.warn("❌ No hay semanas válidas en la base de datos.");
+      return;
     }
 
     semanaActual = selectorSemana.value;
+    console.log("🧩 Semana actual definida como:", semanaActual);
+
     renderizarTabla();
     renderizarResumenEmpleado();
   });
 }
+
+
 function eliminarSemanaActual() {
   if (!semanaActual) return;
 
