@@ -131,26 +131,28 @@ function aplicarModo(td, celdaID) {
   let valor = "";
   let color = "transparent";
 
-  switch (modoSeleccion) {
-    case "uno":
-      valor = "1";
-      color = "orange";
-      break;
-    case "ceroCinco":
-      valor = "0.5";
-      color = "orange";
-      break;
-    case "personalizado":
-      valor = "personalizado";
-      color = colorPersonalizado || "#00cc66";
-      break;
-    case "borrar":
-      valor = "";
-      color = "transparent";
-      break;
-  }
+switch (modoSeleccion) {
+  case "uno":
+    valor = "1";
+    color = "orange";
+    break;
+  case "ceroCinco":
+    valor = "0.5";
+    color = "orange";
+    break;
+  case "personalizado":
+    color = colorPersonalizado || "#00cc66";
+    valor = color; // guarda el color directamente
+    break;
+  case "borrar":
+    valor = "";
+    color = "transparent";
+    break;
+}
+
 
   console.log("🎯 [aplicarModo] Valor:", valor, "Color:", color);
+console.log(`📤 Guardando en Firebase -> ruta: ${semanaActual}/${diaActual}/${celdaID} | valor:`, valor);
 
   td.textContent = ["1", "0.5"].includes(valor) ? valor : "";
   td.style.backgroundColor = color;
@@ -251,7 +253,7 @@ tdNombre.addEventListener("click", () => {
       break;
     case "personalizado":
       color = colorPersonalizado || "#00cc66";
-      valor = "personalizado";
+      valor = color; // ✅ GUARDAMOS el color real
       break;
     default:
       return; // solo afecta a modos visuales, no texto
@@ -262,11 +264,12 @@ tdNombre.addEventListener("click", () => {
     const celda = tabla.querySelector(`[data-celda-id='${celdaID}']`);
     if (celda) {
       celda.style.backgroundColor = color;
-      celda.textContent = ""; // vaciamos texto solo si no es "1" o "0.5"
+      celda.textContent = ""; // vaciamos texto si no es 1 o 0.5
       db.ref(`${semanaActual}/${diaActual}/${celdaID}`).set(valor);
     }
   }
 });
+
 
 
 fila.appendChild(tdNombre);
@@ -1149,29 +1152,66 @@ for (let empleado of empleados) {
     if (dia === diaSeleccionado) td.classList.add("columna-actual");
     const bloques = [];
 
-    for (let i = 0; i < horas.length; i++) {
-      const celdaID = `${empleado}_${horas[i]}`;
-      const valor = datosSemana?.[dia]?.[celdaID];
-      if (valor === "1" || valor === "0.5") {
-        bloques.push({ hora: horas[i], peso: parseFloat(valor) });
-      }
-    }
+let tieneBloques = false;
+let todasVerdes = true;
+let colorPersonal = null;
 
-    if (bloques.length === 0) {
-      const verdes = horas.every(h => datosSemana?.[dia]?.[`${empleado}_${h}`] === "verde");
-      td.textContent = verdes ? "Libre" : "";
-    } else {
-      const inicio = bloques[0].hora.split("-")[0];
-      let finRaw = bloques.at(-1).hora.split("-")[1];
-      if (bloques.at(-1).peso === 0.5) {
-        const finNum = parseInt(finRaw);
-        finRaw = `${finNum - 1}:30`;
-      }
+for (let hora of horas) {
+  const celdaID = `${empleado}_${hora}`;
+  const valor = datosSemana?.[dia]?.[celdaID];
 
-      const formatear = (h) => h.includes(":") ? h : h + ":00";
-      const texto = `${inicio === "7" ? "7:30" : formatear(inicio)}–${formatear(finRaw)}`;
-      td.textContent = texto.replace(":00", "").replace(":00", "");
-    }
+  console.log(`📥 Leyendo celda: ${celdaID} ->`, valor);
+
+  if (valor === "1" || valor === "0.5") {
+    bloques.push({ hora, peso: parseFloat(valor) });
+    tieneBloques = true;
+    todasVerdes = false;
+    console.log(`📦 Añadido bloque:`, bloques.at(-1));
+  } else if (valor?.startsWith("#")) {
+    console.log(`🎨 Color personalizado detectado en ${celdaID}: ${valor}`);
+    colorPersonal = valor;
+    todasVerdes = false;
+  } else if (valor !== "verde") {
+    todasVerdes = false;
+    console.log(`🟡 Valor desconocido o vacío en ${celdaID}:`, valor);
+  }
+}
+
+// 🧠 Decisiones visuales basadas en los valores detectados
+if (tieneBloques) {
+  const inicio = bloques[0].hora.split("-")[0];
+  let finRaw = bloques.at(-1).hora.split("-")[1];
+  if (bloques.at(-1).peso === 0.5) {
+    const finNum = parseInt(finRaw);
+    finRaw = `${finNum - 1}:30`;
+  }
+
+  const formatear = (h) => h.includes(":") ? h : h + ":00";
+  const texto = `${inicio === "7" ? "7:30" : formatear(inicio)}–${formatear(finRaw)}`;
+  td.textContent = texto.replace(":00", "").replace(":00", "");
+  td.style.backgroundColor = "orange";
+
+  console.log(`🧾 Aplicado turno compacto: ${texto} | color: orange`);
+} else if (todasVerdes) {
+  td.textContent = "Libre";
+  td.style.backgroundColor = "green";
+
+  console.log(`🌿 Aplicado estado Libre (verde) a ${empleado}`);
+}
+
+// 🎯 Bloque separado: color personalizado
+if (colorPersonal && !tieneBloques) {
+  td.textContent = "";
+  td.style.backgroundColor = colorPersonal;
+
+  console.log(`✅ Aplicado color personalizado puro: ${colorPersonal} a ${empleado}`);
+}
+
+
+
+
+
+
 
     if (window.esJefa) {
       td.contentEditable = true;
@@ -1286,14 +1326,6 @@ window.mostrarNotificacion = function(titulo, cuerpo = "") {
   } catch (e) {
     console.error("❌ Error al lanzar notificación:", e);
   }
-};
-window.reproducirSonido = function() {
-  const audio = new Audio("recursos/sonido.mp3");
-  audio.play().then(() => {
-    console.log("🔊 Sonido reproducido");
-  }).catch((e) => {
-    console.warn("🔇 No se pudo reproducir sonido:", e);
-  });
 };
 window.guardarCambiosPendientes = async function () {
   const entradas = Object.entries(window.cambiosPendientes);
