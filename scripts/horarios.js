@@ -1,9 +1,6 @@
-
 const usuarios = window.usuarios || {};
 window.usuarios = {};
 window.empleados = [];
-
-
 db.ref("empleados").once("value", (snap) => {
   const data = snap.val();
   if (!data) return;
@@ -33,7 +30,6 @@ empleados = entradas.map(([, nombre]) => nombre);
   renderizarTabla?.();
   cargarIntercambioTurno?.();
 });
-
 const horas = [
   "6-7", "7-8", "8-9", "9-10", "10-11", "11-12", "12-13", "13-14",
   "14-15", "15-16", "16-17", "17-18", "18-19", "19-20", "20-21", "21-22"
@@ -44,21 +40,18 @@ let diaActual = "lunes";
 let celdasTocadas = new Set();
 let tocando = false;
 let empleadoPintando = null;
-
+let colorPersonalizado = "#00cc66";
 const tablaContainer = document.getElementById("tablaHorarioContainer");
 const selectorSemana = document.getElementById("selectorSemana");
 const selectorDia = document.getElementById("selectorDia");
-
 // Establecer día actual al cargar
 const diasSemana = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const hoy = new Date();
 const diaActualNombre = diasSemana[hoy.getDay()];
 selectorDia.value = diaActualNombre;
 diaActual = diaActualNombre; // actualiza también la variable global
-
 window.cambiosPendientes = {};
 window.timeoutAutoGuardar = null;
-
 window.guardarCambiosPendientes = async function () {
   const entradas = Object.entries(window.cambiosPendientes);
   if (entradas.length === 0) {
@@ -80,7 +73,6 @@ window.guardarCambiosPendientes = async function () {
   document.querySelectorAll("td[style*='#fff3cd']")
     .forEach(td => td.style.backgroundColor = "");
 };
-
 window.marcarCambioPendiente = function (dia, empleado, updates) {
   const clave = `${dia}_${empleado}`;
   if (!window.cambiosPendientes[clave]) {
@@ -94,24 +86,88 @@ window.marcarCambioPendiente = function (dia, empleado, updates) {
     window.guardarCambiosPendientes();
   }, 60000);
 };
-
 selectorDia.addEventListener("change", () => {
   diaActual = selectorDia.value;
   renderizarTabla();
 });
 
+//GESTION DE LA SELECCION DE PINTADO DEL CALENDARIO
 function setModo(modo) {
+  console.log("📍 [setModo] Modo recibido:", modo);
+
   modoSeleccion = modo;
 
-  // Quitar la clase activa de todos los botones
   const botones = document.querySelectorAll("#modoSeleccion button");
-  botones.forEach(btn => btn.classList.remove("modo-activo"));
+  const colorWrapper = document.getElementById("colorWrapper");
 
-  // Añadirla solo al botón activo
-  const botonActivo = [...botones].find(btn => btn.textContent.includes(modo === "uno" ? "1" :modo === "ceroCinco" ? "0.5" :modo === "verde" ? "🟩" :"🗑️"));
-  if (botonActivo) botonActivo.classList.add("modo-activo");
+  botones.forEach(btn => btn.classList.remove("modo-activo"));
+  if (colorWrapper) colorWrapper.classList.remove("modo-activo");
+
+  if (modo === "personalizado") {
+    colorPersonalizado = document.getElementById("colorPicker")?.value || "#00cc66";
+    if (colorWrapper) colorWrapper.classList.add("modo-activo");
+    console.log("🎨 [setModo] Color personalizado activo:", colorPersonalizado);
+  } else {
+    const botonActivo = [...botones].find(btn =>
+      btn.textContent.includes(
+        modo === "uno" ? "1" :
+        modo === "ceroCinco" ? "0.5" :
+        modo === "borrar" ? "🗑️" : ""
+      )
+    );
+    if (botonActivo) botonActivo.classList.add("modo-activo");
+  }
+
+  console.log("✅ [setModo] modoSeleccion final:", modoSeleccion);
+}
+function aplicarModo(td, celdaID) {
+  console.log("🧩 [aplicarModo] celdaID:", celdaID, "| modoSeleccion:", modoSeleccion);
+
+  if (!semanaActual || !diaActual || !modoSeleccion || celdasTocadas.has(celdaID)) {
+    console.warn("❌ [aplicarModo] Condición no válida, abortando.");
+    return;
+  }
+
+  let valor = "";
+  let color = "transparent";
+
+  switch (modoSeleccion) {
+    case "uno":
+      valor = "1";
+      color = "orange";
+      break;
+    case "ceroCinco":
+      valor = "0.5";
+      color = "orange";
+      break;
+    case "personalizado":
+      valor = "personalizado";
+      color = colorPersonalizado || "#00cc66";
+      break;
+    case "borrar":
+      valor = "";
+      color = "transparent";
+      break;
+  }
+
+  console.log("🎯 [aplicarModo] Valor:", valor, "Color:", color);
+
+  td.textContent = ["1", "0.5"].includes(valor) ? valor : "";
+  td.style.backgroundColor = color;
+  db.ref(`${semanaActual}/${diaActual}/${celdaID}`).set(valor);
+  celdasTocadas.add(celdaID);
 }
 
+  function aplicarModoFilaCompleta(fila, empleado) {
+  const celdas = fila.querySelectorAll("td:not(:first-child)");
+
+  celdas.forEach((td, index) => {
+    const celdaID = `${empleado}_${index}`;
+    if (!celdasTocadas.has(celdaID)) {
+      aplicarModo(td, celdaID);
+    }
+  });
+}
 
 function crearNuevaSemana() {
   let fecha = prompt("Introduce la fecha de inicio de semana (dd/mm/aaaa):");
@@ -142,10 +198,6 @@ function crearNuevaSemana() {
   renderizarTabla();
   renderizarResumenEmpleado();
 }
-
-
-
-
 function inicializarSemana(nombreSemana) {
   const dias = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
   for (let dia of dias) {
@@ -157,12 +209,10 @@ function inicializarSemana(nombreSemana) {
     }
   }
 }
-
 selectorSemana.addEventListener("change", () => {
   semanaActual = selectorSemana.value;
   renderizarTabla();
 });
-
 function renderizarTabla() {
   if (!semanaActual) return;
   tablaContainer.innerHTML = "";
@@ -291,39 +341,6 @@ document.addEventListener("mouseup", () => {
 }
 
 
-function aplicarModo(td, celdaID) {
-  if (!semanaActual || !diaActual || !modoSeleccion || celdasTocadas.has(celdaID)) return;
-
-  let valor = "";
-  let color = "transparent";
-
-  switch (modoSeleccion) {
-    case "uno":
-      valor = "1";
-      color = "orange";
-      break;
-    case "ceroCinco":
-      valor = "0.5";
-      color = "orange";
-      break;
-    case "verde":
-      valor = "verde";
-      color = "green";
-      break;
-    case "borrar":
-      valor = "";
-      color = "transparent";
-      break;
-  }
-
-  td.textContent = ["1", "0.5"].includes(valor) ? valor : "";
-  td.style.backgroundColor = color;
-  db.ref(`${semanaActual}/${diaActual}/${celdaID}`).set(valor);
-
-  celdasTocadas.add(celdaID);
-}
-
-
 // Inicializar si hay semanas previas
 function cargarSemanasExistentes() {
   db.ref().once("value", (snap) => {
@@ -368,7 +385,6 @@ function cargarSemanasExistentes() {
     renderizarResumenEmpleado();
   });
 }
-
 function eliminarSemanaActual() {
   if (!semanaActual) return;
 
@@ -390,8 +406,6 @@ db.ref().once("value", (snapTodas) => {
     alert("Semana eliminada correctamente.");
   });
 }
-
-
 window.addEventListener("DOMContentLoaded", () => {
   const rol = localStorage.getItem("rol");
   const nombre = localStorage.getItem("nombre");
@@ -410,7 +424,6 @@ window.addEventListener("DOMContentLoaded", () => {
   cargarSemanasExistentes();
   cargarSelectorEmpleado();
 
-  // Botones de navegación de día
   const btnAnterior = document.getElementById("diaAnterior");
   const btnSiguiente = document.getElementById("diaSiguiente");
 
@@ -421,16 +434,44 @@ window.addEventListener("DOMContentLoaded", () => {
     console.warn("⚠️ Botones de navegación de día no encontrados en el DOM.");
   }
 
+  // 🎨 Selector de color personalizado
+  const colorWrapper = document.getElementById("colorWrapper");
+  const colorInput = document.getElementById("colorPicker");
 
+  if (colorWrapper && colorInput) {
+    // Visual del color actual
+    colorWrapper.style.backgroundColor = colorInput.value;
 
+    // Clic en el wrapper: activa modo
+colorWrapper.addEventListener("click", () => {
+  console.log("🖌️ [click] en colorWrapper");
+  setModo("personalizado");
+  colorInput.click();
 });
+
+
+    // Cambia el color visual al elegir otro
+colorInput.addEventListener("change", () => {
+  colorPersonalizado = colorInput.value;
+  colorWrapper.style.backgroundColor = colorPersonalizado;
+
+  console.log("🎨 [colorPicker.change] Nuevo color:", colorPersonalizado);
+
+  setModo("personalizado");
+});
+
+  } else {
+    console.warn("⚠️ Selector de color no encontrado en el DOM.");
+  }
+});
+
+
 
 
 
 
 const selectorEmpleado = document.getElementById("selectorEmpleado");
 const resumenEmpleado = document.getElementById("resumenEmpleado");
-
 function cargarSelectorEmpleado() {
   const nombreUsuario = localStorage.getItem("nombre");
 
@@ -456,19 +497,15 @@ function cargarSelectorEmpleado() {
 
   renderizarResumenEmpleado();
 }
-
 selectorEmpleado.addEventListener("change", renderizarResumenEmpleado);
 selectorSemana.addEventListener("change", renderizarResumenEmpleado);
-
 function renderizarResumenEmpleado() {
   const nombre = selectorEmpleado.value;
   if (!semanaActual || !nombre) return;
-
   if (nombre === "__general__") {
     renderizarResumenGeneral();
     return;
   }
-
   const fechaSemana = selectorSemana.selectedOptions[0]?.textContent;
   const [diaInicio, mesSeleccionado, anioSeleccionado] = fechaSemana.split("/");
 
@@ -643,9 +680,6 @@ if (verdes === totalCeldas && totalCeldas > 0) {
     document.getElementById("miniTurnoEmpleado").innerHTML = tablaMini;
   });
 }
-
-
-
 function renderizarResumenGeneral() {
   const fechaSemana = selectorSemana.selectedOptions[0]?.textContent;
   const [_, mesActual, anioActual] = fechaSemana.split("/");
@@ -761,7 +795,6 @@ document.getElementById("miniTurnoEmpleado").innerHTML = "";
 
   });
 }
-
 function cargarIntercambioTurno() {
   const semanaSel = document.getElementById("semanaIntercambio");
   const origenSel = document.getElementById("empleadoOrigen");
@@ -794,7 +827,6 @@ function cargarIntercambioTurno() {
     });
   }
 }
-
 function intercambiarTurno() {
   const semana = document.getElementById("semanaIntercambio").value;
   const dia = document.getElementById("diaIntercambio").value;
@@ -824,9 +856,6 @@ function intercambiarTurno() {
     });
   });
 }
-
-
-
 function intercambiarTurno() {
   const semana = document.getElementById("semanaIntercambio").value;
   const dia = document.getElementById("diaIntercambio").value;
@@ -861,7 +890,6 @@ function intercambiarTurno() {
     });
   });
 }
-
 function agregarNuevoEmpleado(nombre) {
   if (!nombre || typeof nombre !== 'string') return;
 
@@ -885,13 +913,11 @@ function agregarNuevoEmpleado(nombre) {
 
   renderizarTabla?.();
 }
-
 function generarCodigoLibre() {
   let nuevoCodigo = 1000;
   while (usuarios[nuevoCodigo]) nuevoCodigo++;
   return nuevoCodigo;
 }
-
 function agregarDesdeInput() {
   const nombre = document.getElementById("nuevoNombre").value.trim();
   const codigo = document.getElementById("nuevoCodigo").value.trim();
@@ -917,7 +943,6 @@ function agregarDesdeInput() {
     alert("Error al guardar en Firebase: " + err.message);
   });
 }
-
 function abrirModalEmpleado() {
   const modal = document.getElementById("modalEmpleado");
   const tabla = document.getElementById("tablaEmpleados");
@@ -958,9 +983,6 @@ function abrirModalEmpleado() {
 
   modal.style.display = "block";
 }
-
-
-
 function guardarCambiosTabla() {
   const filas = document.querySelectorAll("#tablaEmpleados tbody tr");
   const nuevosDatos = {};
@@ -993,25 +1015,19 @@ function guardarCambiosTabla() {
     alert("Error al guardar: " + err.message);
   });
 }
-
 function cerrarModalEmpleado() {
   document.getElementById("modalEmpleado").style.display = "none";
 }
-
 window.addEventListener("click", function (e) {
   const modal = document.getElementById("modalEmpleado");
   if (e.target === modal) cerrarModalEmpleado();
 });
-
-
 // 👇 Asegura que los botones con onclick funcionen
 window.abrirModalEmpleado = abrirModalEmpleado;
 window.agregarDesdeInput = agregarDesdeInput;
 window.guardarCambiosTabla = guardarCambiosTabla;
 window.cerrarModalEmpleado = cerrarModalEmpleado;
-
 const td = document.createElement("td");
-
 if (bloques.length === 0) {
   const verdes = horas.every(h => datosSemana?.[dia]?.[`${empleado}_${h}`] === "verde");
   td.textContent = verdes ? "Libre" : "";
@@ -1026,7 +1042,6 @@ if (bloques.length === 0) {
   const texto = `${inicio === "7" ? "7:30" : inicio.padStart(2, "0")}:00–${finRaw}:00`;
   td.textContent = texto.replace("--", "-");
 }
-
 // 👇 Hacer celdas editables solo para jefa o Charly
 if (window.esJefa) {
   td.contentEditable = true;
@@ -1082,7 +1097,6 @@ td.style.backgroundColor = "#fff3cd";
 
   });
 }
-
 function generarTablaResumenHorariosPorDia(datosSemana) {
   if (!datosSemana) {
     console.warn("⚠️ No hay datos para la semana actual");
@@ -1110,103 +1124,113 @@ filaCabecera.innerHTML = "<th>Empleado</th>" + dias.map(d => {
   thead.appendChild(filaCabecera);
   tabla.appendChild(thead);
 
-  for (let empleado of empleados) {
-    const fila = document.createElement("tr");
-    const tdNombre = document.createElement("td");
-    tdNombre.textContent = empleado;
-    fila.appendChild(tdNombre);
+for (let empleado of empleados) {
+  const fila = document.createElement("tr");
 
-    for (let dia of dias) {
-const td = document.createElement("td");
-if (dia === diaSeleccionado) td.classList.add("columna-actual");      const bloques = [];
+  const tdNombre = document.createElement("td");
+  tdNombre.textContent = empleado;
 
-      for (let i = 0; i < horas.length; i++) {
-        const celdaID = `${empleado}_${horas[i]}`;
-        const valor = datosSemana?.[dia]?.[celdaID];
-        if (valor === "1" || valor === "0.5") {
-          bloques.push({ hora: horas[i], peso: parseFloat(valor) });
-        }
+  // ✅ Hacer clic en el nombre aplica el modo a toda la fila
+  tdNombre.onclick = () => {
+    const celdas = fila.querySelectorAll("td:not(:first-child)");
+    celdas.forEach((td, i) => {
+      const celdaID = `${empleado}_${dias[i]}`;
+      aplicarModo(td, celdaID);
+    });
+  };
+
+  fila.appendChild(tdNombre);
+
+  for (let dia of dias) {
+    const td = document.createElement("td");
+    if (dia === diaSeleccionado) td.classList.add("columna-actual");
+    const bloques = [];
+
+    for (let i = 0; i < horas.length; i++) {
+      const celdaID = `${empleado}_${horas[i]}`;
+      const valor = datosSemana?.[dia]?.[celdaID];
+      if (valor === "1" || valor === "0.5") {
+        bloques.push({ hora: horas[i], peso: parseFloat(valor) });
       }
-
-      if (bloques.length === 0) {
-        const verdes = horas.every(h => datosSemana?.[dia]?.[`${empleado}_${h}`] === "verde");
-        td.textContent = verdes ? "Libre" : "";
-      } else {
-        const inicio = bloques[0].hora.split("-")[0];
-        let finRaw = bloques.at(-1).hora.split("-")[1];
-        if (bloques.at(-1).peso === 0.5) {
-          const finNum = parseInt(finRaw);
-          finRaw = `${finNum - 1}:30`;
-        }
-
-        const formatear = (h) => h.includes(":") ? h : h + ":00";
-        const texto = `${inicio === "7" ? "7:30" : formatear(inicio)}–${formatear(finRaw)}`;
-        td.textContent = texto.replace(":00", "").replace(":00", "");
-      }
-
-      if (window.esJefa) {
-        td.contentEditable = true;
-        td.style.backgroundColor = "#ffffe0";
-        td.dataset.dia = dia;
-        td.dataset.empleado = empleado;
-
-        td.addEventListener("blur", async () => {
-          const texto = td.textContent.trim().toLowerCase();
-          const dia = td.dataset.dia;
-          const empleado = td.dataset.empleado;
-          const ruta = `${semanaActual}/${dia}`;
-          const updates = {};
-
-          if (texto === "" || texto === "libre") {
-            for (let hora of horas) {
-              updates[`${empleado}_${hora}`] = "verde";
-            }
-          } else {
-const match = texto.match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
-            if (!match) {
-              alert("Formato inválido. Usa por ejemplo: 7:30–14:00");
-              return;
-            }
-
-            let [_, hInicio, mInicio, hFin, mFin] = match;
-            hInicio = parseInt(hInicio);
-            hFin = parseInt(hFin);
-            mInicio = parseInt(mInicio || "0");
-            mFin = parseInt(mFin || "0");
-
-            const tInicio = hInicio + (mInicio === 30 ? 0.5 : 0);
-            const tFin = hFin + (mFin === 30 ? 0.5 : 0);
-
-            for (let hora of horas) {
-              const [h1, h2] = hora.split("-").map(Number);
-              const bloque = h1 + 0.5;
-              const celdaID = `${empleado}_${hora}`;
-
-              if (bloque > tInicio && bloque <= tFin) {
-                updates[celdaID] = "1";
-              } else if (bloque === tInicio) {
-                updates[celdaID] = "0.5";
-              } else {
-                updates[celdaID] = "";
-              }
-            }
-          }
-
-if (!window.cambiosPendientes[`${dia}_${empleado}`]) {
-  window.cambiosPendientes[`${dia}_${empleado}`] = {};
-}
-window.marcarCambioPendiente(dia, empleado, updates);
-td.style.backgroundColor = "#fff3cd";
-
-
-        });
-      }
-
-      fila.appendChild(td);
     }
 
-    tabla.appendChild(fila);
+    if (bloques.length === 0) {
+      const verdes = horas.every(h => datosSemana?.[dia]?.[`${empleado}_${h}`] === "verde");
+      td.textContent = verdes ? "Libre" : "";
+    } else {
+      const inicio = bloques[0].hora.split("-")[0];
+      let finRaw = bloques.at(-1).hora.split("-")[1];
+      if (bloques.at(-1).peso === 0.5) {
+        const finNum = parseInt(finRaw);
+        finRaw = `${finNum - 1}:30`;
+      }
+
+      const formatear = (h) => h.includes(":") ? h : h + ":00";
+      const texto = `${inicio === "7" ? "7:30" : formatear(inicio)}–${formatear(finRaw)}`;
+      td.textContent = texto.replace(":00", "").replace(":00", "");
+    }
+
+    if (window.esJefa) {
+      td.contentEditable = true;
+      td.style.backgroundColor = "#ffffe0";
+      td.dataset.dia = dia;
+      td.dataset.empleado = empleado;
+
+      td.addEventListener("blur", async () => {
+        const texto = td.textContent.trim().toLowerCase();
+        const dia = td.dataset.dia;
+        const empleado = td.dataset.empleado;
+        const ruta = `${semanaActual}/${dia}`;
+        const updates = {};
+
+        if (texto === "" || texto === "libre") {
+          for (let hora of horas) {
+            updates[`${empleado}_${hora}`] = "verde";
+          }
+        } else {
+          const match = texto.match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
+          if (!match) {
+            alert("Formato inválido. Usa por ejemplo: 7:30–14:00");
+            return;
+          }
+
+          let [_, hInicio, mInicio, hFin, mFin] = match;
+          hInicio = parseInt(hInicio);
+          hFin = parseInt(hFin);
+          mInicio = parseInt(mInicio || "0");
+          mFin = parseInt(mFin || "0");
+
+          const tInicio = hInicio + (mInicio === 30 ? 0.5 : 0);
+          const tFin = hFin + (mFin === 30 ? 0.5 : 0);
+
+          for (let hora of horas) {
+            const [h1, h2] = hora.split("-").map(Number);
+            const bloque = h1 + 0.5;
+            const celdaID = `${empleado}_${hora}`;
+
+            if (bloque > tInicio && bloque <= tFin) {
+              updates[celdaID] = "1";
+            } else if (bloque === tInicio) {
+              updates[celdaID] = "0.5";
+            } else {
+              updates[celdaID] = "";
+            }
+          }
+        }
+
+        if (!window.cambiosPendientes[`${dia}_${empleado}`]) {
+          window.cambiosPendientes[`${dia}_${empleado}`] = {};
+        }
+        window.marcarCambioPendiente(dia, empleado, updates);
+        td.style.backgroundColor = "#fff3cd";
+      });
+    }
+
+    fila.appendChild(td);
   }
+
+  tabla.appendChild(fila);
+}
 
   contenedor.appendChild(tabla);
 
@@ -1224,7 +1248,6 @@ document.getElementById("diaAnterior").addEventListener("click", () => {
 document.getElementById("diaSiguiente").addEventListener("click", () => {
   cambiarDia(1);
 });
-
 function cambiarDia(direccion) {
   const dias = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
   const actual = selectorDia.value;
@@ -1241,7 +1264,6 @@ function cambiarDia(direccion) {
 
   console.log("➡️ Día cambiado a:", diaActual);
 }
-
 window.mostrarNotificacion = function(titulo, cuerpo = "") {
   if (Notification.permission !== "granted") {
     console.warn("🚫 Notificación no lanzada: sin permisos");
@@ -1262,7 +1284,6 @@ window.mostrarNotificacion = function(titulo, cuerpo = "") {
     console.error("❌ Error al lanzar notificación:", e);
   }
 };
-
 window.reproducirSonido = function() {
   const audio = new Audio("recursos/sonido.mp3");
   audio.play().then(() => {

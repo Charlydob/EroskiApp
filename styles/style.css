@@ -154,7 +154,7 @@ nav.sidebar {
     }
 
     /* ESCRITORIO: CAMBIAMOS A MENU LATERAL */
-    @media (min-width: 768px) {
+    @media (min-width: 1768px) {
     .container {
         flex-direction: row;
     }

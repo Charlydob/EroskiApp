@@ -155,12 +155,36 @@
   </div>
 
   <!-- Solo visible para jefa -->
-  <div id="modoSeleccion">
-    <button onclick="setModo('uno')" style="background-color: orange;">1</button>
-    <button onclick="setModo('ceroCinco')" style="background-color: orange;">0.5</button>
-    <button onclick="setModo('verde')" style="background-color: green;">🟩</button>
-    <button onclick="setModo('borrar')" style="background-color: grey;">🗑️</button>
-  </div>
+<div id="modoSeleccion">
+  <button onclick="setModo('uno')">1</button>
+  <button onclick="setModo('ceroCinco')">0.5</button>
+<div id="colorWrapper" style="
+  width: 36px;
+  height: 36px;
+  border: 2px solid gray;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #00cc66;
+">
+</div>
+
+<input type="color" id="colorPicker" value="#00cc66" style="
+  opacity: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+">
+
+
+
+
+
+
+
+  <button onclick="setModo('borrar')">🗑️</button>
+</div>
+
 <div class="zona-edicion">
     <h3>🔁 Intercambiar turno</h3>
     <div id="intercambioTurno">
