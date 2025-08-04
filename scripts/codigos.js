@@ -331,17 +331,19 @@ window.guardarEdicion = function (id) {
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quita tildes
     .replace(/\s+/g, "_"); // espacios por guiones bajos
 
-const rutaLocal = `recursos/img/codigos/${categoria.toLowerCase()}/${nombreArchivo.toLowerCase()}.png`;
+const datasetUrl = document.getElementById("preview-imagen-producto").dataset.url;
+const imgUrl = datasetUrl || `recursos/img/codigos/${categoria}/${nombreArchivo}.png`;
 
-  const nuevoProd = {
-    nombre,
-    balanza: document.getElementById("edit-balanza").value.trim(),
-    merma: document.getElementById("edit-merma").value.trim(),
-    ref: document.getElementById("edit-ref").value.trim(),
-    categoria,
-    oculto: window.productos[id]?.oculto || false,
-    img: rutaLocal
-  };
+const nuevoProd = {
+  nombre,
+  balanza: document.getElementById("edit-balanza").value.trim(),
+  merma: document.getElementById("edit-merma").value.trim(),
+  ref: document.getElementById("edit-ref").value.trim(),
+  categoria,
+  oculto: window.productos[id]?.oculto || false,
+  img: imgUrl
+};
+
 
   console.log("🧾 Producto final a guardar:", nuevoProd);
 

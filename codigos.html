@@ -126,10 +126,11 @@
 
       <!-- 📸 Campo para imagen -->
       <div class="campo">
-        <label for="input-img-nuevo">📸 Imagen del producto</label>
-        <input id="input-img-nuevo" type="file" accept="image/*" capture="environment" onchange="subirImagen(event, 'nuevo')">
-        <img id="img-nuevo" style="max-width: 100%; margin-top: 10px;">
+        <label for="edit-imagen">📷 Imagen del producto</label>
+        <input id="edit-imagen" type="file" accept="image/*" capture="environment" onchange="subirImagenProducto(event)" />
+        <img id="preview-imagen-producto" src="" style="margin-top: 10px; width: 100%; max-height: 200px; object-fit: contain;" />
       </div>
+
 
       <div class="acciones">
         <button id="guardar-edicion">💾</button>
@@ -276,40 +277,45 @@ escaner = new Html5Qrcode("lector-codigos", { verbose: false });
   
 </script>
 <script>
-  function subirImagen(event, indice) {
-    const archivo = event.target.files[0];
-    if (!archivo) return;
+function subirImagenProducto(event) {
+  const archivo = event.target.files[0];
+  if (!archivo) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64Data = reader.result.split(',')[1];
+  const preview = document.getElementById("preview-imagen-producto");
+  preview.src = URL.createObjectURL(archivo);
 
-      fetch("https://api.cloudinary.com/v1_1/dgdavibcx/image/upload", {
-        method: "POST",
-        body: JSON.stringify({
-          file: `data:image/jpeg;base64,${base64Data}`,
-          upload_preset: "publico"
-        }),
-        headers: {
-          "Content-Type": "application/json"
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    const base64Data = reader.result.split(',')[1];
+
+    fetch("https://api.cloudinary.com/v1_1/dgdavibcx/image/upload", {
+      method: "POST",
+      body: JSON.stringify({
+        file: `data:image/jpeg;base64,${base64Data}`,
+        upload_preset: "publico"
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        const url = data.secure_url;
+        preview.src = url;
+        preview.dataset.url = url;
+
+        // Guardar en Firebase si hay código de producto cargado
+        const ean = document.getElementById("edit-ref").value;
+        if (ean) {
+          firebase.database().ref("productos/" + ean + "/imagen").set(url);
         }
       })
-        .then(res => res.json())
-        .then(data => {
-          const url = data.secure_url;
-          document.getElementById("img-" + indice).src = url;
+      .catch(err => console.error("❌ Error al subir imagen:", err));
+  };
 
-          // Guardar en Firebase si hay código de producto cargado
-          const ean = document.getElementById("edit-ref").value;
-          if (ean) {
-            firebase.database().ref("productos/" + ean + "/imagen").set(url);
-          }
-        })
-        .catch(err => console.error("❌ Error al subir imagen:", err));
-    };
+  reader.readAsDataURL(archivo);
+}
 
-    reader.readAsDataURL(archivo);
-  }
 </script>
 
 
