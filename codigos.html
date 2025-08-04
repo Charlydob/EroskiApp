@@ -98,40 +98,48 @@
   </div>
 
   <!-- Modal -->
-  <div id="modal-edicion" class="modal oculto">
-    <div class="modal-contenido">
-      <h3>Editar producto</h3>
-      <div class="form-grid">
-        <div class="campo">
-          <input id="edit-nombre" type="text" placeholder="Nombre" />
-        </div>
-        <div class="campo">
-          <input id="edit-balanza" type="number" inputmode="numeric" placeholder="Código balanza" />
-        </div>
-        <div class="campo">
-          <input id="edit-merma" type="number" inputmode="numeric" placeholder="Código merma" />
-        </div>
-        <div class="campo">
-          <input id="edit-ref" type="number" inputmode="numeric" placeholder="Referencia" />
-        </div>
-        <div class="campo">
-          <select id="edit-cat">
-            <option value="" disabled selected>Selecciona una categoría</option>
-            <option value="fruta">Fruta</option>
-            <option value="bolleria">Bolleria</option>
-            <option value="pan">Pan</option>
-            <option value="tele-recarga">Tele-Recarga</option>
-          </select>
-        </div>
-        <div class="acciones">
-          <button id="guardar-edicion">💾</button>
-          <button id="toggle-visible">🔒</button>
-          <button id="btn-eliminar" class="eliminar">🗑️</button>
-          <button onclick="cerrarModalEdicion()">❌</button>
-        </div>
+<div id="modal-edicion" class="modal oculto">
+  <div class="modal-contenido">
+    <h3>Editar producto</h3>
+    <div class="form-grid">
+      <div class="campo">
+        <input id="edit-nombre" type="text" placeholder="Nombre" />
+      </div>
+      <div class="campo">
+        <input id="edit-balanza" type="number" inputmode="numeric" placeholder="Código balanza" />
+      </div>
+      <div class="campo">
+        <input id="edit-merma" type="number" inputmode="numeric" placeholder="Código merma" />
+      </div>
+      <div class="campo">
+        <input id="edit-ref" type="number" inputmode="numeric" placeholder="Referencia" />
+      </div>
+      <div class="campo">
+        <select id="edit-cat">
+          <option value="" disabled selected>Selecciona una categoría</option>
+          <option value="fruta">Fruta</option>
+          <option value="bolleria">Bolleria</option>
+          <option value="pan">Pan</option>
+          <option value="tele-recarga">Tele-Recarga</option>
+        </select>
+      </div>
+
+      <!-- 📸 Campo para imagen -->
+      <div class="campo">
+        <label for="input-img-nuevo">📸 Imagen del producto</label>
+        <input id="input-img-nuevo" type="file" accept="image/*" capture="environment" onchange="subirImagen(event, 'nuevo')">
+        <img id="img-nuevo" style="max-width: 100%; margin-top: 10px;">
+      </div>
+
+      <div class="acciones">
+        <button id="guardar-edicion">💾</button>
+        <button id="toggle-visible">🔒</button>
+        <button id="btn-eliminar" class="eliminar">🗑️</button>
+        <button onclick="cerrarModalEdicion()">❌</button>
       </div>
     </div>
   </div>
+</div>
 
   <!-- Escáner -->
   <div id="lector-wrapper" style="position: relative; display: none; margin: 1rem auto; max-width: 350px;">
@@ -191,12 +199,10 @@ escaner = new Html5Qrcode("lector-codigos", {
             Html5QrcodeSupportedFormats.CODE_128
           ]
         },
-        (code) => {
-          console.log("📦 Código detectado:", code);
-          document.getElementById("buscador").value = code;
-          document.getElementById("buscador").dispatchEvent(new Event("input"));
-          cerrarEscaner();
-        },
+     (code) => {
+  console.log("📦 Código detectado:", code);
+  procesarCodigoEAN(code);
+},
         (err) => {
           // puedes loguearlo si quieres
         }
@@ -225,6 +231,88 @@ escaner = new Html5Qrcode("lector-codigos", {
           contenedor.innerHTML = "";
         });
     }
+  }
+  async function procesarCodigoEAN(ean) {
+    const ref = firebase.database().ref("productos/" + ean);
+    ref.once("value", async snapshot => {
+      const producto = snapshot.val();
+
+      if (producto) {
+        document.getElementById("buscador").value = ean;
+        document.getElementById("buscador").dispatchEvent(new Event("input"));
+        cerrarEscaner();
+      } else {
+        try {
+          const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${ean}.json`);
+          const data = await res.json();
+
+          document.getElementById("edit-nombre").value = data.product?.product_name || "";
+          document.getElementById("edit-ref").value = ean;
+
+          const catTag = data.product?.categories_tags?.[0];
+          if (catTag) {
+            const cleanCat = catTag.split(":").pop();
+            const select = document.getElementById("edit-cat");
+            for (let opt of select.options) {
+              if (opt.value === cleanCat) {
+                select.value = cleanCat;
+                break;
+              }
+            }
+          }
+
+          if (data.product?.image_url) {
+            subirACloudinaryDesdeUrl(data.product.image_url, url => {
+              document.getElementById("img-nuevo").src = url;
+            });
+          }
+
+        } catch (err) {
+          console.warn("⚠️ Error al consultar OpenFoodFacts:", err);
+        }
+
+        abrirModalEdicion();
+        cerrarEscaner();
+      }
+    });
+  }
+
+  
+</script>
+<script>
+  function subirImagen(event, indice) {
+    const archivo = event.target.files[0];
+    if (!archivo) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Data = reader.result.split(',')[1];
+
+      fetch("https://api.cloudinary.com/v1_1/dgdavibcx/image/upload", {
+        method: "POST",
+        body: JSON.stringify({
+          file: `data:image/jpeg;base64,${base64Data}`,
+          upload_preset: "publico"
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          const url = data.secure_url;
+          document.getElementById("img-" + indice).src = url;
+
+          // Guardar en Firebase si hay código de producto cargado
+          const ean = document.getElementById("edit-ref").value;
+          if (ean) {
+            firebase.database().ref("productos/" + ean + "/imagen").set(url);
+          }
+        })
+        .catch(err => console.error("❌ Error al subir imagen:", err));
+    };
+
+    reader.readAsDataURL(archivo);
   }
 </script>
 
