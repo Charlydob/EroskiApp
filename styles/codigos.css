@@ -691,3 +691,10 @@ div#botones-edit {
   #lector-codigos video {
   transform: none !important;
 }
+#lector-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  min-height: 320px;
+}

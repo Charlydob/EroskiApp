@@ -156,12 +156,14 @@
   let escaner = null;
 
   function iniciarEscaneo() {
-    const wrapper = document.getElementById("lector-wrapper");
-    const contenedor = document.getElementById("lector-codigos");
+const wrapper = document.getElementById("lector-wrapper");
+const contenedor = document.getElementById("lector-codigos");
 
-    // 🔒 Garantiza que el contenedor tiene altura visible antes de iniciar
-    contenedor.style.height = "300px";
-    wrapper.style.display = "block";
+// 🔒 Forzar visibilidad y tamaño mínimo
+wrapper.style.display = "block";
+contenedor.style.display = "block";
+contenedor.style.minHeight = "300px";
+contenedor.innerHTML = ""; // limpiar antes
 
     if (escaner) return;
 
