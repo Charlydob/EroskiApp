@@ -688,3 +688,6 @@ div#botones-edit {
     left: 0;
     z-index: 1;
   }
+  #lector-codigos video {
+  transform: none !important;
+}
