@@ -181,7 +181,7 @@ escaner = new Html5Qrcode("lector-codigos", {
           fps: 60,
           qrbox: (w, h) => {
             const min = Math.min(w, h);
-            const edge = Math.max(80, Math.min(Math.floor(min * 0.7), 100)); // forzar tamaño válido
+            const edge = Math.max(80, Math.min(Math.floor(min * 0.7), 500)); // forzar tamaño válido
             return { width: edge, height: edge };
           },
           disableFlip: true,
