@@ -276,47 +276,7 @@ escaner = new Html5Qrcode("lector-codigos", { verbose: false });
 
   
 </script>
-<script>
-function subirImagenProducto(event) {
-  const archivo = event.target.files[0];
-  if (!archivo) return;
 
-  const preview = document.getElementById("preview-imagen-producto");
-  preview.src = URL.createObjectURL(archivo);
-
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    const base64Data = reader.result.split(',')[1];
-
-    fetch("https://api.cloudinary.com/v1_1/dgdavibcx/image/upload", {
-      method: "POST",
-      body: JSON.stringify({
-        file: `data:image/jpeg;base64,${base64Data}`,
-        upload_preset: "publico"
-      }),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then(res => res.json())
-      .then(data => {
-        const url = data.secure_url;
-        preview.src = url;
-        preview.dataset.url = url;
-
-        // Guardar en Firebase si hay código de producto cargado
-        const ean = document.getElementById("edit-ref").value;
-        if (ean) {
-          firebase.database().ref("productos/" + ean + "/imagen").set(url);
-        }
-      })
-      .catch(err => console.error("❌ Error al subir imagen:", err));
-  };
-
-  reader.readAsDataURL(archivo);
-}
-
-</script>
 
 
 </body>

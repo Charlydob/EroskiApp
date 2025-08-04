@@ -325,38 +325,70 @@ window.guardarEdicion = function (id) {
   const nombre = document.getElementById("edit-nombre").value.trim();
   const categoria = document.getElementById("edit-cat").value.trim().toLowerCase();
 
-  // Generar ruta de imagen local
   const nombreArchivo = nombre
     .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quita tildes
-    .replace(/\s+/g, "_"); // espacios por guiones bajos
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "_");
 
-const datasetUrl = document.getElementById("preview-imagen-producto").dataset.url;
-const imgUrl = datasetUrl || `recursos/img/codigos/${categoria}/${nombreArchivo}.png`;
+  const cloudinaryUrl = document.getElementById("preview-imagen-producto")?.dataset?.url;
+  const imgFinal = cloudinaryUrl || `recursos/img/codigos/${categoria}/${nombreArchivo}.png`;
 
-const nuevoProd = {
-  nombre,
-  balanza: document.getElementById("edit-balanza").value.trim(),
-  merma: document.getElementById("edit-merma").value.trim(),
-  ref: document.getElementById("edit-ref").value.trim(),
-  categoria,
-  oculto: window.productos[id]?.oculto || false,
-  img: imgUrl
-};
-
+  const nuevoProd = {
+    nombre,
+    balanza: document.getElementById("edit-balanza").value.trim(),
+    merma: document.getElementById("edit-merma").value.trim(),
+    ref: document.getElementById("edit-ref").value.trim(),
+    categoria,
+    oculto: window.productos[id]?.oculto || false,
+    img: imgFinal
+  };
 
   console.log("🧾 Producto final a guardar:", nuevoProd);
 
   const ref = id ? dbRef.child(id) : dbRef.push();
   ref.set(nuevoProd)
     .then(() => {
-      console.log("✅ Producto guardado con imagen local:", rutaLocal);
+      console.log("✅ Producto guardado");
       window.cerrarModalEdicion();
       window.cargarProductos();
     })
     .catch(err => console.error("❌ Error al guardar producto:", err));
 };
 
+
+function subirImagenProducto(event) {
+  const archivo = event.target.files[0];
+  if (!archivo) return;
+
+  const preview = document.getElementById("preview-imagen-producto");
+  preview.src = URL.createObjectURL(archivo); // preview local rápida
+
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    const base64Data = reader.result.split(',')[1];
+
+    fetch("https://api.cloudinary.com/v1_1/dgdavibcx/image/upload", {
+      method: "POST",
+      body: JSON.stringify({
+        file: `data:image/jpeg;base64,${base64Data}`,
+        upload_preset: "publico"
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const url = data.secure_url;
+      preview.src = url;
+      preview.dataset.url = url; // 🔥 Esto es lo que se usará para guardar
+      console.log("✅ Imagen subida:", url);
+    })
+    .catch(err => console.error("❌ Error al subir imagen:", err));
+  };
+
+  reader.readAsDataURL(archivo);
+}
 
 
 
