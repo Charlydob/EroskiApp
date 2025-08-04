@@ -367,16 +367,16 @@ function subirImagenProducto(event) {
   reader.onloadend = () => {
     const base64Data = reader.result.split(',')[1];
 
-    fetch("https://api.cloudinary.com/v1_1/dgdavibcx/image/upload", {
-      method: "POST",
-      body: JSON.stringify({
-        file: `data:image/jpeg;base64,${base64Data}`,
-        upload_preset: "publico"
-      }),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
+const formData = new FormData();
+formData.append("file", archivo);
+formData.append("upload_preset", "publico");
+
+fetch("https://api.cloudinary.com/v1_1/dgdavibcx/image/upload", {
+  method: "POST",
+  body: formData
+})
+
+
     .then(res => res.json())
     .then(data => {
       const url = data.secure_url;
