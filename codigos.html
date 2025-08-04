@@ -175,31 +175,30 @@ escaner = new Html5Qrcode("lector-codigos", {
     useBarCodeDetectorIfSupported: true
   }
 });
-      escaner.start(
-        { facingMode: "environment" },
-        {
-          fps: 60,
-          qrbox: (w, h) => {
-            const min = Math.min(w, h);
-            const edge = Math.max(80, Math.min(Math.floor(min * 0.7), 500)); // forzar tamaño válido
-            return { width: edge, height: edge };
-          },
-          disableFlip: true,
-          formatsToSupport: [
-            Html5QrcodeSupportedFormats.EAN_13,
-            Html5QrcodeSupportedFormats.UPC_A,
-            Html5QrcodeSupportedFormats.CODE_128
-          ]
-        },
-        (code) => {
-          console.log("📦 Código detectado:", code);
-          document.getElementById("buscador").value = code;
-          document.getElementById("buscador").dispatchEvent(new Event("input"));
-          cerrarEscaner();
-        },
-        (err) => {
-          // puedes loguearlo si quieres
-        }
+escaner.start(
+  {
+    facingMode: "environment",
+    width: { ideal: 1280 },
+    height: { ideal: 720 }
+  },
+  {
+    fps: 60,
+    qrbox: { width: 300, height: 120 },
+    disableFlip: true,
+    formatsToSupport: [
+      Html5QrcodeSupportedFormats.EAN_13,
+      Html5QrcodeSupportedFormats.UPC_A,
+      Html5QrcodeSupportedFormats.CODE_128
+    ]
+  },
+  (code) => {
+    console.log("📦 Código detectado:", code);
+    document.getElementById("buscador").value = code;
+    document.getElementById("buscador").dispatchEvent(new Event("input"));
+    cerrarEscaner();
+  },
+  (err) => { /* opcional: loguear errores */ }
+
       ).catch(err => {
         console.error("❌ Error al iniciar escáner:", err);
         cerrarEscaner();
