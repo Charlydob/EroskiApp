@@ -138,33 +138,34 @@
 
     if (escaner) return;
 
-    escaner = new Html5Qrcode("lector-codigos", { verbose: false });
+setTimeout(() => {
+  escaner = new Html5Qrcode("lector-codigos", { verbose: false });
 
-    escaner.start(
-      { facingMode: "environment" },
-      {
-        fps: 10,
-        qrbox: 250,
-        formatsToSupport: [
-          Html5QrcodeSupportedFormats.QR_CODE,
-          Html5QrcodeSupportedFormats.EAN_13,
-          Html5QrcodeSupportedFormats.UPC_A,
-          Html5QrcodeSupportedFormats.CODE_128
-        ]
-      },
-      (code) => {
-        console.log("📦 Código detectado:", code);
-        document.getElementById("buscador").value = code;
-        document.getElementById("buscador").dispatchEvent(new Event("input"));
-        cerrarEscaner();
-      },
-      (err) => {
-        // Silenciado
-      }
-    ).catch(err => {
-      console.error("❌ Error al iniciar escaneo:", err);
+  escaner.start(
+    { facingMode: "environment" },
+    {
+      fps: 10,
+      qrbox: 250,
+      formatsToSupport: [
+        Html5QrcodeSupportedFormats.QR_CODE,
+        Html5QrcodeSupportedFormats.EAN_13,
+        Html5QrcodeSupportedFormats.UPC_A,
+        Html5QrcodeSupportedFormats.CODE_128
+      ]
+    },
+    (code) => {
+      console.log("📦 Código detectado:", code);
+      document.getElementById("buscador").value = code;
+      document.getElementById("buscador").dispatchEvent(new Event("input"));
       cerrarEscaner();
-    });
+    },
+    (err) => { /* silencio */ }
+  ).catch(err => {
+    console.error("❌ Error al iniciar escáner:", err);
+    cerrarEscaner();
+  });
+
+}, 100); // Esperar a que el DOM pinte bien
   }
 
   function cerrarEscaner() {

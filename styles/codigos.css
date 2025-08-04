@@ -667,12 +667,24 @@ div#botones-edit {
   overflow-x: hidden;
   flex-wrap: wrap;
 }
-#lector-codigos canvas,
-#lector-codigos video {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
+
+  #lector-codigos {
+    width: 100%;
+    max-width: 350px;
+    height: 300px;
+    background: black;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #lector-codigos video,
+  #lector-codigos canvas {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
