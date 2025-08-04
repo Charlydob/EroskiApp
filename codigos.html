@@ -177,12 +177,8 @@ contenedor.innerHTML = ""; // limpiar antes
     if (escaner) return;
 
     setTimeout(() => {
-escaner = new Html5Qrcode("lector-codigos", {
-  verbose: false,
-  experimentalFeatures: {
-    useBarCodeDetectorIfSupported: true
-  }
-});
+escaner = new Html5Qrcode("lector-codigos", { verbose: false });
+
       escaner.start(
         { facingMode: "environment" },
         {
