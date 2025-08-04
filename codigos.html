@@ -156,48 +156,57 @@
 <script>
   let escaner = null;
 
-function iniciarEscaneo() {
-  const wrapper = document.getElementById("lector-wrapper");
-  const contenedor = document.getElementById("lector-codigos");
+  function iniciarEscaneo() {
+const wrapper = document.getElementById("lector-wrapper");
+const contenedor = document.getElementById("lector-codigos");
 
-  wrapper.style.display = "block";
-  contenedor.style.display = "block";
-  contenedor.style.minHeight = "300px";
-  contenedor.innerHTML = "";
+// 🔒 Forzar visibilidad y tamaño mínimo
+wrapper.style.display = "block";
+contenedor.style.display = "block";
+contenedor.style.minHeight = "300px";
+contenedor.innerHTML = ""; // limpiar antes
 
-  if (escaner) return;
+    if (escaner) return;
 
-  escaner = new Html5Qrcode("lector-codigos", {
-    verbose: false,
-    experimentalFeatures: {
-      useBarCodeDetectorIfSupported: true
-    }
-  });
+    setTimeout(() => {
+escaner = new Html5Qrcode("lector-codigos", {
+  verbose: false,
+  experimentalFeatures: {
+    useBarCodeDetectorIfSupported: true
+  }
+});
+      escaner.start(
+        { facingMode: "environment" },
+        {
+          fps: 60,
+          qrbox: (w, h) => {
+            const min = Math.min(w, h);
+            const edge = Math.max(80, Math.min(Math.floor(min * 0.7), 100)); // forzar tamaño válido
+            return { width: edge, height: edge };
+          },
+          disableFlip: true,
+          formatsToSupport: [
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.UPC_A,
+            Html5QrcodeSupportedFormats.CODE_128
+          ]
+        },
+        (code) => {
+          console.log("📦 Código detectado:", code);
+          document.getElementById("buscador").value = code;
+          document.getElementById("buscador").dispatchEvent(new Event("input"));
+          cerrarEscaner();
+        },
+        (err) => {
+          // puedes loguearlo si quieres
+        }
+      ).catch(err => {
+        console.error("❌ Error al iniciar escáner:", err);
+        cerrarEscaner();
+      });
 
-  escaner.start(
-    { facingMode: "environment" },
-    {
-      fps: 60,
-      qrbox: { width: 300, height: 100 },
-      disableFlip: true,
-      formatsToSupport: [
-        Html5QrcodeSupportedFormats.EAN_13,
-        Html5QrcodeSupportedFormats.UPC_A,
-        Html5QrcodeSupportedFormats.CODE_128
-      ]
-    },
-    (code) => {
-      console.log("📦 Código detectado:", code);
-      document.getElementById("buscador").value = code;
-      document.getElementById("buscador").dispatchEvent(new Event("input"));
-      cerrarEscaner();
-    },
-    (err) => {}
-  ).catch(err => {
-    console.error("❌ Error al iniciar escáner:", err);
-    cerrarEscaner();
-  });
-}
+    }, 100);
+  }
 
   function cerrarEscaner() {
     const wrapper = document.getElementById("lector-wrapper");
