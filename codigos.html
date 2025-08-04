@@ -164,15 +164,16 @@
 setTimeout(() => {
   const contenedor = document.getElementById("lector-codigos");
   contenedor.innerHTML = ""; // limpiar por si quedó algo anterior
-
   escaner = new Html5Qrcode("lector-codigos", { verbose: false });
-
-
   escaner.start(
   { facingMode: "environment" },
   {
     fps: 30,
-    qrbox: 250,
+    qrbox: function(viewfinderWidth, viewfinderHeight) {
+      const min = Math.min(viewfinderWidth, viewfinderHeight);
+      return min * 0.8; // o 0.6 si quieres margen
+    },
+
     disableFlip: true,
     formatsToSupport: [
       Html5QrcodeSupportedFormats.EAN_13,
