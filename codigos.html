@@ -148,50 +148,64 @@
 
 <button onclick="iniciarEscaneo()">📷 Escanear Código</button>
 
-
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
   let escaner = null;
 
   function iniciarEscaneo() {
-    const contenedor = document.getElementById("lector-wrapper");
-    contenedor.style.display = "block";
+    const wrapper = document.getElementById("lector-wrapper");
+    wrapper.style.display = "block";
 
     if (escaner) return;
 
     escaner = new Html5Qrcode("lector-codigos");
+
     escaner.start(
       { facingMode: "environment" },
-      { fps: 10, qrbox: 250, formatsToSupport: [
-      Html5QrcodeSupportedFormats.QR_CODE,
-      Html5QrcodeSupportedFormats.EAN_13,
-      Html5QrcodeSupportedFormats.CODE_128,
-      Html5QrcodeSupportedFormats.UPC_A]},
+      {
+        fps: 10,
+        qrbox: 250,
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.QR_CODE,
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.UPC_A,
+          Html5QrcodeSupportedFormats.CODE_128
+        ]
+      },
       (code) => {
-        console.log("✅ Detectado:", code);
+        console.log("📦 Código detectado:", code);
+
         document.getElementById("buscador").value = code;
         document.getElementById("buscador").dispatchEvent(new Event("input"));
-        cerrarEscaner();
+
+        cerrarEscaner(); // parar después de leer
       },
-      (error) => { /* puedes logear errores aquí si quieres */ }
-    ).catch(e => {
-      console.error("❌ No se pudo iniciar el escáner:", e);
+      (errorMsg) => {
+        // console.warn("Error escaneo:", errorMsg);
+      }
+    ).catch(err => {
+      console.error("❌ Error al iniciar escaneo:", err);
       cerrarEscaner();
     });
   }
 
   function cerrarEscaner() {
-    const contenedor = document.getElementById("lector-wrapper");
-    contenedor.style.display = "none";
+    const wrapper = document.getElementById("lector-wrapper");
+    wrapper.style.display = "none";
 
     if (escaner) {
       escaner.stop().then(() => {
         escaner.clear();
         escaner = null;
+      }).catch(err => {
+        console.error("❌ Error al detener escáner:", err);
       });
     }
   }
 </script>
+
+
+
 
 
 
