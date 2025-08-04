@@ -149,7 +149,7 @@
   overflow: hidden;
 "></div>
   </div>
-  
+
   <!-- Scripts -->
   <script src="scripts/codigos.js"></script>
 <script src="https://unpkg.com/html5-qrcode"></script>
@@ -169,8 +169,12 @@ contenedor.innerHTML = ""; // limpiar antes
     if (escaner) return;
 
     setTimeout(() => {
-      escaner = new Html5Qrcode("lector-codigos", { verbose: false });
-
+escaner = new Html5Qrcode("lector-codigos", {
+  verbose: false,
+  experimentalFeatures: {
+    useBarCodeDetectorIfSupported: true
+  }
+});
       escaner.start(
         { facingMode: "environment" },
         {
