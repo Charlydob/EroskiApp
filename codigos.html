@@ -31,6 +31,29 @@
       .then(snapshot => console.log("🔥 Firebase raíz:", snapshot.val()))
       .catch(err => console.error("❌ Error al conectar con Firebase:", err));
   </script>
+  <style>
+  #lector-codigos {
+    width: 100%;
+    max-width: 350px;
+    height: 300px;
+    position: relative;
+    background: black;
+    overflow: hidden;
+  }
+
+  #lector-codigos video,
+  #lector-codigos canvas {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+</style>
+
 </head>
 <body>
   <div class="container">
@@ -139,7 +162,11 @@
     if (escaner) return;
 
 setTimeout(() => {
+  const contenedor = document.getElementById("lector-codigos");
+  contenedor.innerHTML = ""; // limpiar por si quedó algo anterior
+
   escaner = new Html5Qrcode("lector-codigos", { verbose: false });
+
 
   escaner.start(
   { facingMode: "environment" },
