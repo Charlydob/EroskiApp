@@ -176,10 +176,7 @@ escaner = new Html5Qrcode("lector-codigos", {
   }
 });
       escaner.start(
-        { facingMode: "environment",
-          width: { ideal: 1280 },
-    height: { ideal: 720 }
-         },
+        { facingMode: "environment" },
         {
           fps: 60,
           qrbox: (w, h) => {
