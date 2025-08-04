@@ -169,11 +169,7 @@ setTimeout(() => {
   { facingMode: "environment" },
   {
     fps: 30,
-    qrbox: function(viewfinderWidth, viewfinderHeight) {
-  const edge = Math.floor(Math.min(viewfinderWidth, viewfinderHeight) * 0.8);
-  return { width: edge, height: edge };
-},
-
+    qrbox: 200,
     disableFlip: true,
     formatsToSupport: [
       Html5QrcodeSupportedFormats.EAN_13,
