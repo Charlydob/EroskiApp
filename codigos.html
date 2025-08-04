@@ -129,21 +129,55 @@
 
   <script src="scripts/codigos.js"></script>
 <div id="lector-codigos" style="width: 100%; max-width: 350px;"></div>
+<div id="lector-wrapper" style="position: relative; display: none;">
+  <div id="lector-codigos" style="width: 100%; max-width: 350px;"></div>
+  <button onclick="cerrarEscaner()" style="position: absolute; top: 5px; right: 5px; z-index: 10;">❌</button>
+</div>
+
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
-  document.querySelector("button[onclick='iniciarEscaneo()']").onclick = function () {
-    const scanner = new Html5Qrcode("lector-codigos");
+  let escaner = null;
 
-    scanner.start(
+  function iniciarEscaneo() {
+    const contenedor = document.getElementById("lector-wrapper");
+    contenedor.style.display = "block";
+
+    if (escaner) return;
+
+    escaner = new Html5Qrcode("lector-codigos");
+    escaner.start(
       { facingMode: "environment" },
-      { fps: 10, qrbox: 250 },
+      { fps: 10, qrbox: 250, formatsToSupport: [
+      Html5QrcodeSupportedFormats.QR_CODE,
+      Html5QrcodeSupportedFormats.EAN_13,
+      Html5QrcodeSupportedFormats.CODE_128,
+      Html5QrcodeSupportedFormats.UPC_A]},
       (code) => {
-        alert("Detectado: " + code);
-        scanner.stop();
-      }
-    ).catch((e) => alert("Error: " + e));
-  };
+        console.log("✅ Detectado:", code);
+        document.getElementById("buscador").value = code;
+        document.getElementById("buscador").dispatchEvent(new Event("input"));
+        cerrarEscaner();
+      },
+      (error) => { /* puedes logear errores aquí si quieres */ }
+    ).catch(e => {
+      console.error("❌ No se pudo iniciar el escáner:", e);
+      cerrarEscaner();
+    });
+  }
+
+  function cerrarEscaner() {
+    const contenedor = document.getElementById("lector-wrapper");
+    contenedor.style.display = "none";
+
+    if (escaner) {
+      escaner.stop().then(() => {
+        escaner.clear();
+        escaner = null;
+      });
+    }
+  }
 </script>
+
 
 
 </body>
