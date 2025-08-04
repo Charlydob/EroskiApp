@@ -83,6 +83,9 @@
   <!-- Añade más si las tienes -->
 </select>
 <button id="btn-nuevo" style="margin: 1rem 0;">➕ Añadir producto</button>
+<div id="lector-codigos" style="width: 100%; max-width: 350px; margin-top: 1rem;"></div>
+<button onclick="iniciarEscaneo()">📷 Escanear Código</button>
+
 </div>
       <div id="galeria" class="galeria"></div>
     </main>
@@ -125,6 +128,24 @@
 
 
   <script src="scripts/codigos.js"></script>
+<div id="lector-codigos" style="width: 100%; max-width: 350px;"></div>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+  document.querySelector("button[onclick='iniciarEscaneo()']").onclick = function () {
+    const scanner = new Html5Qrcode("lector-codigos");
+
+    scanner.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 250 },
+      (code) => {
+        alert("Detectado: " + code);
+        scanner.stop();
+      }
+    ).catch((e) => alert("Error: " + e));
+  };
+</script>
+
+
 </body>
 
 </html>
