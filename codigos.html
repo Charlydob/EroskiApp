@@ -170,9 +170,9 @@ setTimeout(() => {
   {
     fps: 30,
     qrbox: function(viewfinderWidth, viewfinderHeight) {
-      const min = Math.min(viewfinderWidth, viewfinderHeight);
-      return min * 0.8; // o 0.6 si quieres margen
-    },
+  const edge = Math.floor(Math.min(viewfinderWidth, viewfinderHeight) * 0.8);
+  return { width: edge, height: edge };
+},
 
     disableFlip: true,
     formatsToSupport: [
