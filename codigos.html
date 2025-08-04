@@ -157,54 +157,70 @@
 
   function iniciarEscaneo() {
     const wrapper = document.getElementById("lector-wrapper");
+    const contenedor = document.getElementById("lector-codigos");
+
+    // 🔒 Garantiza que el contenedor tiene altura visible antes de iniciar
+    contenedor.style.height = "300px";
     wrapper.style.display = "block";
 
     if (escaner) return;
 
-setTimeout(() => {
-  const contenedor = document.getElementById("lector-codigos");
-  contenedor.innerHTML = ""; // limpiar por si quedó algo anterior
-  escaner = new Html5Qrcode("lector-codigos", { verbose: false });
-  escaner.start(
-  { facingMode: "environment" },
-  {
-    fps: 30,
-    qrbox: 100,
-    disableFlip: true,
-    formatsToSupport: [
-      Html5QrcodeSupportedFormats.EAN_13,
-      Html5QrcodeSupportedFormats.UPC_A,
-      Html5QrcodeSupportedFormats.CODE_128
-    ]
-  },
+    setTimeout(() => {
+      escaner = new Html5Qrcode("lector-codigos", { verbose: false });
 
-    (code) => {
-      console.log("📦 Código detectado:", code);
-      document.getElementById("buscador").value = code;
-      document.getElementById("buscador").dispatchEvent(new Event("input"));
-      cerrarEscaner();
-    },
-    (err) => { /* silencio */ }
-  ).catch(err => {
-    console.error("❌ Error al iniciar escáner:", err);
-    cerrarEscaner();
-  });
+      escaner.start(
+        { facingMode: "environment" },
+        {
+          fps: 30,
+          qrbox: (w, h) => {
+            const min = Math.min(w, h);
+            const edge = Math.max(80, Math.min(Math.floor(min * 0.7), 300)); // forzar tamaño válido
+            return { width: edge, height: edge };
+          },
+          disableFlip: true,
+          formatsToSupport: [
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.UPC_A,
+            Html5QrcodeSupportedFormats.CODE_128
+          ]
+        },
+        (code) => {
+          console.log("📦 Código detectado:", code);
+          document.getElementById("buscador").value = code;
+          document.getElementById("buscador").dispatchEvent(new Event("input"));
+          cerrarEscaner();
+        },
+        (err) => {
+          // puedes loguearlo si quieres
+        }
+      ).catch(err => {
+        console.error("❌ Error al iniciar escáner:", err);
+        cerrarEscaner();
+      });
 
-}, 100); // Esperar a que el DOM pinte bien
+    }, 100);
   }
 
   function cerrarEscaner() {
     const wrapper = document.getElementById("lector-wrapper");
+
     wrapper.style.display = "none";
 
     if (escaner) {
-      escaner.stop().then(() => {
-        escaner.clear();
-        escaner = null;
-      }).catch(err => console.error("❌ Error al detener escáner:", err));
+      escaner.stop()
+        .then(() => escaner.clear())
+        .catch(err => console.warn("⚠️ No se pudo detener escáner:", err))
+        .finally(() => {
+          escaner = null;
+
+          // 🧹 Limpia el contenedor una vez cerrado correctamente
+          const contenedor = document.getElementById("lector-codigos");
+          contenedor.innerHTML = "";
+        });
     }
   }
 </script>
+
 
 </body>
 </html>
