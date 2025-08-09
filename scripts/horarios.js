@@ -11,7 +11,7 @@ empleados = Object.values(data); // ✅ incluye a todos, incluida Lorena
 console.log("📋 Nombres en Firebase:", Object.values(data));
 
   // ✅ ORDEN PERSONALIZADO
-const ordenDeseado = ["Lorena", "Juan", "Leti", "Charly", "Bryant", "Rocio", "Natalia", "Sergio"];
+const ordenDeseado = ["Lorena", "Juan", "Leti", "Charly", "Bryant", "Rocio", "Natalia"];
 
 const entradas = Object.entries(data); // ✅ no excluye a nadie
 
@@ -30,8 +30,7 @@ empleados = entradas.map(([, nombre]) => nombre);
   renderizarTabla?.();
   cargarIntercambioTurno?.();
 });
-const horas = [
-  "6-7", "7-8", "8-9", "9-10", "10-11", "11-12", "12-13", "13-14",
+const horas = [ "7-8", "8-9", "9-10", "10-11", "11-12", "12-13", "13-14",
   "14-15", "15-16", "16-17", "17-18", "18-19", "19-20", "20-21", "21-22"
 ];
 let modoSeleccion = null;
@@ -486,6 +485,10 @@ window.addEventListener("DOMContentLoaded", () => {
     if (modo) modo.style.display = "none";
     modoSeleccion = null;
   }
+["selectorEmpleado","resumenEmpleado","miniTurnoEmpleado"].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) { el.hidden = false; el.style.removeProperty("display"); }
+});
 
   cargarSemanasExistentes();
   cargarSelectorEmpleado();
@@ -581,16 +584,18 @@ inputFecha.addEventListener("input", () => {
 const selectorEmpleado = document.getElementById("selectorEmpleado");
 const resumenEmpleado = document.getElementById("resumenEmpleado");
 function cargarSelectorEmpleado() {
-  const nombreUsuario = localStorage.getItem("nombre");
+  const nombreUsuario = (localStorage.getItem("nombre") || "").trim();
+  const nombreMatch = empleados.find(n => n.trim().toLowerCase() === nombreUsuario.toLowerCase()) || "";
 
-  selectorEmpleado.innerHTML = ""; // Limpiar
+  selectorEmpleado.innerHTML = "";
 
-  // Añadir "Resumen general" siempre
-  const general = document.createElement("option");
-  general.value = "__general__";
-  general.textContent = "Resumen general";
-  selectorEmpleado.appendChild(general);
+  // Opción "Resumen general" (déjala si quieres que todos puedan verla)
+  const optGen = document.createElement("option");
+  optGen.value = "__general__";
+  optGen.textContent = "Resumen general";
+  selectorEmpleado.appendChild(optGen);
 
+  // Empleados
   empleados.forEach(nombre => {
     const opt = document.createElement("option");
     opt.value = nombre;
@@ -598,13 +603,12 @@ function cargarSelectorEmpleado() {
     selectorEmpleado.appendChild(opt);
   });
 
-  // Selección automática del usuario logueado si existe en la lista
-  if (nombreUsuario && empleados.includes(nombreUsuario)) {
-    selectorEmpleado.value = nombreUsuario;
-  }
+  // Autoselección robusta (case-insensitive)
+  selectorEmpleado.value = nombreMatch || "__general__";
 
   renderizarResumenEmpleado();
 }
+
 selectorEmpleado.addEventListener("change", renderizarResumenEmpleado);
 selectorSemana.addEventListener("change", renderizarResumenEmpleado);
 function renderizarResumenEmpleado() {
@@ -1064,7 +1068,7 @@ function abrirModalEmpleado() {
   const tbody = tabla.querySelector("tbody");
   tbody.innerHTML = "";
 
-  const ordenDeseado = ["Lorena", "Juan", "Leti", "Charly", "Bryant", "Rocio", "Natalia", "Sergio"];
+  const ordenDeseado = ["Lorena", "Juan", "Leti", "Charly", "Bryant", "Rocio", "Natalia"];
 
   const entradas = Object.entries(window.usuarios).filter(([codigo]) => parseInt(codigo) !== 1306);
 
