@@ -1,249 +1,292 @@
+// === Firebase refs ===
 const dbRef = db.ref("productos/eroski");
 const storage = firebase.storage();
 
+// === Estado global ===
 window.productos = {};
-window.mostrarOcultos = false;
-window.modoEspecial = null;
-window.contadorModo = "sumar";
+window.mostrarOcultos = cargarLS("mostrarOcultos", false);
+window.modoEspecial = cargarLS("modoEspecial", null);
+window.contadorModo = cargarLS("contadorModo", "sumar");
+window.contadoresPreviosCache = cargarLS("contadoresPreviosCache", {});
 
-
+// === DOM Ready ===
 document.addEventListener("DOMContentLoaded", () => {
-  window.cargarProductos();
+  // Restaurar filtros UI
+  if (document.getElementById("filtro-categoria")) {
+    document.getElementById("filtro-categoria").value = cargarLS("ui:filtro", "");
+  }
+  if (document.getElementById("buscador")) {
+    document.getElementById("buscador").value = cargarLS("ui:busqueda", "");
+  }
 
+  // 1) Pintar instantáneo desde cache
+  const cacheProductos = cargarLS("productosCache", null);
+  if (cacheProductos) {
+    window.productos = cacheProductos;
+    renderizarProductos();
+  }
+
+  // 2) Traer versión online (y cachear)
+  cargarProductos();
+
+  // Botones principales
   document.getElementById("btn-nuevo").addEventListener("click", window.mostrarModalNuevo);
 
   document.getElementById("toggle-ocultos")?.addEventListener("click", () => {
     window.mostrarOcultos = !window.mostrarOcultos;
-    window.cargarProductos();
+    guardarLS("mostrarOcultos", window.mostrarOcultos);
+    cargarProductos();
   });
 
   document.getElementById("filtro-categoria")?.addEventListener("change", () => {
-  // No resetear modoEspecial si estamos en previa
-  if (window.modoEspecial !== "previa") window.modoEspecial = null;
-  window.cargarProductos();
-});
+    if (window.modoEspecial !== "previa") window.modoEspecial = null;
+    guardarLS("ui:filtro", document.getElementById("filtro-categoria").value);
+    guardarLS("modoEspecial", window.modoEspecial);
+    cargarProductos();
+  });
 
-document.getElementById("buscador")?.addEventListener("input", () => {
-  if (window.modoEspecial !== "previa") window.modoEspecial = null;
-  window.cargarProductos();
-});
+  document.getElementById("buscador")?.addEventListener("input", () => {
+    if (window.modoEspecial !== "previa") window.modoEspecial = null;
+    guardarLS("ui:busqueda", document.getElementById("buscador").value);
+    guardarLS("modoEspecial", window.modoEspecial);
+    cargarProductos();
+  });
 
-
+  // Modos especiales
   document.getElementById("btn-merma")?.addEventListener("click", () => {
     window.modoEspecial = (window.modoEspecial === "merma") ? null : "merma";
-    window.cargarProductos();
+    guardarLS("modoEspecial", window.modoEspecial);
+    cargarProductos();
   });
 
   document.getElementById("btn-envasar")?.addEventListener("click", () => {
     window.modoEspecial = (window.modoEspecial === "envasar") ? null : "envasar";
-    window.cargarProductos();
+    guardarLS("modoEspecial", window.modoEspecial);
+    cargarProductos();
   });
 
   document.getElementById("btn-caja")?.addEventListener("click", () => {
     window.modoEspecial = (window.modoEspecial === "caja") ? null : "caja";
-    window.cargarProductos();
+    guardarLS("modoEspecial", window.modoEspecial);
+    cargarProductos();
   });
 
   document.getElementById("btn-tele")?.addEventListener("click", () => {
-  window.modoEspecial = (window.modoEspecial === "tele") ? null : "tele";
-  window.cargarProductos();
-});
+    window.modoEspecial = (window.modoEspecial === "tele") ? null : "tele";
+    guardarLS("modoEspecial", window.modoEspecial);
+    cargarProductos();
+  });
 
-
-  // Botones para el modo Previa
+  // --- Modo Previa ---
   const btnSumar = document.getElementById("btn-sumar");
-const btnRestar = document.getElementById("btn-restar");
+  const btnRestar = document.getElementById("btn-restar");
 
-btnSumar.addEventListener("click", () => {
-  window.contadorModo = "sumar";
-  btnSumar.classList.add("boton-activo");
-  btnRestar.classList.remove("boton-activo");
-});
-
-btnRestar.addEventListener("click", () => {
-  window.contadorModo = "restar";
-  btnRestar.classList.add("boton-activo");
-  btnSumar.classList.remove("boton-activo");
-});
-
-document.getElementById("btn-previa")?.addEventListener("click", () => {
-  const activando = window.modoEspecial !== "previa";
-  window.modoEspecial = activando ? "previa" : null;
-  window.contadorModo = "sumar";
-
-  // Mostrar u ocultar botones
-  btnSumar.style.display = activando ? "inline-block" : "none";
-  btnRestar.style.display = activando ? "inline-block" : "none";
-
-  // Estilo visual
-  if (activando) {
+  btnSumar?.addEventListener("click", () => {
+    window.contadorModo = "sumar";
+    guardarLS("contadorModo", window.contadorModo);
     btnSumar.classList.add("boton-activo");
-    btnRestar.classList.remove("boton-activo");
-  } else {
-    btnSumar.classList.remove("boton-activo");
-    btnRestar.classList.remove("boton-activo");
-  }
+    btnRestar?.classList.remove("boton-activo");
+  });
 
-  window.cargarProductos();
+  btnRestar?.addEventListener("click", () => {
+    window.contadorModo = "restar";
+    guardarLS("contadorModo", window.contadorModo);
+    btnRestar.classList.add("boton-activo");
+    btnSumar?.classList.remove("boton-activo");
+  });
+
+  document.getElementById("btn-previa")?.addEventListener("click", () => {
+    const activando = window.modoEspecial !== "previa";
+    window.modoEspecial = activando ? "previa" : null;
+    window.contadorModo = "sumar";
+    guardarLS("modoEspecial", window.modoEspecial);
+    guardarLS("contadorModo", window.contadorModo);
+
+    if (btnSumar && btnRestar) {
+      btnSumar.style.display = activando ? "inline-block" : "none";
+      btnRestar.style.display = activando ? "inline-block" : "none";
+      if (activando) {
+        btnSumar.classList.add("boton-activo");
+        btnRestar.classList.remove("boton-activo");
+      } else {
+        btnSumar.classList.remove("boton-activo");
+        btnRestar.classList.remove("boton-activo");
+      }
+    }
+
+    cargarProductos();
+  });
 });
 
-
-});
-
-
+// === Datos ===
 window.cargarProductos = function () {
-  console.log("🔄 Cargando productos desde Firebase...");
   dbRef.once("value")
     .then(snapshot => {
       window.productos = snapshot.val() || {};
-      console.log("✅ Productos cargados:", window.productos);
-      window.renderizarProductos();
+      guardarLS("productosCache", window.productos);
+      renderizarProductos();
     })
     .catch(err => console.error("❌ Error al cargar productos:", err));
 };
 
-
+// === Render ===
 window.renderizarProductos = function () {
-  console.log("🎨 Renderizando productos...");
   const galeria = document.getElementById("galeria");
+  if (!galeria) return;
   galeria.innerHTML = "";
 
-  const filtro = document.getElementById("filtro-categoria").value.toLowerCase();
-  const busqueda = document.getElementById("buscador").value.toLowerCase();
+  const filtro = (document.getElementById("filtro-categoria")?.value || "").toLowerCase();
+  const busqueda = (document.getElementById("buscador")?.value || "").toLowerCase();
 
   let lista = Object.entries(window.productos)
     .filter(([_, prod]) => window.mostrarOcultos || !prod.oculto);
 
-  console.log("🧪 Filtro aplicado:", filtro, " | Búsqueda:", busqueda, " | Modo especial:", window.modoEspecial);
-
+  // Modos especiales
   if (window.modoEspecial === "merma") {
-    lista = lista.filter(([_, prod]) => prod.merma);
+    // Mostrar TODA la fruta; las que no tengan código merma se verán pálidas
+    lista = lista.filter(([_, p]) => (p.categoria || "").toLowerCase() === "fruta");
   } else if (window.modoEspecial === "envasar") {
-    lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === "bolleria");
+    lista = lista.filter(([_, p]) => (p.categoria || "").toLowerCase() === "bolleria");
   } else if (window.modoEspecial === "caja") {
-    lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === "fruta");
+    lista = lista.filter(([_, p]) => (p.categoria || "").toLowerCase() === "fruta");
   } else if (window.modoEspecial === "tele") {
-  lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === "tele-recarga");
-} else if (window.modoEspecial === "previa") {
-  lista = lista.filter(([_, prod]) => {
-    const cat = prod.categoria?.toLowerCase();
-    const filtroActivo = document.getElementById("filtro-categoria").value.toLowerCase();
+    lista = lista.filter(([_, p]) => (p.categoria || "").toLowerCase() === "tele-recarga");
+  } else if (window.modoEspecial === "previa") {
+    lista = lista.filter(([_, p]) => {
+      const cat = (p.categoria || "").toLowerCase();
+      const filtroActivo = (document.getElementById("filtro-categoria")?.value || "").toLowerCase();
+      if (filtroActivo === "bolleria" || filtroActivo === "pan") return cat === filtroActivo;
+      return cat === "bolleria" || cat === "pan";
+    });
+  } else {
+    if (filtro) lista = lista.filter(([_, p]) => (p.categoria || "").toLowerCase() === filtro);
+    if (busqueda) lista = lista.filter(([_, p]) => (p.nombre || "").toLowerCase().includes(busqueda));
+  }
 
-    if (filtroActivo === "bolleria" || filtroActivo === "pan") {
-      return cat === filtroActivo;
+  // Ordenar (modo previa: activos arriba; si no, alfabético)
+  lista.sort((a, b) => {
+    if (window.modoEspecial === "previa") {
+      const aCont = window.contadoresPreviosCache?.[a[0]] || 0;
+      const bCont = window.contadoresPreviosCache?.[b[0]] || 0;
+      const aEsActivo = aCont > 0 ? 0 : 1;
+      const bEsActivo = bCont > 0 ? 0 : 1;
+      if (aEsActivo !== bEsActivo) return aEsActivo - bEsActivo;
     }
-
-    return cat === "bolleria" || cat === "pan";
+    return (a[1].nombre || "").localeCompare(b[1].nombre || "");
   });
-}
- else {
-    if (filtro) lista = lista.filter(([_, prod]) => prod.categoria?.toLowerCase() === filtro);
-    if (busqueda) lista = lista.filter(([_, prod]) => prod.nombre?.toLowerCase().includes(busqueda));
-  }
 
-  // Recuperar contadores previos si los hubiera
-  const contadoresPrevios = {};
-  if (window.modoEspecial === "previa" && window.contadoresPreviosCache) {
-    Object.assign(contadoresPrevios, window.contadoresPreviosCache);
-  }
-
-  // Ordenar: primero por contador descendente, luego alfabético
-lista.sort((a, b) => {
-  const aCont = window.contadoresPreviosCache?.[a[0]] || 0;
-  const bCont = window.contadoresPreviosCache?.[b[0]] || 0;
-
-  const aEsActivo = aCont > 0 ? 0 : 1;
-  const bEsActivo = bCont > 0 ? 0 : 1;
-
-  // Primero agrupamos: activos primero (contador > 0), luego inactivos
-  if (aEsActivo !== bEsActivo) return aEsActivo - bEsActivo;
-
-  // Dentro del grupo, orden alfabético por nombre
-  return (a[1].nombre || '').localeCompare(b[1].nombre || '');
-});
-
-
-  console.log(`📦 ${lista.length} productos a mostrar`);
-
+  // Render tarjetas
   lista.forEach(([id, prod]) => {
     const tarjeta = document.createElement("div");
     tarjeta.className = "tarjeta-producto";
     tarjeta.dataset.id = id;
     if (prod.oculto) tarjeta.classList.add("oculto");
+    if (window.modoEspecial === "merma" && !prod.merma) tarjeta.classList.add("merma-sin-codigo"); // pálido
 
-    let contenido = `
+    let html = `
       <div class="vista-simple">
-        <img src="${prod.img || ''}" alt="Imagen del producto" 
-          onerror="this.style.border='2px solid red'; this.alt='No encontrada'; console.warn('❌ Imagen no cargada:', this.src)" />
-        <h4>${prod.nombre || 'Sin nombre'}</h4>
+        <img src="${prod.img || ""}" alt="Imagen del producto"
+          onerror="this.style.border='2px solid red'; this.alt='No encontrada'"/>
+        <h4>${prod.nombre || "Sin nombre"}</h4>
+        ${window.modoEspecial === "merma"
+          ? `<p>${prod.merma || "-"}</p>`
+          : `<p>${prod.balanza || "-"}</p>`}
+        <button class="btn-editar oculto">✏️</button>
+      </div>
     `;
 
-    contenido += (window.modoEspecial === "merma")
-      ? `<p>${prod.merma || '-'}</p>`
-      : `<p>${prod.balanza || '-'}</p>`;
-
-    contenido += `<button class="btn-editar oculto">✏️</button></div>`;
-
     if (!window.modoEspecial) {
-      contenido += `
+      html += `
         <div class="vista-detalles oculto">
-          <p><strong>Merma:</strong> ${prod.merma || '-'}</p>
-          <p><strong>Ref:</strong> ${prod.ref || '-'}</p>
-          <p><strong>Cat:</strong> ${prod.categoria || '-'}</p>
+          <p><strong>Merma:</strong> ${prod.merma || "-"}</p>
+          <p><strong>Ref:</strong> ${prod.ref || "-"}</p>
+          <p><strong>Cat:</strong> ${prod.categoria || "-"}</p>
           <span class="cerrar-detalle">✖</span>
-        </div>`;
+        </div>
+      `;
     }
 
-    tarjeta.innerHTML = contenido;
+    tarjeta.innerHTML = html;
 
-    let longPressTimeout;
-    ["mousedown", "touchstart"].forEach(eventoInicio => {
-      tarjeta.addEventListener(eventoInicio, (e) => {
+    // Long-press para editar
+    let lp;
+    ["mousedown", "touchstart"].forEach(ev => {
+      tarjeta.addEventListener(ev, (e) => {
         e.stopPropagation();
-        longPressTimeout = setTimeout(() => {
+        lp = setTimeout(() => {
           tarjeta.querySelector(".btn-editar").classList.remove("oculto");
         }, 500);
       });
-      const eventoFin = eventoInicio === "mousedown" ? "mouseup" : "touchend";
-      tarjeta.addEventListener(eventoFin, () => clearTimeout(longPressTimeout));
+      tarjeta.addEventListener(ev === "mousedown" ? "mouseup" : "touchend", () => clearTimeout(lp));
     });
-    tarjeta.addEventListener("mouseleave", () => clearTimeout(longPressTimeout));
+    tarjeta.addEventListener("mouseleave", () => clearTimeout(lp));
 
+    // Modo PREVIA: contador + click-to-edit
     if (window.modoEspecial === "previa") {
-      const contador = document.createElement("span");
-      contador.className = "contador previa-contador";
-      const valorPrevio = contadoresPrevios[id] || 0;
-      contador.textContent = valorPrevio;
-      tarjeta.querySelector(".vista-simple").appendChild(contador);
+      const cont = document.createElement("span");
+      cont.className = "contador previa-contador";
+      const valPrev = window.contadoresPreviosCache?.[id] || 0;
+      cont.textContent = valPrev;
+      tarjeta.querySelector(".vista-simple").appendChild(cont);
 
-      if (valorPrevio > 0) {
-        tarjeta.classList.add("tarjeta-activa");
-      }
+      if (valPrev > 0) tarjeta.classList.add("tarjeta-activa");
 
+      // Click en tarjeta = sumar/restar
       tarjeta.addEventListener("click", (e) => {
-        e.stopPropagation();
-        let valor = parseInt(contador.textContent);
-        if (window.contadorModo === "sumar") valor++;
-        else if (window.contadorModo === "restar" && valor > 0) valor--;
-
-        contador.textContent = valor;
-
-        if (valor > 0) {
-          tarjeta.classList.add("tarjeta-activa");
-        } else {
-          tarjeta.classList.remove("tarjeta-activa");
-        }
-
-        // Actualizar el cache con el nuevo valor y volver a renderizar
+        if (e.target === cont || e.target.closest(".contador-input")) return; // no interferir con edición directa
+        let v = parseInt(cont.textContent || "0", 10);
+        if (window.contadorModo === "sumar") v++;
+        else if (window.contadorModo === "restar" && v > 0) v--;
+        cont.textContent = v;
+        if (v > 0) tarjeta.classList.add("tarjeta-activa"); else tarjeta.classList.remove("tarjeta-activa");
         window.contadoresPreviosCache = window.contadoresPreviosCache || {};
-        window.contadoresPreviosCache[id] = valor;
-        window.renderizarProductos(); // Reordenar automáticamente tras clic
+        window.contadoresPreviosCache[id] = v;
+        guardarLS("contadoresPreviosCache", window.contadoresPreviosCache);
+        renderizarProductos(); // reordenar
+      });
+
+      // >>> NUEVO: editar cantidad al clicar el contador <<<
+      cont.style.cursor = "number";
+      cont.title = "Clica para editar";
+      cont.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (cont.querySelector("input")) return;
+
+        const input = document.createElement("input");
+        input.type = "number";
+        input.inputMode = "numeric";  // ← fuerza teclado numérico en móviles
+input.pattern = "[0-9]*"; 
+        input.min = "0";
+        input.className = "contador-input";
+        input.value = cont.textContent || "0";
+        input.style.width = Math.max(28, (input.value.length + 1) * 10) + "px";
+
+        cont.textContent = "";
+        cont.appendChild(input);
+        input.focus();
+        input.select();
+
+        const commit = () => {
+          let v = parseInt(input.value || "0", 10);
+          if (isNaN(v) || v < 0) v = 0;
+          cont.textContent = v;
+          if (v > 0) tarjeta.classList.add("tarjeta-activa"); else tarjeta.classList.remove("tarjeta-activa");
+          window.contadoresPreviosCache[id] = v;
+          guardarLS("contadoresPreviosCache", window.contadoresPreviosCache);
+          renderizarProductos(); // reordenar tras edición
+        };
+
+        input.addEventListener("blur", commit);
+        input.addEventListener("keydown", (ev) => {
+          if (ev.key === "Enter") { ev.preventDefault(); input.blur(); }
+          if (ev.key === "Escape") { ev.preventDefault(); cont.textContent = window.contadoresPreviosCache?.[id] || 0; }
+        });
       });
     } else {
+      // Vista normal
       tarjeta.addEventListener("click", () => {
         tarjeta.querySelector(".vista-detalles")?.classList.toggle("oculto");
       });
-
       tarjeta.querySelector(".cerrar-detalle")?.addEventListener("click", (e) => {
         e.stopPropagation();
         tarjeta.querySelector(".vista-detalles").classList.add("oculto");
@@ -252,76 +295,61 @@ lista.sort((a, b) => {
 
     tarjeta.querySelector(".btn-editar").addEventListener("click", (e) => {
       e.stopPropagation();
-      window.editarProducto(id);
+      editarProducto(id);
     });
 
     galeria.appendChild(tarjeta);
   });
 
-  // Guardar estado final de contadores después de renderizar
+  // Persistir contadores tras render
   if (window.modoEspecial === "previa") {
-  window.contadoresPreviosCache = window.contadoresPreviosCache || {};
-  document.querySelectorAll(".tarjeta-producto").forEach(tarjeta => {
-    const id = tarjeta.dataset.id;
-    const contador = tarjeta.querySelector(".contador")?.textContent;
-    if (id && contador) {
-      window.contadoresPreviosCache[id] = parseInt(contador);
-    }
-  });
-}
-
+    window.contadoresPreviosCache = window.contadoresPreviosCache || {};
+    document.querySelectorAll(".tarjeta-producto").forEach(t => {
+      const id = t.dataset.id;
+      const c = t.querySelector(".contador")?.textContent;
+      if (id && c != null) window.contadoresPreviosCache[id] = parseInt(c || "0", 10);
+    });
+    guardarLS("contadoresPreviosCache", window.contadoresPreviosCache);
+  }
 };
 
-
-
-
-
+// === CRUD / Modal ===
 window.mostrarModalNuevo = function () {
-  console.log("🆕 Abriendo modal para nuevo producto...");
-  window.limpiarModal();
-  document.getElementById("guardar-edicion").onclick = () => window.guardarEdicion(null);
+  limpiarModal();
+  document.getElementById("guardar-edicion").onclick = () => guardarEdicion(null);
   document.getElementById("toggle-visible").classList.add("oculto");
   document.getElementById("modal-edicion").classList.remove("oculto");
   document.getElementById("btn-eliminar").classList.add("oculto");
   document.body.style.overflow = "hidden";
 };
 
-
 window.editarProducto = function (id) {
-  console.log("✏️ Editando producto con ID:", id);
-  const prod = window.productos[id];
-  if (!prod) {
-    console.warn("⚠️ Producto no encontrado.");
-    return;
-  }
+  const p = window.productos[id];
+  if (!p) return;
 
-  document.getElementById("edit-nombre").value = prod.nombre || "";
-  document.getElementById("edit-balanza").value = prod.balanza || "";
-  document.getElementById("edit-merma").value = prod.merma || "";
-  document.getElementById("edit-ref").value = prod.ref || "";
-  document.getElementById("edit-cat").value = prod.categoria || "";
+  document.getElementById("edit-nombre").value = p.nombre || "";
+  document.getElementById("edit-balanza").value = p.balanza || "";
+  document.getElementById("edit-merma").value = p.merma || "";
+  document.getElementById("edit-ref").value = p.ref || "";
+  document.getElementById("edit-cat").value = p.categoria || "";
   document.getElementById("btn-eliminar").classList.remove("oculto");
-  document.getElementById("btn-eliminar").onclick = () => window.eliminarProducto(id);
+  document.getElementById("btn-eliminar").onclick = () => eliminarProducto(id);
   document.body.style.overflow = "hidden";
 
   const btnVisible = document.getElementById("toggle-visible");
   btnVisible.classList.remove("oculto");
-  btnVisible.textContent = prod.oculto ? "👁️ Mostrar" : "🙈 Ocultar";
+  btnVisible.textContent = p.oculto ? "👁️ Mostrar" : "🙈 Ocultar";
   btnVisible.onclick = () => {
-    console.log("🔁 Cambiando visibilidad del producto...");
     window.productos[id].oculto = !window.productos[id].oculto;
-    dbRef.child(id).update({ oculto: window.productos[id].oculto }).then(() => window.cargarProductos());
-    window.cerrarModalEdicion();
+    dbRef.child(id).update({ oculto: window.productos[id].oculto }).then(() => cargarProductos());
+    cerrarModalEdicion();
   };
 
-  document.getElementById("guardar-edicion").onclick = () => window.guardarEdicion(id);
+  document.getElementById("guardar-edicion").onclick = () => guardarEdicion(id);
   document.getElementById("modal-edicion").classList.remove("oculto");
 };
 
-
 window.guardarEdicion = function (id) {
-  console.log(id ? "💾 Guardando edición..." : "🆕 Guardando nuevo producto...");
-
   const nombre = document.getElementById("edit-nombre").value.trim();
   const categoria = document.getElementById("edit-cat").value.trim().toLowerCase();
 
@@ -343,83 +371,78 @@ window.guardarEdicion = function (id) {
     img: imgFinal
   };
 
-  console.log("🧾 Producto final a guardar:", nuevoProd);
-
   const ref = id ? dbRef.child(id) : dbRef.push();
   ref.set(nuevoProd)
     .then(() => {
-      console.log("✅ Producto guardado");
-      window.cerrarModalEdicion();
-      window.cargarProductos();
+      cerrarModalEdicion();
+      cargarProductos();
     })
     .catch(err => console.error("❌ Error al guardar producto:", err));
 };
 
-
+// === Cloudinary (FIX: exponer en window + flujo simplificado) ===
 function subirImagenProducto(event) {
-  const archivo = event.target.files[0];
+  const archivo = event.target.files?.[0];
   if (!archivo) return;
 
   const preview = document.getElementById("preview-imagen-producto");
-  preview.src = URL.createObjectURL(archivo); // preview local rápida
+  if (preview) preview.src = URL.createObjectURL(archivo);
 
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    const base64Data = reader.result.split(',')[1];
+  const formData = new FormData();
+  formData.append("file", archivo);
+  formData.append("upload_preset", "publico"); // Asegúrate de que exista en tu Cloudinary
 
-const formData = new FormData();
-formData.append("file", archivo);
-formData.append("upload_preset", "publico");
-
-fetch("https://api.cloudinary.com/v1_1/dgdavibcx/image/upload", {
-  method: "POST",
-  body: formData
-})
-
-
+  fetch("https://api.cloudinary.com/v1_1/dgdavibcx/image/upload", {
+    method: "POST",
+    body: formData
+  })
     .then(res => res.json())
     .then(data => {
       const url = data.secure_url;
-      preview.src = url;
-      preview.dataset.url = url; // 🔥 Esto es lo que se usará para guardar
-      console.log("✅ Imagen subida:", url);
+      if (preview) {
+        preview.src = url;
+        preview.dataset.url = url; // usado en guardarEdicion
+      }
     })
     .catch(err => console.error("❌ Error al subir imagen:", err));
-  };
-
-  reader.readAsDataURL(archivo);
 }
+window.subirImagenProducto = subirImagenProducto; // << necesario si el HTML usa onchange="subirImagenProducto(event)"
 
-
-
-
+// === Utilidades Modal ===
 window.cerrarModalEdicion = function () {
-  console.log("❎ Cerrando modal...");
   document.getElementById("modal-edicion").classList.add("oculto");
   document.body.style.overflow = "";
 };
 
-
 window.limpiarModal = function () {
-  console.log("🧽 Limpiando modal de edición...");
   ["edit-nombre", "edit-balanza", "edit-merma", "edit-ref", "edit-img", "edit-cat"].forEach(id => {
     const input = document.getElementById(id);
     if (input) input.value = "";
   });
+  const prev = document.getElementById("preview-imagen-producto");
+  if (prev) { prev.src = ""; prev.removeAttribute("data-url"); }
 };
 
-
 window.eliminarProducto = function (id) {
-  console.log("🗑️ Eliminando producto con ID:", id);
   const tarjeta = document.querySelector(`.tarjeta-producto[data-id="${id}"]`);
   if (tarjeta) tarjeta.style.opacity = "0.3";
 
   dbRef.child(id).remove()
     .then(() => {
-      console.log("✅ Producto eliminado");
-      window.cerrarModalEdicion();
-      window.cargarProductos();
+      cerrarModalEdicion();
+      cargarProductos();
     })
     .catch(err => console.error("❌ Error al eliminar producto:", err));
 };
+
+// === LocalStorage helpers ===
+function guardarLS(clave, valor) {
+  try { localStorage.setItem(clave, JSON.stringify(valor)); } catch {}
+}
+function cargarLS(clave, defecto = null) {
+  try {
+    const v = localStorage.getItem(clave);
+    return v == null ? defecto : JSON.parse(v);
+  } catch { return defecto; }
+}
 
