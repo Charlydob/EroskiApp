@@ -902,7 +902,7 @@ function generarTablaResumenHorariosPorDia(datosSemana) {
 
       if (window.esJefa) {
         td.contentEditable = true;
-        td.style.backgroundColor = "#ffffe0";
+        td.style.backgroundColor = "#ffffe00a";
         td.dataset.dia = dia;
         td.dataset.empleado = empleado;
 
