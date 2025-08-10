@@ -10,27 +10,48 @@ window.addEventListener("DOMContentLoaded", () => {
         { valor: 0.01, peso: 2.3 },
     ];
 
+    const billetes = [
+        { valor: 50 },
+        { valor: 20 },
+        { valor: 10 },
+        { valor: 5 }
+    ];
+
     const totalEuros = document.getElementById("totalEuros");
     const resetBtn = document.getElementById("resetBtn");
 
     function calcular() {
         let total = 0;
 
+        // Monedas por peso
         monedas.forEach((moneda, i) => {
-        const pesoInput = document.getElementById(`peso-${i}`);
-        const cantidadSpan = document.getElementById(`cantidad-${i}`);
+            const pesoInput = document.getElementById(`peso-${i}`);
+            const cantidadSpan = document.getElementById(`cantidad-${i}`);
 
-        const pesoTotal = parseFloat(pesoInput.value);
-        if (!isNaN(pesoTotal) && pesoTotal > 0) {
-            const cantidad = Math.floor(pesoTotal / moneda.peso);
+            const pesoTotal = parseFloat(pesoInput.value);
+            if (!isNaN(pesoTotal) && pesoTotal > 0) {
+                const cantidad = Math.round(pesoTotal / moneda.peso);
 
-            cantidadSpan.textContent = cantidad;
-            total += cantidad * moneda.valor;
-            localStorage.setItem(`peso-${i}`, pesoInput.value);
-        } else {
-            cantidadSpan.textContent = "0";
-            localStorage.removeItem(`peso-${i}`);
-        }
+                cantidadSpan.textContent = cantidad;
+                total += cantidad * moneda.valor;
+                localStorage.setItem(`peso-${i}`, pesoInput.value);
+            } else {
+                cantidadSpan.textContent = "0";
+                localStorage.removeItem(`peso-${i}`);
+            }
+        });
+
+        // Billetes por cantidad directa
+        billetes.forEach((billete, i) => {
+            const cantInput = document.getElementById(`billete-${i}`);
+            const cantidad = parseInt(cantInput.value) || 0;
+
+            total += cantidad * billete.valor;
+            if (cantidad > 0) {
+                localStorage.setItem(`billete-${i}`, cantidad);
+            } else {
+                localStorage.removeItem(`billete-${i}`);
+            }
         });
 
         totalEuros.textContent = total.toFixed(2) + " €";
@@ -41,20 +62,33 @@ window.addEventListener("DOMContentLoaded", () => {
         const pesoInput = document.getElementById(`peso-${i}`);
         const guardado = localStorage.getItem(`peso-${i}`);
         if (guardado) pesoInput.value = guardado;
-
         pesoInput.addEventListener("input", calcular);
+    });
+
+    billetes.forEach((_, i) => {
+        const cantInput = document.getElementById(`billete-${i}`);
+        const guardado = localStorage.getItem(`billete-${i}`);
+        if (guardado) cantInput.value = guardado;
+        cantInput.addEventListener("input", calcular);
     });
 
     // Botón reiniciar
     resetBtn.addEventListener("click", () => {
         monedas.forEach((_, i) => {
-        const pesoInput = document.getElementById(`peso-${i}`);
-        pesoInput.value = "";
-        document.getElementById(`cantidad-${i}`).textContent = "0";
-        localStorage.removeItem(`peso-${i}`);
+            const pesoInput = document.getElementById(`peso-${i}`);
+            pesoInput.value = "";
+            document.getElementById(`cantidad-${i}`).textContent = "0";
+            localStorage.removeItem(`peso-${i}`);
         });
+
+        billetes.forEach((_, i) => {
+            const cantInput = document.getElementById(`billete-${i}`);
+            cantInput.value = "";
+            localStorage.removeItem(`billete-${i}`);
+        });
+
         totalEuros.textContent = "0,00 €";
     });
 
-  calcular(); // Cálculo inicial
+    calcular(); // Cálculo inicial
 });
