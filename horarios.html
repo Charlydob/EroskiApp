@@ -2,242 +2,194 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
+  >
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="color-scheme" content="dark">
   <title>Calendario</title>
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="styles/style.css">
   <link rel="stylesheet" href="styles/horarios.css">
 
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"></script>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDN8KAiad5vmKNwhtfd9EUzVgTt2uUapno",
-    authDomain: "eroskiapp.firebaseapp.com",
-    databaseURL: "https://eroskiapp-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "eroskiapp",
-    storageBucket: "eroskiapp.appspot.com",
-    messagingSenderId: "1033463841470",
-    appId: "1:1033463841470:web:ec92569dd7dabe8a93d4ef"
-  };
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN8KAiad5vmKNwhtfd9EUzVgTt2uUapno",
+      authDomain: "eroskiapp.firebaseapp.com",
+      databaseURL: "https://eroskiapp-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "eroskiapp",
+      storageBucket: "eroskiapp.appspot.com",
+      messagingSenderId: "1033463841470",
+      appId: "1:1033463841470:web:ec92569dd7dabe8a93d4ef"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-  // 🔥 Inicializar Firebase y DB
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+    db.ref().once("value")
+      .then(s => console.log("🔥 Firebase raíz:", s.val()))
+      .catch(err => console.error("❌ Firebase:", err));
 
-  db.ref().once("value")
-    .then(snapshot => {
-      console.log("🔥 Firebase raíz:", snapshot.val());
-    })
-    .catch(err => {
-      console.error("❌ Error al conectar con Firebase:", err);
-    });
+    let messaging;
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      navigator.serviceWorker.register("firebase-messaging-sw.js")
+        .then(async (registration) => {
+          console.log("✅ Service Worker registrado");
+          messaging = firebase.messaging();
+          messaging.useServiceWorker(registration);
+          try {
+            const token = await messaging.getToken({
+              vapidKey: "BL5jXmLFLFoPnZlX4lJlJXVNB6HOppu5DnGUSUFnedH0tqomOSI5_zPIQzGxm0Dt4QXRPsINnlhrHP5Fx9rsnOg"
+            });
+            if (token) console.log("📲 Token:", token);
+          } catch(e){ console.warn("⚠️ No hay token:", e); }
+        })
+        .catch(err => console.error("❌ SW:", err));
+    } else {
+      console.warn("🚫 Push no soportado.");
+    }
+  </script>
 
-  // 🔔 Inicializar Firebase Messaging
-  let messaging;
-  if ('serviceWorker' in navigator && 'PushManager' in window) {
-    navigator.serviceWorker.register("firebase-messaging-sw.js")
-      .then(async (registration) => {
-        console.log("✅ Service Worker registrado");
-
-        messaging = firebase.messaging();
-        messaging.useServiceWorker(registration);
-
-        const token = await messaging.getToken({
-          vapidKey: "BL5jXmLFLFoPnZlX4lJlJXVNB6HOppu5DnGUSUFnedH0tqomOSI5_zPIQzGxm0Dt4QXRPsINnlhrHP5Fx9rsnOg"
-        });
-
-        if (token) {
-          console.log("📲 Token de dispositivo:", token);
-          // Guardarlo si querés:
-          // const usuario = localStorage.getItem("nombre") || "anonimo";
-          // db.ref("tokens/" + usuario).set(token);
-        } else {
-          console.warn("⚠️ No se pudo obtener el token.");
-        }
-      })
-      .catch((err) => {
-        console.error("❌ Error registrando el Service Worker:", err);
-      });
-  } else {
-    console.warn("🚫 Este navegador no soporta notificaciones push.");
-  }
-</script>
-
-
-    <script src="navbar.js"></script>
-
+  <script src="navbar.js"></script>
   <script src="scripts/proteccion.js"></script>
 </head>
-<body>
+
+<body data-theme="opal">
   <div class="container">
     <nav class="sidebar">
-
-        <a href="index.html"><img src="recursos/img/iniciologo.png" alt="Inicio" class="icon" /></a>
-        <a href="balanza.html"><img src="recursos/img/balanzalogo.png" alt="Balanza" class="icon" /></a>
-        <a href="checklist.html"><img src="recursos/img/Checklist.png" alt="Checklist" class="icon" /></a>
-        <a href="calendario.html"><img src="recursos/img/imagenes.png" alt="Calendario" class="icon" /></a>
-        <a href="codigos.html"><img src="recursos/img/codigos.png" alt="Códigos" class="icon" /></a>
-        <a href="tpv.html"><img src="recursos/img/tpv.png" alt="tpv" class="icon" /></a>
-        <a href="horarios.html"><img src="recursos/img/calendario.png" alt="Horarios" class="icon" /></a>
+      <a href="index.html"><img src="recursos/img/iniciologo.png" alt="Inicio" class="icon" /></a>
+      <a href="balanza.html"><img src="recursos/img/balanzalogo.png" alt="Balanza" class="icon" /></a>
+      <a href="checklist.html"><img src="recursos/img/Checklist.png" alt="Checklist" class="icon" /></a>
+      <a href="calendario.html"><img src="recursos/img/imagenes.png" alt="Calendario" class="icon" /></a>
+      <a href="codigos.html"><img src="recursos/img/codigos.png" alt="Códigos" class="icon" /></a>
+      <a href="tpv.html"><img src="recursos/img/tpv.png" alt="tpv" class="icon" /></a>
+      <a href="horarios.html"><img src="recursos/img/calendario.png" alt="Horarios" class="icon" /></a>
     </nav>
 
-<!-- horarios.html -->
-<section id="pagina-horarios" class="pagina-app">
-  <h2>🕒 Horarios</h2>
+    <!-- horarios.html -->
+    <section id="pagina-horarios" class="pagina-app" style="padding-bottom: env(safe-area-inset-bottom);">
+      <h2>🕒 Horarios</h2>
 
+      <div id="controles-superiores">
+        <select id="selectorSemana"></select>
 
-  <div id="controles-superiores">
-    <select id="selectorSemana"></select>
-    
-    <!-- Solo visible para jefa -->
-<div class="zona-edicion">
-<button id="crearSemanaBtn">➕ Crear semana</button>
+        <!-- Solo jefa -->
+        <div class="zona-edicion">
+          <button id="crearSemanaBtn">➕ Crear semana</button>
 
-  <!-- Modal flotante oculto inicialmente -->
-  <div id="modalFecha" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-       background: white; padding: 20px; border: 2px solid #ccc; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); z-index: 1000;">
-    <label for="fechaLunes">📅 Selecciona el lunes de la semana:</label><br>
-    <input type="date" id="fechaLunes" />
-  </div>
-  <button onclick="eliminarSemanaActual()" style="background-color: crimson;">🗑️ Eliminar semana</button>
-</div>
+          <!-- Modal fecha (mismo tamaño; IDs limpios y roles) -->
+          <div
+            id="modalFecha"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tituloModalFecha"
+            style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
+                   background:white; padding:20px; border:2px solid #ccc; border-radius:10px;
+                   box-shadow:0 0 10px rgba(0,0,0,0.2); z-index:1000;"
+          >
+            <h3 id="tituloModalFecha" style="margin-top:0">Nueva semana</h3>
+            <label for="fechaLunes">📅 Selecciona el lunes:</label><br>
+            <input type="date" id="fechaLunes" />
+          </div>
 
+          <button onclick="eliminarSemanaActual()" style="background-color:crimson;">🗑️ Eliminar semana</button>
+        </div>
 
-<!-- Botón que abre el modal -->
-<div class="zona-edicion">
-  <h3>👥 Gestión de empleados</h3>
-  <button onclick="abrirModalEmpleado()">➕ Añadir nuevo empleado</button>
-</div>
+        <!-- Gestión de empleados -->
+        <div class="zona-edicion">
+          <h3>👥 Gestión de empleados</h3>
+          <button onclick="abrirModalEmpleado()">➕ Añadir nuevo empleado</button>
+        </div>
 
-<!-- Modal oculto por defecto -->
-<div id="modalEmpleado" class="modal">
-  <div class="modal-contenido">
-    <span class="cerrar" onclick="cerrarModalEmpleado()">&times;</span>
-    <h3>👥 Empleados actuales</h3>
+        <div id="modalEmpleado" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalEmpleadoTitulo">
+          <div class="modal-contenido" role="document">
+            <span class="cerrar" onclick="cerrarModalEmpleado()" aria-label="Cerrar">&times;</span>
+            <h3 id="modalEmpleadoTitulo">👥 Empleados actuales</h3>
 
-    <table id="tablaEmpleados" class="tabla-empleados">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Código</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Filas generadas dinámicamente -->
-      </tbody>
-    </table>
+            <table id="tablaEmpleados" class="tabla-empleados">
+              <thead>
+                <tr><th style="width:36px"></th><th>Nombre</th><th>Código</th><th></th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
 
-    <h4 style="margin-top:15px;">➕ Añadir nuevo</h4>
-    <input type="text" id="nuevoNombre" placeholder="Nombre del empleado nuevo" />
-    <input type="number" id="nuevoCodigo" placeholder="Código del empleado nuevo" />
+            <h4 style="margin-top:15px;">➕ Añadir nuevo</h4>
+            <input type="text" id="nuevoNombre" placeholder="Nombre del empleado nuevo" />
+            <input type="number" id="nuevoCodigo" placeholder="Código del empleado nuevo" />
+            <button onclick="agregarDesdeInput()">Añadir empleado</button>
+            <button onclick="guardarCambiosTabla()" style="margin-top:10px;">💾 Guardar modificaciones</button>
+          </div>
+        </div>
 
-    <button onclick="agregarDesdeInput()">Añadir empleado</button>
-    <button onclick="guardarCambiosTabla()" style="margin-top:10px;">💾 Guardar modificaciones</button>
-  </div>
-</div>
+        <select id="selectorDia">
+          <option value="lunes">Lunes</option><option value="martes">Martes</option>
+          <option value="miércoles">Miércoles</option><option value="jueves">Jueves</option>
+          <option value="viernes">Viernes</option><option value="sábado">Sábado</option>
+          <option value="domingo">Domingo</option>
+        </select>
+        <button id="diaAnterior">←</button>
+        <button id="diaSiguiente">→</button>
+      </div>
 
-<!-- Modal para editar empleado -->
+      <div id="tablaHorarioContainer"></div>
 
+      <!-- Modos (IDs únicos; roles y estado) -->
+      <div id="modoSeleccion" role="group" aria-label="Modo de marcación" class="zona-edicion">
+        <button type="button" data-modo="uno" aria-pressed="false">1</button>
+        <button type="button" data-modo="ceroCinco" aria-pressed="false">0.5</button>
 
+        <!-- Chip color visible -->
+        <div id="colorWrapperMain"
+             style="width:36px; height:36px; border:2px solid gray; border-radius:6px; cursor:pointer; background-color:#00cc66;"
+             title="Color actual"></div>
 
+        <!-- Contenedor pipeta -->
+        <div id="colorModoContainer" style="display:flex; align-items:center; gap:6px;">
+          <div id="colorWrapperGhost"
+               style="width:1px; height:1px; border:0; border-radius:20px; cursor:pointer;"
+               title="Modo color personalizado"></div>
 
-    <select id="selectorDia">
-      <option value="lunes">Lunes</option>
-      <option value="martes">Martes</option>
-      <option value="miércoles">Miércoles</option>
-      <option value="jueves">Jueves</option>
-      <option value="viernes">Viernes</option>
-      <option value="sábado">Sábado</option>
-      <option value="domingo">Domingo</option>
-    </select>
-   <button id="diaAnterior">←</button>
-<button id="diaSiguiente">→</button>
-  </div>
+          <label for="colorPicker" id="colorPickerIcon" style="cursor:pointer;" title="Elegir color personalizado">🖌️</label>
+          <input type="color" id="colorPicker" value="#00cc66"
+                 style="position:absolute; opacity:0; pointer-events:none; width:0; height:0; margin:0; padding:0; border:none;">
+          <button type="button" data-modo="borrar" aria-pressed="false">🗑️</button>
+        </div>
+      </div>
 
+      <div class="zona-edicion">
+        <h3>🔁 Intercambiar turno</h3>
+        <div id="intercambioTurno">
+          <div class="campo"><label for="semanaIntercambio">Semana:</label><select id="semanaIntercambio"></select></div>
+          <div class="campo"><label for="diaIntercambio">Día:</label>
+            <select id="diaIntercambio">
+              <option value="lunes">Lunes</option><option value="martes">Martes</option><option value="miércoles">Miércoles</option>
+              <option value="jueves">Jueves</option><option value="viernes">Viernes</option><option value="sábado">Sábado</option>
+              <option value="domingo">Domingo</option>
+            </select>
+          </div>
+          <div class="campo"><label for="empleadoOrigen">De:</label><select id="empleadoOrigen"></select></div>
+          <div class="campo"><label for="empleadoDestino">A:</label><select id="empleadoDestino"></select></div>
+          <button onclick="intercambiarTurno()">Intercambiar</button>
+        </div>
+      </div>
 
+      <hr>
 
-  <div id="tablaHorarioContainer">
-    <!-- Tabla generada dinámicamente -->
-  </div>
-
-  <!-- Solo visible para jefa -->
-<div id="modoSeleccion">
-  <button onclick="setModo('uno')">1</button>
-  <button onclick="setModo('ceroCinco')">0.5</button>
-<div id="colorWrapper" style="
-  width: 36px;
-  height: 36px;
-  border: 2px solid gray;
-  border-radius: 6px;
-  cursor: pointer;
-  background-color: #00cc66;
-">
-</div>
-
-<div id="colorModoContainer" style="display: flex; align-items: center; gap: 6px;">
-  <!-- Botón visible para seleccionar el modo color -->
-  <div id="colorWrapper"
-       style="width: 1px; height: 1px; border: 0px solid gray; border-radius: 20px; cursor: pointer;"
-       title="Modo color personalizado">
-  </div>
-
-  <!-- Pipeta que abre el selector de color -->
-  <label for="colorPicker" id="colorPickerIcon" style="cursor: pointer;" title="Elegir color personalizado">
-    🖌️
-  </label>
-
-  <!-- Selector oculto -->
-<input type="color" id="colorPicker" value="#00cc66" style="
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-  width: 0;
-  height: 0;
-  margin: 0;
-  padding: 0;
-  border: none;
-">
-
-  <button onclick="setModo('borrar')">🗑️</button>
-</div>
-
-<div class="zona-edicion">
-    <h3>🔁 Intercambiar turno</h3>
-    <div id="intercambioTurno">
-  <div class="campo"><label for="semanaIntercambio">Semana:</label><select id="semanaIntercambio"></select></div>
-  <div class="campo"><label for="diaIntercambio">Día:</label><select id="diaIntercambio">
-      <option value="lunes">Lunes</option>
-      <option value="martes">Martes</option>
-      <option value="miércoles">Miércoles</option>
-      <option value="jueves">Jueves</option>
-      <option value="viernes">Viernes</option>
-      <option value="sábado">Sábado</option>
-      <option value="domingo">Domingo</option>
-    </select></div>
-  <div class="campo"><label for="empleadoOrigen">De:</label><select id="empleadoOrigen"></select></div>
-  <div class="campo"><label for="empleadoDestino">A:</label><select id="empleadoDestino"></select></div>
-  <button onclick="intercambiarTurno()">Intercambiar</button>
-</div>
-
-</div>
-  <hr>
-</div>
-  <h3>🧾 Resumen personal</h3>
-  <select id="selectorEmpleado"></select>
-
-  <div id="resumenEmpleado" class="resumen-empleado">
-    <!-- Aquí se rellenará el resumen -->
-     
+      <h3>🧾 Resumen personal</h3>
+      <select id="selectorEmpleado"></select>
+      <div id="resumenEmpleado" class="resumen-empleado"></div>
+      <div id="miniTurnoEmpleado" class="mini-turno-empleado"></div>
+    </section>
   </div>
 
-  <div id="miniTurnoEmpleado" class="mini-turno-empleado"></div>
-  
-</section>
-
-
-<script src="scripts/horarios.js" defer></script>
+  <script src="scripts/horarios.js" defer></script>
 </body>
 </html>
