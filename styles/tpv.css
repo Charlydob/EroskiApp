@@ -543,3 +543,136 @@ div#botones-edit {
   opacity: 0.4;
   pointer-events: none;
 }
+/* ===================== OPAL OVERRIDES (no layout) ===================== */
+:root{
+  --opal-bg-1:#0f172a; --opal-bg-2:#1e293b;
+  --opal-surface:rgba(255,255,255,0.04); --opal-surface-2:rgba(255,255,255,0.08);
+  --opal-border:rgba(255,255,255,0.12);
+  --opal-text:#e5eaf2; --opal-text-dim:#cbd5e1;
+  --opal-accent:#3b82f6; --opal-accent-2:#8b5cf6;
+  --opal-positive:#22c55e; --opal-warn:#f59e0b;
+  --shadow-1:0 2px 10px rgba(0,0,0,.25); --shadow-2:0 8px 30px rgba(0,0,0,.4);
+}
+
+/* Fondo y textos base */
+body{
+  background: linear-gradient(180deg, var(--opal-bg-1) 0%, var(--opal-bg-2) 100%) !important;
+  color: var(--opal-text) !important;
+}
+
+/* Sidebar */
+.sidebar{
+  background: linear-gradient(180deg, #111827 0%, #0b1220 60%, #060a14 100%) !important;
+  box-shadow: var(--shadow-1) !important;
+}
+.sidebar .logo{ color: var(--opal-text) !important; }
+
+/* Título */
+h1{ color: var(--opal-text) !important; }
+
+/* Buscador */
+#buscador{
+  background: var(--opal-surface) !important;
+  color: var(--opal-text) !important;
+  border: 1px solid var(--opal-border) !important;
+  border-radius: 10px;
+  box-shadow: var(--shadow-1);
+}
+input.clearable{
+  background: var(--opal-surface) url("data:image/svg+xml,%3Csvg fill='%23cbd5e1' height='18' viewBox='0 0 24 24' width='18' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M18.3 5.71a1 1 0 00-1.41 0L12 10.59 7.11 5.7a1 1 0 00-1.41 1.41L10.59 12l-4.89 4.89a1 1 0 101.41 1.41L12 13.41l4.89 4.89a1 1 0 001.41-1.41L13.41 12l4.89-4.89a1 1 0 000-1.4z'/%3E%3C/svg%3E") no-repeat right .7em center !important;
+  background-size: 1em !important;
+  color: var(--opal-text) !important;
+  border: 1px solid var(--opal-border) !important;
+  border-radius: 10px !important;
+}
+
+/* Filtros rápidos */
+.filtros-rapidos button{
+  background: linear-gradient(135deg, var(--opal-accent), var(--opal-accent-2)) !important;
+  color:#fff !important; border:none !important; border-radius: 20px !important;
+  box-shadow: var(--shadow-1) !important;
+}
+
+/* Tarjetas (grilla de productos de TPV) */
+.item{
+  background: var(--opal-surface) !important;
+  border: 1px solid var(--opal-border) !important;
+  color: var(--opal-text) !important;
+  box-shadow: var(--shadow-1) !important;
+}
+.nombre,.codigo{ color: var(--opal-text) !important; }
+
+/* Detalle flotante */
+.vista-detalles{
+  background: rgba(59,130,246,0.15) !important;
+  color: var(--opal-text) !important;
+  box-shadow: inset 0 0 6px rgba(0,0,0,.25) !important;
+}
+
+/* Modal */
+.modal{ background: rgba(2,6,23,0.55) !important; }
+.modal-contenido{
+  background: var(--opal-bg-2) !important; color: var(--opal-text) !important;
+  border: 1px solid var(--opal-border) !important; box-shadow: var(--shadow-2) !important;
+}
+
+/* Inputs/labels del modal */
+.modal-contenido input,
+.modal-contenido select,
+.modal-contenido textarea{
+  background: var(--opal-surface) !important;
+  color: var(--opal-text) !important;
+  border: 1px solid var(--opal-border) !important;
+  border-radius: 8px !important;
+}
+.modal-contenido label{ color: var(--opal-text-dim) !important; }
+
+/* Botonera del modal */
+.acciones button{
+  border: none !important; box-shadow: var(--shadow-1) !important;
+}
+#guardar-edicion{ background: linear-gradient(135deg, var(--opal-positive), #16a34a) !important; color:#fff !important; }
+#toggle-visible { background: linear-gradient(135deg, var(--opal-warn), #f59e0b) !important; color:#111827 !important; }
+#btn-eliminar   { background: linear-gradient(135deg, #ef4444, #dc2626) !important; color:#fff !important; }
+.acciones button:last-child{ background:#475569 !important; color:#fff !important; }
+
+/* Tarjeta de lista de edición */
+.tarjeta-producto{
+  background: var(--opal-surface) !important;
+  border: 1px solid var(--opal-border) !important;
+  color: var(--opal-text) !important;
+  box-shadow: var(--shadow-1) !important;
+}
+.col-boton button{
+  background: linear-gradient(135deg, var(--opal-accent), var(--opal-accent-2)) !important;
+  color:#fff !important; border:none !important; box-shadow: var(--shadow-1) !important;
+}
+.vista-simple h4{ color: var(--opal-text) !important; }
+.vista-simple p { color: var(--opal-text-dim) !important; }
+
+/* Botón editar flotante */
+.btn-editar{
+  background: linear-gradient(135deg, var(--opal-accent), var(--opal-accent-2)) !important;
+  color:#fff !important; box-shadow: var(--shadow-1) !important;
+}
+
+/* Selectores (filtro + modal) + botón añadir producto */
+#filtro-categoria, #edit-cat{
+  -webkit-appearance:none; appearance:none;
+  background: var(--opal-surface) !important; color: var(--opal-text) !important;
+  border: 1px solid var(--opal-border) !important; border-radius: 10px !important;
+  padding-right: 2.2em; /* solo estética de flecha */
+  background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='%23cbd5e1' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right .6em center; background-size:12px;
+  box-shadow: var(--shadow-1);
+}
+#filtro-categoria:focus, #edit-cat:focus{
+  outline:none; border-color: var(--opal-accent) !important;
+  box-shadow: 0 0 0 2px rgba(59,130,246,.45), var(--shadow-1);
+  background-color: rgba(255,255,255,0.05);
+}
+#btn-nuevo{
+  background: linear-gradient(135deg, var(--opal-accent), var(--opal-accent-2)) !important;
+  color:#fff !important; border:none !important; border-radius:10px !important;
+  box-shadow: var(--shadow-1) !important; font-weight:700;
+}
