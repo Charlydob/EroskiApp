@@ -95,16 +95,7 @@ nav.sidebar {
     color: white;
     font-size: 22px;
     }
-    .sidebar a.active {
-    background-color: #00bef875;
-    border-radius: 8px;
-    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 10px;
-    width: 10px;
-    }
+
 
 
 
@@ -247,11 +238,7 @@ nav.sidebar a:hover{
 }
 
 /* Link activo (no cambia el tamaño que ya tienes) */
-.sidebar a.active{
-  background: linear-gradient(135deg, var(--opal-accent), var(--opal-accent-2)) !important;
-  box-shadow: var(--shadow-1) !important;
-  border-radius: 8px !important;
-}
+
 
 /* Contenido */
 main.content h2.logo{

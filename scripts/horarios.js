@@ -28,6 +28,7 @@ db.ref().once("value").then((snap) => {
 });
 
 const horas = ["7-8","8-9","9-10","10-11","11-12","12-13","13-14","14-15","15-16","16-17","17-18","18-19","19-20","20-21","21-22"];
+const __norm = (s) => (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
 
 let modoSeleccion = null;
 let semanaActual = null;
@@ -395,21 +396,40 @@ const selectorEmpleado = document.getElementById("selectorEmpleado");
 const resumenEmpleado = document.getElementById("resumenEmpleado");
 
 function cargarSelectorEmpleado() {
-  const nombreUsuario = (localStorage.getItem("nombre") || "").trim();
-  const nombreMatch = empleados.find(n => n.trim().toLowerCase() === nombreUsuario.toLowerCase()) || "";
+  if (!Array.isArray(empleados) || empleados.length === 0 || !selectorEmpleado) return;
+
+  const prev = selectorEmpleado.value; // recuerda selección previa
+  const nombreUsuarioRaw = localStorage.getItem("nombre") || "";
+  const nombreUsuario = __norm(nombreUsuarioRaw);
+
   selectorEmpleado.innerHTML = "";
 
+  // opción general
   const optGen = document.createElement("option");
-  optGen.value="__general__"; optGen.textContent="Resumen general"; selectorEmpleado.appendChild(optGen);
+  optGen.value = "__general__";
+  optGen.textContent = "Resumen general";
+  selectorEmpleado.appendChild(optGen);
 
+  // opciones empleados
   empleados.forEach(nombre => {
     const opt = document.createElement("option");
-    opt.value = nombre; opt.textContent = nombre; selectorEmpleado.appendChild(opt);
+    opt.value = nombre;
+    opt.textContent = nombre;
+    selectorEmpleado.appendChild(opt);
   });
 
-  selectorEmpleado.value = nombreMatch || "__general__";
+  // 1) intentar restaurar selección previa si existe
+  if ([...selectorEmpleado.options].some(o => o.value === prev)) {
+    selectorEmpleado.value = prev;
+  } else {
+    // 2) intentar matchear usuario logueado normalizado
+    const match = empleados.find(n => __norm(n) === nombreUsuario);
+    selectorEmpleado.value = match || "__general__";
+  }
+
   renderizarResumenEmpleado();
 }
+
 selectorEmpleado.addEventListener("change", renderizarResumenEmpleado);
 selectorSemana.addEventListener("change", renderizarResumenEmpleado);
 
@@ -599,7 +619,7 @@ function renderizarResumenGeneral() {
     let tabla = `
       <table class="tabla-resumen-general">
         <thead><tr>
-          <th>👤 Empleado</th><th>🕓 Semana</th><th>📆 Mes</th><th>🌅 Mañanas</th><th>🌇 Tardes</th><th>💤 Libres</th>
+          <th>👤</th><th>🕓 Semana</th><th>📆 Mes</th><th>🌅 Mañanas</th><th>🌇 Tardes</th><th>💤 Libres</th>
         </tr></thead><tbody>
     `;
     for (let e of empleados) {
@@ -884,21 +904,25 @@ function generarTablaResumenHorariosPorDia(datosSemana) {
         else { todasVerdes = false; }
       }
 
-      if (tieneBloques) {
-        const inicio = bloques[0].hora.split("-")[0];
-        let finRaw = bloques.at(-1).hora.split("-")[1];
-        if (bloques.at(-1).peso === 0.5) { const finNum = parseInt(finRaw,10); finRaw = `${finNum - 1}:30`; }
-        const fmt = (h) => h.includes(":") ? h : h + ":00";
-        const texto = `${inicio === "7" ? "7:30" : fmt(inicio)}–${fmt(finRaw)}`.replace(":00","").replace(":00","");
-        td.textContent = texto; td.style.backgroundColor = "orange";
-      } else if (todasVerdes) {
-        td.textContent = "Libre"; td.style.backgroundColor = "green";
+if (tieneBloques) {
+  const inicioHora = parseInt(bloques[0].hora.split("-")[0], 10);
+  const finHora    = parseInt(bloques.at(-1).hora.split("-")[1], 10);
+
+  const tInicio = inicioHora + (bloques[0].peso === 0.5 ? 0.5 : 0);
+  const tFin    = finHora    - (bloques.at(-1).peso === 0.5 ? 0.5 : 0);
+
+  const fmt = (t) => Number.isInteger(t) ? String(t) : `${Math.floor(t)},5`;
+
+  td.textContent = `${fmt(tInicio)}–${fmt(tFin)}`;
+  td.style.backgroundColor = "transparent";
+} else if (todasVerdes) {
+        td.textContent = "Libre"; td.style.backgroundColor = "transparent";
       } else if (colorPersonal) {
         td.textContent = ""; td.style.backgroundColor = colorPersonal;
       }
 
       // Overlay de resaltado de fila (no pisa backgrounds existentes)
-      if (esYo) td.style.boxShadow = (td.style.boxShadow ? td.style.boxShadow + "," : "") + "inset 0 0 0 2px rgba(59,130,246,0.6)";
+      if (esYo) td.style.boxShadow = (td.style.boxShadow ? td.style.boxShadow + "," : "") + "inset 0 0 0 2px rgba(246, 59, 59, 0.6)";
 
       if (window.esJefa) {
         td.contentEditable = true;
@@ -906,34 +930,63 @@ function generarTablaResumenHorariosPorDia(datosSemana) {
         td.dataset.dia = dia;
         td.dataset.empleado = empleado;
 
-        td.addEventListener("blur", async () => {
-          const texto = td.textContent.trim().toLowerCase();
-          const dia = td.dataset.dia;
-          const empleado = td.dataset.empleado;
-          const updates = {};
+td.addEventListener("blur", async () => {
+  const texto = td.textContent.trim().toLowerCase();
+  const dia = td.dataset.dia;
+  const empleado = td.dataset.empleado;
+  const updates = {};
 
-          if (texto === "" || texto === "libre") {
-            for (let hora of horas) updates[`${empleado}_${hora}`] = "verde";
-          } else {
-            const match = texto.match(/(\d{1,2}):?(\d{2})\s*[–-]\s*(\d{1,2}):?(\d{2})/);
-            if (!match) { alert("Formato inválido. Usa: 7:30–14:00"); return; }
-            let [_, hInicio, mInicio, hFin, mFin] = match.map(Number);
-            const tInicio = hInicio + ((mInicio||0) === 30 ? 0.5 : 0);
-            const tFin = hFin + ((mFin||0) === 30 ? 0.5 : 0);
+  // helper: parsea "11", "7:30", "7,5", "14.5" → horas en pasos de 0.5
+  const parseHalfHour = (s) => {
+    if (!s) return null;
+    s = s.replace(",", "."); // admite coma decimal
+    if (s.includes(":")) {
+      const [h, mRaw] = s.split(":");
+      const hNum = parseInt(h, 10);
+      const mNum = parseInt(mRaw || "0", 10);
+      if (!Number.isFinite(hNum)) return null;
+      if (mNum === 0) return hNum;
+      if (mNum === 30) return hNum + 0.5;
+      return null; // solo 00 o 30
+    }
+    const f = Number(s);
+    if (!Number.isFinite(f)) return null;
+    const h = Math.floor(f + 1e-9);
+    const frac = Math.round((f - h) * 10); // admite .5
+    if (frac === 0) return h;
+    if (frac === 5) return h + 0.5;
+    return null; // solo .0 o .5
+  };
 
-            for (let hora of horas) {
-              const [h1] = hora.split("-").map(Number);
-              const bloque = h1 + 0.5;
-              const id = `${empleado}_${hora}`;
-              if (bloque > tInicio && bloque <= tFin) updates[id] = "1";
-              else if (bloque === tInicio) updates[id] = "0.5";
-              else updates[id] = "";
-            }
-          }
-          if (!window.cambiosPendientes[`${dia}_${empleado}`]) window.cambiosPendientes[`${dia}_${empleado}`] = {};
-          window.marcarCambioPendiente(dia, empleado, updates);
-          td.style.backgroundColor = "#fff3cd";
-        });
+  if (texto === "" || texto === "libre") {
+    for (let hora of horas) updates[`${empleado}_${hora}`] = "verde";
+  } else {
+    const limpio = texto.replace(/\s+/g, "");
+    const partes = limpio.split(/[–-]/); // guion o en dash
+    if (partes.length !== 2) { alert("Formato inválido. Ej: 7:30–14:00, 11-13, 7,5-13, 14,5-21,5"); return; }
+
+    const tInicio = parseHalfHour(partes[0]);
+    const tFin    = parseHalfHour(partes[1]);
+    if (tInicio == null || tFin == null || tFin <= tInicio) {
+      alert("Formato inválido. Usa tramos en pasos de 30 min. Ej: 7:30–14:00, 11-13, 7,5-13, 14,5-21,5");
+      return;
+    }
+
+    for (let hora of horas) {
+      const [h1] = hora.split("-").map(Number);
+      const bloque = h1 + 0.5;
+      const id = `${empleado}_${hora}`;
+      if (bloque > tInicio && bloque <= tFin) updates[id] = "1";
+      else if (bloque === tInicio) updates[id] = "0.5";
+      else updates[id] = "";
+    }
+  }
+
+  if (!window.cambiosPendientes[`${dia}_${empleado}`]) window.cambiosPendientes[`${dia}_${empleado}`] = {};
+  window.marcarCambioPendiente(dia, empleado, updates);
+  td.style.backgroundColor = "#fff3cd";
+});
+
       }
 
       fila.appendChild(td);
