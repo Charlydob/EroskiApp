@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>Inicio</title>
     <link rel="stylesheet" href="styles/style.css" />
     <link rel="stylesheet" href="styles/balanza.css" />
@@ -39,67 +39,73 @@
     <h1>💰 Calculadora de monedas por peso</h1>
 
     <div class="balanza-wrapper">
-        <table id="tablaMonedas">
-        <thead>
-            <tr>
-            <th>Moneda</th>
-            <th>Peso por moneda (g)</th>
-            <th>Peso total (g)</th>
-            <th>Cantidad</th>
-            </tr>
-        </thead>
-        <tbody>
-  <tr>
-    <td>2,00 €</td>
-    <td><input type="number" value="8.5" disabled></td>
-    <td><input type="number" id="peso-0" min="0" placeholder="0"></td>
-    <td><span id="cantidad-0">0</span></td>
-  </tr>
-  <tr>
-    <td>1,00 €</td>
-    <td><input type="number" value="7.5" disabled></td>
-    <td><input type="number" id="peso-1" min="0" placeholder="0"></td>
-    <td><span id="cantidad-1">0</span></td>
-  </tr>
-  <tr>
-    <td>0,50 €</td>
-    <td><input type="number" value="7.8" disabled></td>
-    <td><input type="number" id="peso-2" min="0" placeholder="0"></td>
-    <td><span id="cantidad-2">0</span></td>
-  </tr>
-  <tr>
-    <td>0,20 €</td>
-    <td><input type="number" value="5.7" disabled></td>
-    <td><input type="number" id="peso-3" min="0" placeholder="0"></td>
-    <td><span id="cantidad-3">0</span></td>
-        </tr>
-        <tr>
-            <td>0,10 €</td>
-            <td><input type="number" value="4.1" disabled></td>
-            <td><input type="number" id="peso-4" min="0" placeholder="0"></td>
-            <td><span id="cantidad-4">0</span></td>
-        </tr>
-        <tr>
-            <td>0,05 €</td>
-            <td><input type="number" value="3.9" disabled></td>
-            <td><input type="number" id="peso-5" min="0" placeholder="0"></td>
-            <td><span id="cantidad-5">0</span></td>
-        </tr>
-        <tr>
-            <td>0,02 €</td>
-            <td><input type="number" value="3.0" disabled></td>
-            <td><input type="number" id="peso-6" min="0" placeholder="0"></td>
-            <td><span id="cantidad-6">0</span></td>
-        </tr>
-        <tr>
-            <td>0,01 €</td>
-            <td><input type="number" value="2.3" disabled></td>
-            <td><input type="number" id="peso-7" min="0" placeholder="0"></td>
-            <td><span id="cantidad-7">0</span></td>
-        </tr>
-        </tbody>
+        <table id="tablaMonedas" class="tabla-balanza" aria-label="Monedas por peso">
+  <colgroup>
+    <col style="width:28%">
+    <col style="width:24%">
+    <col style="width:24%">
+    <col style="width:24%">
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Moneda</th>
+      <th>Peso por moneda (g)</th>
+      <th>Peso total (g)</th>
+      <th>Cantidad</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2,00 €</td>
+      <td><input type="number" value="8.5" disabled inputmode="decimal" step="0.1"></td>
+      <td><input type="number" id="peso-0" min="0" placeholder="0" inputmode="decimal" step="0.1"></td>
+      <td><span id="cantidad-0">0</span></td>
+    </tr>
+    <tr>
+      <td>1,00 €</td>
+      <td><input type="number" value="7.5" disabled inputmode="decimal" step="0.1"></td>
+      <td><input type="number" id="peso-1" min="0" placeholder="0" inputmode="decimal" step="0.1"></td>
+      <td><span id="cantidad-1">0</span></td>
+    </tr>
+    <tr>
+      <td>0,50 €</td>
+      <td><input type="number" value="7.8" disabled inputmode="decimal" step="0.1"></td>
+      <td><input type="number" id="peso-2" min="0" placeholder="0" inputmode="decimal" step="0.1"></td>
+      <td><span id="cantidad-2">0</span></td>
+    </tr>
+    <tr>
+      <td>0,20 €</td>
+      <td><input type="number" value="5.7" disabled inputmode="decimal" step="0.1"></td>
+      <td><input type="number" id="peso-3" min="0" placeholder="0" inputmode="decimal" step="0.1"></td>
+      <td><span id="cantidad-3">0</span></td>
+    </tr>
+    <tr>
+      <td>0,10 €</td>
+      <td><input type="number" value="4.1" disabled inputmode="decimal" step="0.1"></td>
+      <td><input type="number" id="peso-4" min="0" placeholder="0" inputmode="decimal" step="0.1"></td>
+      <td><span id="cantidad-4">0</span></td>
+    </tr>
+    <tr>
+      <td>0,05 €</td>
+      <td><input type="number" value="3.9" disabled inputmode="decimal" step="0.1"></td>
+      <td><input type="number" id="peso-5" min="0" placeholder="0" inputmode="decimal" step="0.1"></td>
+      <td><span id="cantidad-5">0</span></td>
+    </tr>
+    <tr>
+      <td>0,02 €</td>
+      <td><input type="number" value="3.0" disabled inputmode="decimal" step="0.1"></td>
+      <td><input type="number" id="peso-6" min="0" placeholder="0" inputmode="decimal" step="0.1"></td>
+      <td><span id="cantidad-6">0</span></td>
+    </tr>
+    <tr>
+      <td>0,01 €</td>
+      <td><input type="number" value="2.3" disabled inputmode="decimal" step="0.1"></td>
+      <td><input type="number" id="peso-7" min="0" placeholder="0" inputmode="decimal" step="0.1"></td>
+      <td><span id="cantidad-7">0</span></td>
+    </tr>
+  </tbody>
+</table>
 
-        </table>
 
         <div class="total">
         Total estimado: <span id="totalEuros">0,00 €</span>

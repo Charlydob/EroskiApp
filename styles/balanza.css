@@ -1,153 +1,180 @@
-    html, body, button,input, select, textarea, table, th, td {
-    touch-action: manipulation;
+/* ===== Touch ===== */
+html, body, button, input, select, textarea, table, th, td { touch-action: manipulation; }
+
+/* ===== Paleta Opal ===== */
+:root{
+  --opal-bg-1:#0b1220; --opal-bg-2:#0f172a; --opal-bg-3:#1e293b;
+  --opal-surface:rgba(255,255,255,.06); --opal-surface-2:rgba(255,255,255,.09);
+  --opal-border:rgba(255,255,255,.14);
+  --opal-text:#e5eaf2; --opal-text-dim:#cbd5e1;
+  --opal-accent:#3b82f6; --opal-accent-2:#8b5cf6;
+  --shadow-1:0 2px 10px rgba(0,0,0,.25);
+  --shadow-2:0 8px 30px rgba(0,0,0,.40);
 }
-    
-    /* Estilos generales del cuerpo de la página */
-    body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: transparent; /* degradado vertical de fondo */
-    color: #333; /* color de texto base */
-    }
 
-    /* Contenedor principal: sidebar + contenido */
-    .container {
-    display: flex;
-    min-height: 100vh; /* altura mínima igual a la altura de la pantalla */
-    }
+/* ===== Base (misma tipografía y márgenes) ===== */
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  color: var(--opal-text);
+  background:
+    radial-gradient(900px 600px at 8% -10%, rgba(59,130,246,.18), transparent 40%),
+    radial-gradient(800px 500px at 92% 0%, rgba(139,92,246,.16), transparent 42%),
+    linear-gradient(180deg, var(--opal-bg-1) 0%, var(--opal-bg-2) 45%, var(--opal-bg-3) 100%);
+}
 
-    /* Menú lateral (sidebar) */
-    .sidebar {
-    width: 80px; /* ancho fijo */
-    background: linear-gradient(to bottom, #ff4d4d, #000000); /* degradado rojo a negro */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 0;
-    }
+/* ===== Layout (sin cambios de dimensiones) ===== */
+.container{ display:flex; min-height:100vh; }
 
-    /* Logo del sidebar */
-    .sidebar .logo {
-    margin-bottom: 20px;
-    font-size: 1.2em;
-    color: white;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.6); /* sombra para mejorar visibilidad */
-    }
+.sidebar{
+  width:80px;                   /* respeta */
+  background: linear-gradient(180deg, #111827 0%, #0b1220 60%, #060a14 100%);
+  display:flex; flex-direction:column; align-items:center; padding:10px 0;
+  box-shadow: var(--shadow-1);
+}
+.sidebar .logo{
+  margin-bottom:20px; font-size:1.2em; color:#fff;
+  text-shadow:0 1px 3px rgba(0,0,0,.6);
+}
+.sidebar a:hover img.icon{ transform: scale(1.1); filter: drop-shadow(0 2px 6px rgba(59,130,246,.45)); }
 
-    /* Separación entre enlaces del menú */
+.content{
+  flex:1; padding:20px; display:flex; flex-direction:column; align-items:center; /* respeta */
+}
 
+/* ===== Titular ===== */
+h1{ text-align:center; color:#fff; margin-bottom:20px; }
 
-    /* Iconos dentro de los enlaces del menú */
+/* ===== Card balanza (mismas medidas) ===== */
+.balanza-wrapper{
+  padding:20px; width:90%; max-width:600px;          /* respeta */
+  border-radius:12px;                                 /* respeta */
+  background: linear-gradient(160deg, var(--opal-surface) 0%, rgba(255,255,255,.03) 100%);
+  border:1px solid var(--opal-border);
+  box-shadow: var(--shadow-2);
+  color: var(--opal-text);
+}
 
-    /* Estilo del enlace activo (resaltado actual) */
+/* ===== Tabla (mismos paddings y colapso) ===== */
+table{
+  width:100%; border-collapse:collapse; margin-top:20px; /* respeta */
+  background: transparent;
+  color: var(--opal-text);
+  box-shadow: var(--shadow-1);
+}
+th, td{
+  padding:10px; text-align:center; border-bottom:1px solid var(--opal-border); /* respeta */
+}
+th{ background: var(--opal-surface-2); }
+tbody tr:nth-child(odd) td{ background: rgba(255,255,255,0.03); }
+tbody tr:hover td{ background: rgba(59,130,246,0.08); }
 
+/* ===== Inputs (mismas dimensiones) ===== */
+input{
+  width:80px; padding:5px; text-align:center; border-radius:6px; /* respeta */
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  color: var(--opal-text);
+  border:1px solid var(--opal-border);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.25);
+}
+input::placeholder{ color: var(--opal-text-dim); }
+input:focus{
+  outline:none;
+  border-color: var(--opal-accent);
+  box-shadow: 0 0 0 2px rgba(59,130,246,.45), inset 0 1px 2px rgba(0,0,0,.25);
+  background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
+}
 
-    /* Efecto hover en los iconos del menú */
-    .sidebar a:hover img.icon {
-    transform: scale(1.1); /* efecto de zoom ligero */
-    }
+/* ===== Total ===== */
+.total{ font-size:1.2em; margin:20px 0; text-align:center; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.25); }
 
-    /* Zona principal de contenido */
-    .content {
-    flex: 1; /* ocupa todo el espacio restante */
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    }
+/* ===== Botón reset (mismo tamaño) ===== */
+button#resetBtn{
+  display:block; margin:auto; padding:10px 20px; border:none; border-radius:8px; /* respeta */
+  background: linear-gradient(135deg, var(--opal-accent), var(--opal-accent-2));
+  color:#fff; cursor:pointer;
+  box-shadow: var(--shadow-1);
+  transition: filter .12s ease, transform .08s ease, box-shadow .15s ease;
+}
+button#resetBtn:hover{ filter: brightness(1.05); }
+button#resetBtn:active{ transform: scale(.98); }
+button#resetBtn:focus{
+  outline:none;
+  box-shadow: 0 0 0 2px rgba(59,130,246,.45), var(--shadow-1);
+}
 
-    /* Título principal */
-    h1 {
-    text-align: center;
-    color: #ffffff;
-    margin-bottom: 20px;
-    }
+/* ===== Mobile (idéntico en medidas) ===== */
+@media (max-width: 480px){
+  .sidebar{ flex-direction:row; height:60px; width:100%; justify-content:space-around; } /* respeta */
+  .sidebar .logo{ display:none; }
+  .content{ padding:10px; }                           /* respeta */
+  table, th, td{ font-size:.85em; }                   /* respeta */
+  input{ width:60px; }                                 /* respeta */
+}
 
-    /* Contenedor de la tabla y controles de balanza */
-    .balanza-wrapper {
-    background: #eeeeee;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    padding: 20px;
-    width: 90%;
-    max-width: 600px;
-    }
+/* ===== Scrollbar sutil ===== */
+::-webkit-scrollbar{ width:8px; height:8px; }
+::-webkit-scrollbar-thumb{
+  background: linear-gradient(180deg, rgba(96,165,250,.45), rgba(139,92,246,.45));
+  border-radius:6px; border:1px solid rgba(255,255,255,.15);
+}
+/* ===== Fix tabla Opal: alineada + esquinas redondeadas ===== */
+/* === Balanza: tabla perfectamente alineada, sin “dobles” y con esquinas redondeadas === */
+/* Pega AL FINAL de tu balanza.css. No cambia tamaños ni distribución. */
 
-    /* Tabla de monedas */
-    table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    }
+.balanza-wrapper{
+  border-radius: 14px;
+  overflow: hidden;                 /* muestra bien las esquinas */
+  border: 1px solid var(--opal-border);
+}
 
-    /* Celdas de la tabla */
-    th, td {
-    padding: 10px;
-    text-align: center;
-    border-bottom: 1px solid #aaa;
-    }
+/* Mantén layout; evitamos el descuadre con separate+spacing 0 */
+.balanza-wrapper table{
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;        /* clave para radios */
+  border-spacing: 0;                /* sin huecos */
+  background: var(--opal-surface);
+}
 
-    /* Campos de entrada de peso */
-    input {
-    width: 80px;
-    padding: 5px;
-    text-align: center;
-    border-radius: 6px;
-    border: 1px solid black;
-    
-    }
+/* Quitamos borders físicos para no duplicar líneas; dibujamos con sombras internas */
+.balanza-wrapper th,
+.balanza-wrapper td{
+  border: 0;
+  position: relative;
+  background-clip: padding-box;     /* no invade el radio */
+  color: var(--opal-text);
+  padding: 10px;                    /* respeta tu padding */
+  text-align: center;
+}
 
-    /* Texto del total calculado */
-    .total {
-    font-size: 1.2em;
-    margin: 20px 0;
-    text-align: center;
-    }
+/* Separadores de columnas (solo dentro, no en el borde exterior) */
+.balanza-wrapper th:not(:last-child),
+.balanza-wrapper td:not(:last-child){
+  box-shadow: inset -1px 0 0 var(--opal-border);
+}
 
-    /* Botón de reiniciar */
-    button#resetBtn {
-    display: block;
-    margin: auto;
-    padding: 10px 20px;
-    background-color: #1a40bc;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    }
+/* Separadores de filas */
+.balanza-wrapper thead tr th{
+  background: var(--opal-surface-2);
+  box-shadow: inset 0 -1px 0 var(--opal-border);
+}
+.balanza-wrapper tbody tr:not(:last-child) td{
+  box-shadow: inset 0 -1px 0 var(--opal-border);
+}
 
-    /* Hover del botón de reinicio */
-    button#resetBtn:hover {
-    background-color: #0f2c80;
-    }
+/* Radios visibles en las cuatro esquinas reales de la tabla */
+.balanza-wrapper thead tr:first-child th:first-child{ border-top-left-radius: 14px; }
+.balanza-wrapper thead tr:first-child th:last-child { border-top-right-radius: 14px; }
+.balanza-wrapper tbody tr:last-child  td:first-child{ border-bottom-left-radius: 14px; }
+.balanza-wrapper tbody tr:last-child  td:last-child { border-bottom-right-radius: 14px; }
 
-    /* Estilos adaptativos para pantallas pequeñas */
-    @media (max-width: 480px) {
-    /* La barra lateral se convierte en barra inferior horizontal */
-    .sidebar {
-        flex-direction: row;
-        height: 60px;
-        width: 100%;
-        justify-content: space-around;
-    }
-
-    /* El logo del menú se oculta para ahorrar espacio */
-    .sidebar .logo {
-        display: none;
-    }
-
-    /* Menor padding del contenido */
-    .content {
-        padding: 10px;
-    }
-
-    /* Texto e inputs más pequeños */
-    table, th, td {
-        font-size: 0.85em;
-    }
-
-    input {
-        width: 60px;
-    }
-    }
+/* Inputs dentro de celdas: sin desplazar líneas */
+.balanza-wrapper input{
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  color: var(--opal-text);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 8px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.25);
+  background-clip: padding-box;
+}

@@ -177,3 +177,95 @@ html, body {
 * {
   touch-action: none;
 }
+/* ======== OPAL OVERRIDES (añadir al FINAL de login.css; sin tocar tamaños ni distribución) ======== */
+/* Paleta */
+:root{
+  --opal-bg-1:#0f172a; --opal-bg-2:#1e293b;
+  --opal-surface:rgba(255,255,255,0.05); --opal-surface-2:rgba(255,255,255,0.08);
+  --opal-border:rgba(255,255,255,0.14);
+  --opal-text:#e5eaf2; --opal-text-dim:#cbd5e1;
+  --opal-accent:#3b82f6; --opal-accent-2:#8b5cf6;
+  --shadow-1:0 2px 10px rgba(0,0,0,.25); --shadow-2:0 8px 30px rgba(0,0,0,.4);
+}
+
+/* Fondo y tipografía (no cambia márgenes/medidas) */
+html, body{
+  background: linear-gradient(180deg, var(--opal-bg-1) 0%, var(--opal-bg-2) 100%) !important;
+  color: var(--opal-text) !important;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Capa de login */
+.login-overlay{
+  backdrop-filter: blur(6px);
+  background: rgba(2,6,23,0.55) !important;
+}
+
+/* Tarjeta de login (respeta width:300px; paddings originales) */
+.login-container{
+  background: var(--opal-bg-2) !important;
+  border: 1px solid var(--opal-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-2);
+  color: var(--opal-text);
+}
+
+/* Inputs y botón (respeta width:80%, padding y font-size ya definidos) */
+.login-container input{
+  background: var(--opal-surface) !important;
+  color: var(--opal-text) !important;
+  border: 1px solid var(--opal-border) !important;
+}
+.login-container input::placeholder{ color: var(--opal-text-dim); }
+
+.login-container button{
+  background: linear-gradient(135deg, var(--opal-accent), var(--opal-accent-2)) !important;
+  color:#fff !important;
+  border:none !important;
+  box-shadow: var(--shadow-1);
+  font-weight: 700;
+}
+.login-container button:hover{ filter: brightness(1.05); }
+.login-container button:active{ transform: scale(.98); }
+.login-container button:focus{
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59,130,246,.45), var(--shadow-1);
+}
+
+/* Mensajes */
+#errorMsg{ color:#fecaca !important; }
+
+/* Bienvenida */
+.bienvenida{ color: var(--opal-text) !important; text-shadow: 0 1px 3px rgba(0,0,0,.35); }
+
+/* Logo y grid del menú (no se altera la distribución) */
+.logo{ color: var(--opal-text) !important; }
+
+/* Tarjetas del menú (mantiene width/height 80x80) */
+.menu-item{
+  background: var(--opal-surface) !important;
+  border: 1px solid var(--opal-border) !important;
+  border-radius: 16px !important;
+  color: var(--opal-text) !important;
+  box-shadow: var(--shadow-1) !important;
+  backdrop-filter: blur(10px);
+}
+.menu-item:hover{ filter: brightness(1.05); }
+.menu-item img{ filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
+
+/* Botón de cerrar sesión (usa estilos globales de button ya definidos) */
+button{
+  background: linear-gradient(135deg, var(--opal-accent), var(--opal-accent-2)) !important;
+  color:#fff !important; border:none !important; border-radius: 8px !important;
+  box-shadow: var(--shadow-1) !important;
+}
+
+/* Estados de foco accesibles globales */
+button:focus, a:focus, input:focus{
+  outline:none !important;
+  box-shadow: 0 0 0 2px rgba(59,130,246,.45), var(--shadow-1) !important;
+}
+
+/* Scrollbar sutil */
+::-webkit-scrollbar{ width:8px; height:8px; }
+::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.18); border-radius: 6px; }
