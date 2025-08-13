@@ -80,48 +80,47 @@
     <section id="pagina-horarios" class="pagina-app" style="padding-bottom: env(safe-area-inset-bottom);">
       <h2>🕒 Horarios</h2>
 
-      <div id="controles-superiores">
-        <select id="selectorSemana"></select>
+<div id="controles-superiores">
+  <select id="selectorSemana"></select>
 
-        <!-- Solo jefa -->
-        <div class="zona-edicion">
-          <button id="crearSemanaBtn">➕ Crear semana</button>
+  <!-- Solo jefa -->
+  <div class="zona-edicion">
+    <button id="crearSemanaBtn">➕ Crear semana</button>
+    <div id="modalFecha" role="dialog" aria-modal="true" aria-labelledby="tituloModalFecha" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border:2px solid #ccc; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2); z-index:1000;">
+      <h3 id="tituloModalFecha" style="margin-top:0">Nueva semana</h3>
+      <label for="fechaLunes">📅 Selecciona el lunes:</label><br>
+      <input type="date" id="fechaLunes" />
+    </div>
+    <button onclick="eliminarSemanaActual()" style="background-color:crimson;">🗑️ Eliminar semana</button>
+  </div>
 
-          <!-- Modal fecha (mismo tamaño; IDs limpios y roles) -->
-          <div
-            id="modalFecha"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="tituloModalFecha"
-            style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
-                   background:white; padding:20px; border:2px solid #ccc; border-radius:10px;
-                   box-shadow:0 0 10px rgba(0,0,0,0.2); z-index:1000;"
-          >
-            <h3 id="tituloModalFecha" style="margin-top:0">Nueva semana</h3>
-            <label for="fechaLunes">📅 Selecciona el lunes:</label><br>
-            <input type="date" id="fechaLunes" />
-          </div>
+  <!-- Gestión de empleados (separado de la cabecera de día) -->
+  <div class="zona-edicion">
+    <h3>👥 Gestión de empleados</h3>
+    <button onclick="abrirModalEmpleado()">➕ Añadir nuevo empleado</button>
+  </div>
+</div>
 
-          <button onclick="eliminarSemanaActual()" style="background-color:crimson;">🗑️ Eliminar semana</button>
-        </div>
-
-        <!-- Gestión de empleados -->
-        <div class="zona-edicion">
-          <h3>👥 Gestión de empleados</h3>
-          <button onclick="abrirModalEmpleado()">➕ Añadir nuevo empleado</button>
-        </div>
-        
+<!-- CABECERA DE DÍA + NAV (siempre encima del horario) -->
 <div id="barra-dia">
-  <span id="labelDia">—</span>
+  <div id="navDia" aria-label="Navegación por día">
+    <button id="diaPrev" type="button" aria-label="Día anterior">◀</button>
+    <span id="labelDia">—</span>
+    <button id="diaNext" type="button" aria-label="Día siguiente">▶</button>
+  </div>
+
   <button id="toggleVistaBtn" type="button">Mes</button>
-  <div id="mesNav" hidden>
+
+  <div id="mesNav" aria-label="Navegación por mes" hidden>
     <button id="mesPrev" type="button">◀</button>
     <span id="mesTitulo"></span>
     <button id="mesNext" type="button">▶</button>
   </div>
 </div>
 
+<!-- CONTENEDORES AISLADOS -->
 <div id="tablaHorarioContainer"></div>
+
 <div id="calendarioMes" hidden>
   <div class="cal-grid" id="calHead"></div>
   <div class="cal-grid" id="calBody"></div>
@@ -147,14 +146,14 @@
           </div>
         </div>
 
-        <select id="selectorDia">
+        <select id="selectorDia"  style="display: none;">
           <option value="lunes">Lunes</option><option value="martes">Martes</option>
           <option value="miércoles">Miércoles</option><option value="jueves">Jueves</option>
           <option value="viernes">Viernes</option><option value="sábado">Sábado</option>
           <option value="domingo">Domingo</option>
         </select>
-        <button id="diaAnterior">←</button>
-        <button id="diaSiguiente">→</button>
+        <button id="diaAnterior" style="display: none;">←</button>
+        <button id="diaSiguiente" style="display: none;">→</button>
       </div>
 
       <div id="tablaHorarioContainer"></div>

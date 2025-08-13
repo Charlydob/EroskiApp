@@ -1179,7 +1179,7 @@ function habilitarDragSortEmpleados(tbody) {
   }, { passive: true });
 }
 
-/* === NUEVO: util fecha + estado mensual === */
+/* === NUEVO: util fecha + estado mensual (SIN selectorDia) === */
 const _dow = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
 const _dowCap = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
 const _mesCap = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
@@ -1192,10 +1192,15 @@ const mesNav = document.getElementById("mesNav");
 const mesTitulo = document.getElementById("mesTitulo");
 const btnMesPrev = document.getElementById("mesPrev");
 const btnMesNext = document.getElementById("mesNext");
+const navDia = document.getElementById("navDia");
+const btnDiaPrev = document.getElementById("diaPrev");
+const btnDiaNext = document.getElementById("diaNext");
 
 let fechaMesActual = new Date();            // mes que se muestra en calendario
 let mapaEstadoDias = new Map();             // "YYYY-MM-DD" -> "trabajo" | "libre"
 let nombreEmpleadoLog = null;
+
+const mapIdx2Dia = ["lunes","martes","miércoles","jueves","viernes","sábado","domingo"];
 
 /* lunes de la semana seleccionada (selectorSemana muestra dd/mm/yyyy del lunes) */
 function getLunesSeleccionado() {
@@ -1212,25 +1217,34 @@ function fmtDDMMYYYY(d){
 }
 function ymd(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
 
-/* === NUEVO: cabecera de día actualizada === */
+/* helpers de índice de día */
+function getDiaIdx(){
+  const d = (window.diaActual || "lunes").toLowerCase();
+  const i = mapIdx2Dia.indexOf(d);
+  return i >= 0 ? i : 0;
+}
+function setDiaIdx(i){
+  window.diaActual = mapIdx2Dia[(i+7)%7];
+  if (typeof renderizarTabla === "function") renderizarTabla();
+  if (typeof renderizarResumenEmpleado === "function") renderizarResumenEmpleado();
+  actualizarLabelDia();
+}
+
+/* === Cabecera de día actualizada === */
 function actualizarLabelDia(){
   const lunes = getLunesSeleccionado();
   if (!lunes) { labelDia.textContent = "—"; return; }
-  const idx = ["lunes","martes","miércoles","jueves","viernes","sábado","domingo"].indexOf(selectorDia.value);
+  const idx = getDiaIdx();
   const fecha = new Date(lunes); fecha.setDate(lunes.getDate()+idx);
   labelDia.textContent = `${_dowCap[fecha.getDay()]}, ${fmtDDMMYYYY(fecha)}`;
 }
 selectorSemana.addEventListener("change", actualizarLabelDia);
-selectorDia.addEventListener("change", actualizarLabelDia);
 
-/* hook al cambiar con flechas ya existente */
-const _oldCambiarDia = typeof cambiarDia === "function" ? cambiarDia : null;
-window.cambiarDia = function(dir){
-  if (_oldCambiarDia) _oldCambiarDia(dir);
-  actualizarLabelDia();
-};
+/* === Navegación de día con flechas === */
+btnDiaPrev?.addEventListener("click", () => setDiaIdx(getDiaIdx()-1));
+btnDiaNext?.addEventListener("click", () => setDiaIdx(getDiaIdx()+1));
 
-/* === NUEVO: precarga de estados por empleado (una sola lectura) === */
+/* === Precarga de estados por empleado (una sola lectura) === */
 async function precalcularMapaEstados(nombreEmpleado){
   mapaEstadoDias.clear();
   const snap = await db.ref().once("value");
@@ -1242,8 +1256,8 @@ async function precalcularMapaEstados(nombreEmpleado){
     const [dd,mm,yy] = fecha.split("/").map(Number);
     const base = new Date(yy, mm-1, dd); // lunes
 
-    for (const dia of ["lunes","martes","miércoles","jueves","viernes","sábado","domingo"]){
-      const idx = ["lunes","martes","miércoles","jueves","viernes","sábado","domingo"].indexOf(dia);
+    for (const dia of mapIdx2Dia){
+      const idx = mapIdx2Dia.indexOf(dia);
       const fechaReal = new Date(base); fechaReal.setDate(base.getDate()+idx);
       const keyYmd = ymd(fechaReal);
 
@@ -1251,7 +1265,7 @@ async function precalcularMapaEstados(nombreEmpleado){
       let total=0, verdes=0, trabajo=0;
       for (const h of horas){
         const v = celdas[`${nombreEmpleado}_${h}`];
-        if (v) { total++; if (v==="1"||v==="0.5") trabajo++; if (esVerde(v)) verdes++; }
+        if (v) { total++; if (v==="1"||v==="0.5") trabajo++; if (typeof esVerde==="function" && esVerde(v)) verdes++; }
       }
       if (trabajo>0) mapaEstadoDias.set(keyYmd, "trabajo");
       else if (total>0 && verdes===total) mapaEstadoDias.set(keyYmd, "libre");
@@ -1259,11 +1273,15 @@ async function precalcularMapaEstados(nombreEmpleado){
   }
 }
 
-/* === NUEVO: render calendario mensual === */
+/* === Render calendario mensual (celdas coloreadas) === */
 function renderCabeceraCalendario(){
   calHead.innerHTML = "";
   const dows = ["L","M","X","J","V","S","D"];
-  for(const l of dows){ const e = document.createElement("div"); e.className="cal-dow"; e.textContent=l; calHead.appendChild(e); }
+  for(const l of dows){
+    const e = document.createElement("div");
+    e.className="cal-dow"; e.textContent=l;
+    calHead.appendChild(e);
+  }
 }
 function renderCalendarioMes(){
   mesTitulo.textContent = `${_mesCap[fechaMesActual.getMonth()]} ${fechaMesActual.getFullYear()}`;
@@ -1272,15 +1290,15 @@ function renderCalendarioMes(){
 
   const first = new Date(fechaMesActual.getFullYear(), fechaMesActual.getMonth(), 1);
   const last  = new Date(fechaMesActual.getFullYear(), fechaMesActual.getMonth()+1, 0);
-  // posición arrancando en Lunes
-  let startOffset = (first.getDay() + 6) % 7; // 0=Mon ... 6=Sun
-  const totalCells = startOffset + last.getDate();
+  let startOffset = (first.getDay() + 6) % 7; // lunes=0
   const hoyYMD = ymd(new Date());
 
-  // celdas en blanco previas
-  for(let i=0;i<startOffset;i++){ const d=document.createElement("div"); d.className="cal-cell mes-externo"; d.tabIndex=-1; calBody.appendChild(d); }
+  for(let i=0;i<startOffset;i++){
+    const d=document.createElement("div");
+    d.className="cal-cell mes-externo";
+    calBody.appendChild(d);
+  }
 
-  // días del mes
   for(let day=1; day<=last.getDate(); day++){
     const fecha = new Date(fechaMesActual.getFullYear(), fechaMesActual.getMonth(), day);
     const key = ymd(fecha);
@@ -1289,27 +1307,23 @@ function renderCalendarioMes(){
     if (key===hoyYMD) cell.classList.add("hoy");
     cell.textContent = String(day);
 
-    const estado = mapaEstadoDias.get(key); // "trabajo" | "libre" | undefined
-if (estado) {
-  if (estado === "trabajo") {
-    cell.style.backgroundColor = "#3b83f69c"; // azul
-    cell.style.color = "#fff"; // texto blanco para contraste
-  } else if (estado === "libre") {
-    cell.style.backgroundColor = "#22c55e8c"; // verde
-    cell.style.color = "#fff";
-  }
-}
-
+    const estado = mapaEstadoDias.get(key);
+    if (estado === "trabajo") {
+      cell.style.backgroundColor = "#3b83f69c";
+      cell.style.color = "#fff";
+    } else if (estado === "libre") {
+      cell.style.backgroundColor = "#22c55e8c";
+      cell.style.color = "#fff";
+    }
 
     cell.addEventListener("click", () => abrirDiaDesdeCalendario(fecha));
     calBody.appendChild(cell);
   }
 }
 
-/* === NUEVO: abrir día al tocar calendario === */
+/* === Abrir día desde calendario === */
 function abrirDiaDesdeCalendario(fecha){
-  // 1) hallar lunes de esa fecha
-  const dow = fecha.getDay(); // 0=Dom..6=Sab
+  const dow = fecha.getDay();
   const offset = dow===0 ? -6 : 1 - dow;
   const lunes = new Date(fecha); lunes.setDate(fecha.getDate()+offset);
   const dd = String(lunes.getDate()).padStart(2,"0");
@@ -1317,36 +1331,34 @@ function abrirDiaDesdeCalendario(fecha){
   const yy = lunes.getFullYear();
   const claveSemana = `horario_semana_${dd}-${mm}-${yy}`;
 
-  // si existe, seleccionar; si no, mantener la actual
   const opt = [...selectorSemana.options].find(o => o.value===claveSemana);
   if (opt) { selectorSemana.value = claveSemana; semanaActual = claveSemana; }
 
-  // 2) seleccionar día de la semana
-  const nombreDia = _dow[(fecha.getDay())]; // domingo..sábado
-  const mapa = {domingo:"domingo", lunes:"lunes", martes:"martes", miércoles:"miércoles", jueves:"jueves", viernes:"viernes", sábado:"sábado"};
-  selectorDia.value = mapa[nombreDia] || "lunes"; diaActual = selectorDia.value;
-
-  // 3) volver a vista semana
+  window.diaActual = mapIdx2Dia[(dow===0?6:dow-1)];
   ocultarCalendario();
-  renderizarTabla(); renderizarResumenEmpleado();
+  renderizarTabla();
+  renderizarResumenEmpleado();
   actualizarLabelDia();
 }
 
-/* === NUEVO: toggle de vistas === */
+/* === Toggle de vistas === */
 function mostrarCalendario(){
   document.getElementById("tablaHorarioContainer").hidden = true;
-  calWrap.hidden = false; mesNav.hidden = false;
+  calWrap.hidden = false;
+  mesNav.hidden = false;
+  navDia.hidden = true;
   btnToggleVista.textContent = "Semana";
 }
 function ocultarCalendario(){
-  calWrap.hidden = true; mesNav.hidden = true;
+  calWrap.hidden = true;
+  mesNav.hidden = true;
   document.getElementById("tablaHorarioContainer").hidden = false;
+  navDia.hidden = false;
   btnToggleVista.textContent = "Mes";
 }
 btnToggleVista?.addEventListener("click", async () => {
   if (calWrap.hidden){
-    // preparar calendario para el empleado logueado
-    nombreEmpleadoLog = localStorage.getItem("nombre") || selectorEmpleado.value || "";
+    nombreEmpleadoLog = localStorage.getItem("nombre") || (typeof selectorEmpleado!=="undefined" ? selectorEmpleado.value : "") || "";
     await precalcularMapaEstados(nombreEmpleadoLog);
     const lunes = getLunesSeleccionado() || new Date();
     fechaMesActual = new Date(lunes.getFullYear(), lunes.getMonth(), 1);
@@ -1359,7 +1371,7 @@ btnToggleVista?.addEventListener("click", async () => {
 btnMesPrev?.addEventListener("click", () => { fechaMesActual.setMonth(fechaMesActual.getMonth()-1); renderCalendarioMes(); });
 btnMesNext?.addEventListener("click", () => { fechaMesActual.setMonth(fechaMesActual.getMonth()+1); renderCalendarioMes(); });
 
-/* === INTEGRACIÓN: actualizar cabecera al cargar/semanas === */
+/* === Integración inicial === */
 const _oldRenderTabla = renderizarTabla;
 renderizarTabla = function(){ _oldRenderTabla(); actualizarLabelDia(); };
 window.addEventListener("DOMContentLoaded", () => {
