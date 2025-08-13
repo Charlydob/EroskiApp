@@ -504,15 +504,7 @@ tr.dragging { filter: drop-shadow(0 6px 14px rgba(0,0,0,.35)); }
   font-weight: 800;
 }
 /* === NUEVO: cabecera de día + toggle vista === */
-#barra-dia {
-  display:flex; align-items:center; gap:.5rem; margin:.5rem 0;
-}
-#labelDia {
-  font-weight:800; font-size:1rem; color:#fff;
-  padding:.25rem .5rem; border-radius:.375rem;
-  background: var(--opal-surface-2); border:1px solid var(--opal-border);
-  box-shadow: var(--shadow-1);
-}
+
 #toggleVistaBtn, #mesPrev, #mesNext {
   padding:.375rem .625rem; font-size:.875rem; border:none; border-radius:.375rem;
   background: linear-gradient(135deg, var(--opal-accent), var(--opal-accent-2)); color:#fff;
@@ -547,16 +539,9 @@ tr.dragging { filter: drop-shadow(0 6px 14px rgba(0,0,0,.35)); }
 .cal-cell.hoy { outline:2px solid rgba(246, 59, 59, 0.45); outline-offset:2px; }
 /* Controles superiores no afectan cabecera de día */
 #controles-superiores { margin-bottom:.5rem; }
-#barra-dia{
-  display:flex; align-items:center; gap:.5rem; margin:.25rem 0 .5rem;
-  justify-content:space-between; flex-wrap:wrap;
-}
+
 #navDia{ display:flex; align-items:center; gap:.5rem; }
-#labelDia{
-  font-weight:800; font-size:1rem; color:#fff; padding:.25rem .5rem;
-  border-radius:.375rem; background:var(--opal-surface-2); border:1px solid var(--opal-border);
-  box-shadow:var(--shadow-1);
-}
+
 #toggleVistaBtn, #mesPrev, #mesNext, #diaPrev, #diaNext{
   padding:.375rem .625rem; font-size:.875rem; border:none; border-radius:.375rem;
   background: linear-gradient(135deg, var(--opal-accent), var(--opal-accent-2)); color:#fff;
@@ -582,4 +567,20 @@ tr.dragging { filter: drop-shadow(0 6px 14px rgba(0,0,0,.35)); }
 ;
     flex-direction: column;
     min-height: 40vh;
+}
+#labelDia{
+  font-weight:800; font-size:1rem; color:#fff; padding:.25rem .5rem;
+  border-radius:.375rem; background:var(--opal-surface-2); border:1px solid var(--opal-border);
+  box-shadow:var(--shadow-1);
+}
+#diaAnterior, #diaSiguiente,
+#toggleVistaBtn, #mesPrev, #mesNext{
+  padding:.375rem .625rem; font-size:.875rem; border:none; border-radius:.375rem;
+  background: linear-gradient(135deg, var(--opal-accent), var(--opal-accent-2)); color:#fff;
+  box-shadow: var(--shadow-1), var(--glow); cursor:pointer;
+}
+#tablaHorarioContainer[hidden], #calendarioMes[hidden], #mesNav[hidden]{ display:none !important; }
+#barra-dia{
+  display:flex; align-items:center; gap:.5rem; margin:.25rem 0 .5rem;
+  justify-content:flex-start; flex-wrap:wrap;
 }

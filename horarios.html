@@ -103,11 +103,17 @@
 
 <!-- CABECERA DE DÍA + NAV (siempre encima del horario) -->
 <div id="barra-dia">
-  <div id="navDia" aria-label="Navegación por día">
-    <button id="diaPrev" type="button" aria-label="Día anterior">◀</button>
-    <span id="labelDia">—</span>
-    <button id="diaNext" type="button" aria-label="Día siguiente">▶</button>
-  </div>
+  <button id="diaAnterior" type="button" aria-label="Día anterior">◀</button>
+  <span id="labelDia">—</span>
+  <button id="diaSiguiente" type="button" aria-label="Día siguiente">▶</button>
+
+  <!-- selector oculto pero funcional -->
+  <select id="selectorDia" hidden>
+    <option value="lunes">Lunes</option><option value="martes">Martes</option>
+    <option value="miércoles">Miércoles</option><option value="jueves">Jueves</option>
+    <option value="viernes">Viernes</option><option value="sábado">Sábado</option>
+    <option value="domingo">Domingo</option>
+  </select>
 
   <button id="toggleVistaBtn" type="button">Mes</button>
 
@@ -146,14 +152,7 @@
           </div>
         </div>
 
-        <select id="selectorDia"  style="display: none;">
-          <option value="lunes">Lunes</option><option value="martes">Martes</option>
-          <option value="miércoles">Miércoles</option><option value="jueves">Jueves</option>
-          <option value="viernes">Viernes</option><option value="sábado">Sábado</option>
-          <option value="domingo">Domingo</option>
-        </select>
-        <button id="diaAnterior" style="display: none;">←</button>
-        <button id="diaSiguiente" style="display: none;">→</button>
+
       </div>
 
       <div id="tablaHorarioContainer"></div>
