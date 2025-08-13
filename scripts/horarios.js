@@ -1231,7 +1231,15 @@ window.cambiarDia = function(dir){
 };
 
 /* === NUEVO: precarga de estados por empleado (una sola lectura) === */
+/* === precarga de estados por empleado (con M/T) === */
 async function precalcularMapaEstados(nombreEmpleado){
+  // Franja configurable (24h): mañana [06,14), tarde [14,22)
+  const MORNING_START = 6, MORNING_END = 12;
+  const AFTER_START   = 16, AFTER_END   = 22;
+
+  const isMorning = (hIni, hFin) => hIni < MORNING_END && hFin <= MORNING_END;
+  const isAfternoon = (hIni, hFin) => hIni >= AFTER_START && hIni < AFTER_END;
+
   mapaEstadoDias.clear();
   const snap = await db.ref().once("value");
   const root = snap.val() || {};
@@ -1248,16 +1256,27 @@ async function precalcularMapaEstados(nombreEmpleado){
       const keyYmd = ymd(fechaReal);
 
       const celdas = semana[dia] || {};
-      let total=0, verdes=0, trabajo=0;
+      let total=0, verdes=0, trabajo=0, hasM=false, hasT=false;
+
       for (const h of horas){
         const v = celdas[`${nombreEmpleado}_${h}`];
-        if (v) { total++; if (v==="1"||v==="0.5") trabajo++; if (esVerde(v)) verdes++; }
+        if (!v) continue;
+        total++;
+        if (esVerde(v)) verdes++;
+        if (v==="1" || v==="0.5"){
+          trabajo++;
+          const [hIni, hFin] = h.split("-").map(Number); // ej "7-8"
+          if (isMorning(hIni, hFin)) hasM = true;
+          if (isAfternoon(hIni, hFin)) hasT = true;
+        }
       }
-      if (trabajo>0) mapaEstadoDias.set(keyYmd, "trabajo");
-      else if (total>0 && verdes===total) mapaEstadoDias.set(keyYmd, "libre");
+
+      if (trabajo>0) mapaEstadoDias.set(keyYmd, { estado:"trabajo", M:hasM, T:hasT });
+      else if (total>0 && verdes===total) mapaEstadoDias.set(keyYmd, { estado:"libre", M:false, T:false });
     }
   }
 }
+
 
 /* === NUEVO: render calendario mensual === */
 function renderCabeceraCalendario(){
@@ -1272,39 +1291,65 @@ function renderCalendarioMes(){
 
   const first = new Date(fechaMesActual.getFullYear(), fechaMesActual.getMonth(), 1);
   const last  = new Date(fechaMesActual.getFullYear(), fechaMesActual.getMonth()+1, 0);
-  // posición arrancando en Lunes
-  let startOffset = (first.getDay() + 6) % 7; // 0=Mon ... 6=Sun
-  const totalCells = startOffset + last.getDate();
+  let startOffset = (first.getDay() + 6) % 7; // lunes=0
   const hoyYMD = ymd(new Date());
 
-  // celdas en blanco previas
-  for(let i=0;i<startOffset;i++){ const d=document.createElement("div"); d.className="cal-cell mes-externo"; d.tabIndex=-1; calBody.appendChild(d); }
+  // huecos antes del día 1
+  for(let i=0;i<startOffset;i++){
+    const d=document.createElement("div");
+    d.className="cal-cell mes-externo";
+    calBody.appendChild(d);
+  }
 
-  // días del mes
   for(let day=1; day<=last.getDate(); day++){
     const fecha = new Date(fechaMesActual.getFullYear(), fechaMesActual.getMonth(), day);
     const key = ymd(fecha);
     const cell = document.createElement("div");
     cell.className = "cal-cell";
+    cell.style.position = "relative"; // para badges
     if (key===hoyYMD) cell.classList.add("hoy");
     cell.textContent = String(day);
 
-    const estado = mapaEstadoDias.get(key); // "trabajo" | "libre" | undefined
-if (estado) {
-  if (estado === "trabajo") {
-    cell.style.backgroundColor = "#3b82f6"; // azul
-    cell.style.color = "#fff"; // texto blanco para contraste
-  } else if (estado === "libre") {
-    cell.style.backgroundColor = "#22c55e"; // verde
-    cell.style.color = "#fff";
-  }
-}
+    const info = mapaEstadoDias.get(key); // puede ser string antiguo o {estado,M,T}
+    const estado = typeof info === "string" ? info : info?.estado;
 
+    if (estado === "trabajo"){
+      cell.style.backgroundColor = "#3b82f6";
+      cell.style.color = "#fff";
+    } else if (estado === "libre"){
+      cell.style.backgroundColor = "#22c55e";
+      cell.style.color = "#fff";
+    }
+
+    // Badges "M"/"T" si corresponde
+    const putBadge = (txt, topRem) => {
+      const b = document.createElement("span");
+      b.textContent = txt;
+      b.style.position = "absolute";
+      b.style.top = topRem;
+      b.style.left = ".25rem";
+      b.style.fontSize = ".65rem";
+      b.style.fontWeight = "800";
+      b.style.background = "rgba(255, 255, 255, 0)";
+      b.style.color = "#111827ff";
+      b.style.borderRadius = ".35rem";
+      b.style.padding = ".05rem .25rem";
+      b.style.lineHeight = "1.1";
+      b.style.boxShadow = "0 1px 2px rgba(0, 0, 0, 0)";
+      b.style.pointerEvents = "none";
+      cell.appendChild(b);
+    };
+
+    if (info && typeof info === "object"){
+      if (info.M) putBadge("M", ".2rem");
+      if (info.T) putBadge("T", info.M ? "1.1rem" : ".2rem");
+    }
 
     cell.addEventListener("click", () => abrirDiaDesdeCalendario(fecha));
     calBody.appendChild(cell);
   }
 }
+
 
 /* === NUEVO: abrir día al tocar calendario === */
 function abrirDiaDesdeCalendario(fecha){

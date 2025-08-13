@@ -583,4 +583,14 @@ tr.dragging { filter: drop-shadow(0 6px 14px rgba(0,0,0,.35)); }
 #barra-dia{
   display:flex; align-items:center; gap:.5rem; margin:.25rem 0 .5rem;
   justify-content:flex-start; flex-wrap:wrap;
+}/* Etiquetas de turno en las celdas del calendario */
+.cal-badge{
+  position:absolute; top:.2rem; left:.25rem;
+  font-size:.65rem; font-weight:800;
+  background: rgba(255,255,255,.92);
+  color:#111827; border-radius:.35rem;
+  padding:.05rem .25rem; line-height:1.1;
+  box-shadow: 0 1px 2px rgba(0,0,0,.15);
+  pointer-events:none;
 }
+.cal-badge.T{ top:1.1rem; } /* T debajo de M */
