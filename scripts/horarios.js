@@ -1290,11 +1290,16 @@ function renderCalendarioMes(){
     cell.textContent = String(day);
 
     const estado = mapaEstadoDias.get(key); // "trabajo" | "libre" | undefined
-    if (estado){
-      const dot = document.createElement("div");
-      dot.className = "cal-dot " + (estado==="trabajo" ? "blue" : "green");
-      cell.appendChild(dot);
-    }
+if (estado) {
+  if (estado === "trabajo") {
+    cell.style.backgroundColor = "#3b82f6"; // azul
+    cell.style.color = "#fff"; // texto blanco para contraste
+  } else if (estado === "libre") {
+    cell.style.backgroundColor = "#22c55e"; // verde
+    cell.style.color = "#fff";
+  }
+}
+
 
     cell.addEventListener("click", () => abrirDiaDesdeCalendario(fecha));
     calBody.appendChild(cell);

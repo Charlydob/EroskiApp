@@ -541,11 +541,7 @@ tr.dragging { filter: drop-shadow(0 6px 14px rgba(0,0,0,.35)); }
 }
 .cal-cell:active{ transform:scale(.98); }
 .cal-cell.mes-externo{ opacity:.35; }
-.cal-dot {
-  width:.375rem; height:.375rem; border-radius:999px; position:absolute; bottom:.25rem; left:50%; transform:translateX(-50%);
-}
-.cal-dot.blue{ background:#3b82f6; }
-.cal-dot.green{ background:#22c55e; }
+
 
 /* pequeñísimo marcador del día actual */
 .cal-cell.hoy { outline:2px solid rgba(59,130,246,.45); outline-offset:2px; }
