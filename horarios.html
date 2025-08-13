@@ -110,6 +110,22 @@
           <h3>👥 Gestión de empleados</h3>
           <button onclick="abrirModalEmpleado()">➕ Añadir nuevo empleado</button>
         </div>
+        
+<div id="barra-dia">
+  <span id="labelDia">—</span>
+  <button id="toggleVistaBtn" type="button">Mes</button>
+  <div id="mesNav" hidden>
+    <button id="mesPrev" type="button">◀</button>
+    <span id="mesTitulo"></span>
+    <button id="mesNext" type="button">▶</button>
+  </div>
+</div>
+
+<div id="tablaHorarioContainer"></div>
+<div id="calendarioMes" hidden>
+  <div class="cal-grid" id="calHead"></div>
+  <div class="cal-grid" id="calBody"></div>
+</div>
 
         <div id="modalEmpleado" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalEmpleadoTitulo">
           <div class="modal-contenido" role="document">

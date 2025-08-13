@@ -503,3 +503,49 @@ tr.dragging { filter: drop-shadow(0 6px 14px rgba(0,0,0,.35)); }
   border-left: 0.25rem solid var(--opal-accent);
   font-weight: 800;
 }
+/* === NUEVO: cabecera de día + toggle vista === */
+#barra-dia {
+  display:flex; align-items:center; gap:.5rem; margin:.5rem 0;
+}
+#labelDia {
+  font-weight:800; font-size:1rem; color:#fff;
+  padding:.25rem .5rem; border-radius:.375rem;
+  background: var(--opal-surface-2); border:1px solid var(--opal-border);
+  box-shadow: var(--shadow-1);
+}
+#toggleVistaBtn, #mesPrev, #mesNext {
+  padding:.375rem .625rem; font-size:.875rem; border:none; border-radius:.375rem;
+  background: linear-gradient(135deg, var(--opal-accent), var(--opal-accent-2)); color:#fff;
+  box-shadow: var(--shadow-1), var(--glow); cursor:pointer;
+}
+#mesNav { display:flex; align-items:center; gap:.5rem; margin-left:auto; }
+#mesTitulo { font-weight:700; color:var(--opal-text); }
+
+/* === NUEVO: calendario mensual === */
+#calendarioMes[hidden]{ display:none !important; }
+#calendarioMes {
+  background: var(--opal-surface);
+  border:1px solid var(--opal-border);
+  border-radius: .5rem; box-shadow: var(--shadow-1);
+  padding:.5rem; user-select:none;
+}
+.cal-grid {
+  display:grid; grid-template-columns: repeat(7, 1fr); gap:.25rem;
+}
+.cal-dow { text-align:center; font-weight:700; font-size:.75rem; color:var(--opal-text-dim); padding:.25rem 0; }
+.cal-cell {
+  aspect-ratio:1/1; border:1px solid var(--opal-border-soft);
+  border-radius:.5rem; display:flex; align-items:center; justify-content:center;
+  position:relative; background: var(--opal-chip); color:var(--opal-text);
+  font-size:.875rem; cursor:pointer; transition: transform .06s ease;
+}
+.cal-cell:active{ transform:scale(.98); }
+.cal-cell.mes-externo{ opacity:.35; }
+.cal-dot {
+  width:.375rem; height:.375rem; border-radius:999px; position:absolute; bottom:.25rem; left:50%; transform:translateX(-50%);
+}
+.cal-dot.blue{ background:#3b82f6; }
+.cal-dot.green{ background:#22c55e; }
+
+/* pequeñísimo marcador del día actual */
+.cal-cell.hoy { outline:2px solid rgba(59,130,246,.45); outline-offset:2px; }

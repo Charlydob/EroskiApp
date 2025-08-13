@@ -1179,3 +1179,184 @@ function habilitarDragSortEmpleados(tbody) {
   }, { passive: true });
 }
 
+/* === NUEVO: util fecha + estado mensual === */
+const _dow = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+const _dowCap = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+const _mesCap = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const labelDia = document.getElementById("labelDia");
+const calWrap = document.getElementById("calendarioMes");
+const calHead = document.getElementById("calHead");
+const calBody = document.getElementById("calBody");
+const btnToggleVista = document.getElementById("toggleVistaBtn");
+const mesNav = document.getElementById("mesNav");
+const mesTitulo = document.getElementById("mesTitulo");
+const btnMesPrev = document.getElementById("mesPrev");
+const btnMesNext = document.getElementById("mesNext");
+
+let fechaMesActual = new Date();            // mes que se muestra en calendario
+let mapaEstadoDias = new Map();             // "YYYY-MM-DD" -> "trabajo" | "libre"
+let nombreEmpleadoLog = null;
+
+/* lunes de la semana seleccionada (selectorSemana muestra dd/mm/yyyy del lunes) */
+function getLunesSeleccionado() {
+  const txt = selectorSemana.selectedOptions[0]?.textContent || "";
+  const [dd,mm,yyyy] = txt.split("/").map(Number);
+  if (!dd||!mm||!yyyy) return null;
+  return new Date(yyyy, mm-1, dd);
+}
+function fmtDDMMYYYY(d){
+  const dd = String(d.getDate()).padStart(2,"0");
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const yy = d.getFullYear();
+  return `${dd}/${mm}/${yy}`;
+}
+function ymd(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
+
+/* === NUEVO: cabecera de día actualizada === */
+function actualizarLabelDia(){
+  const lunes = getLunesSeleccionado();
+  if (!lunes) { labelDia.textContent = "—"; return; }
+  const idx = ["lunes","martes","miércoles","jueves","viernes","sábado","domingo"].indexOf(selectorDia.value);
+  const fecha = new Date(lunes); fecha.setDate(lunes.getDate()+idx);
+  labelDia.textContent = `${_dowCap[fecha.getDay()]}, ${fmtDDMMYYYY(fecha)}`;
+}
+selectorSemana.addEventListener("change", actualizarLabelDia);
+selectorDia.addEventListener("change", actualizarLabelDia);
+
+/* hook al cambiar con flechas ya existente */
+const _oldCambiarDia = typeof cambiarDia === "function" ? cambiarDia : null;
+window.cambiarDia = function(dir){
+  if (_oldCambiarDia) _oldCambiarDia(dir);
+  actualizarLabelDia();
+};
+
+/* === NUEVO: precarga de estados por empleado (una sola lectura) === */
+async function precalcularMapaEstados(nombreEmpleado){
+  mapaEstadoDias.clear();
+  const snap = await db.ref().once("value");
+  const root = snap.val() || {};
+  for (const key in root){
+    if (!key.startsWith("horario_semana_")) continue;
+    const semana = root[key];
+    const fecha = semana?._fecha; if (!fecha) continue;
+    const [dd,mm,yy] = fecha.split("/").map(Number);
+    const base = new Date(yy, mm-1, dd); // lunes
+
+    for (const dia of ["lunes","martes","miércoles","jueves","viernes","sábado","domingo"]){
+      const idx = ["lunes","martes","miércoles","jueves","viernes","sábado","domingo"].indexOf(dia);
+      const fechaReal = new Date(base); fechaReal.setDate(base.getDate()+idx);
+      const keyYmd = ymd(fechaReal);
+
+      const celdas = semana[dia] || {};
+      let total=0, verdes=0, trabajo=0;
+      for (const h of horas){
+        const v = celdas[`${nombreEmpleado}_${h}`];
+        if (v) { total++; if (v==="1"||v==="0.5") trabajo++; if (esVerde(v)) verdes++; }
+      }
+      if (trabajo>0) mapaEstadoDias.set(keyYmd, "trabajo");
+      else if (total>0 && verdes===total) mapaEstadoDias.set(keyYmd, "libre");
+    }
+  }
+}
+
+/* === NUEVO: render calendario mensual === */
+function renderCabeceraCalendario(){
+  calHead.innerHTML = "";
+  const dows = ["L","M","X","J","V","S","D"];
+  for(const l of dows){ const e = document.createElement("div"); e.className="cal-dow"; e.textContent=l; calHead.appendChild(e); }
+}
+function renderCalendarioMes(){
+  mesTitulo.textContent = `${_mesCap[fechaMesActual.getMonth()]} ${fechaMesActual.getFullYear()}`;
+  calBody.innerHTML = "";
+  renderCabeceraCalendario();
+
+  const first = new Date(fechaMesActual.getFullYear(), fechaMesActual.getMonth(), 1);
+  const last  = new Date(fechaMesActual.getFullYear(), fechaMesActual.getMonth()+1, 0);
+  // posición arrancando en Lunes
+  let startOffset = (first.getDay() + 6) % 7; // 0=Mon ... 6=Sun
+  const totalCells = startOffset + last.getDate();
+  const hoyYMD = ymd(new Date());
+
+  // celdas en blanco previas
+  for(let i=0;i<startOffset;i++){ const d=document.createElement("div"); d.className="cal-cell mes-externo"; d.tabIndex=-1; calBody.appendChild(d); }
+
+  // días del mes
+  for(let day=1; day<=last.getDate(); day++){
+    const fecha = new Date(fechaMesActual.getFullYear(), fechaMesActual.getMonth(), day);
+    const key = ymd(fecha);
+    const cell = document.createElement("div");
+    cell.className = "cal-cell";
+    if (key===hoyYMD) cell.classList.add("hoy");
+    cell.textContent = String(day);
+
+    const estado = mapaEstadoDias.get(key); // "trabajo" | "libre" | undefined
+    if (estado){
+      const dot = document.createElement("div");
+      dot.className = "cal-dot " + (estado==="trabajo" ? "blue" : "green");
+      cell.appendChild(dot);
+    }
+
+    cell.addEventListener("click", () => abrirDiaDesdeCalendario(fecha));
+    calBody.appendChild(cell);
+  }
+}
+
+/* === NUEVO: abrir día al tocar calendario === */
+function abrirDiaDesdeCalendario(fecha){
+  // 1) hallar lunes de esa fecha
+  const dow = fecha.getDay(); // 0=Dom..6=Sab
+  const offset = dow===0 ? -6 : 1 - dow;
+  const lunes = new Date(fecha); lunes.setDate(fecha.getDate()+offset);
+  const dd = String(lunes.getDate()).padStart(2,"0");
+  const mm = String(lunes.getMonth()+1).padStart(2,"0");
+  const yy = lunes.getFullYear();
+  const claveSemana = `horario_semana_${dd}-${mm}-${yy}`;
+
+  // si existe, seleccionar; si no, mantener la actual
+  const opt = [...selectorSemana.options].find(o => o.value===claveSemana);
+  if (opt) { selectorSemana.value = claveSemana; semanaActual = claveSemana; }
+
+  // 2) seleccionar día de la semana
+  const nombreDia = _dow[(fecha.getDay())]; // domingo..sábado
+  const mapa = {domingo:"domingo", lunes:"lunes", martes:"martes", miércoles:"miércoles", jueves:"jueves", viernes:"viernes", sábado:"sábado"};
+  selectorDia.value = mapa[nombreDia] || "lunes"; diaActual = selectorDia.value;
+
+  // 3) volver a vista semana
+  ocultarCalendario();
+  renderizarTabla(); renderizarResumenEmpleado();
+  actualizarLabelDia();
+}
+
+/* === NUEVO: toggle de vistas === */
+function mostrarCalendario(){
+  document.getElementById("tablaHorarioContainer").hidden = true;
+  calWrap.hidden = false; mesNav.hidden = false;
+  btnToggleVista.textContent = "Semana";
+}
+function ocultarCalendario(){
+  calWrap.hidden = true; mesNav.hidden = true;
+  document.getElementById("tablaHorarioContainer").hidden = false;
+  btnToggleVista.textContent = "Mes";
+}
+btnToggleVista?.addEventListener("click", async () => {
+  if (calWrap.hidden){
+    // preparar calendario para el empleado logueado
+    nombreEmpleadoLog = localStorage.getItem("nombre") || selectorEmpleado.value || "";
+    await precalcularMapaEstados(nombreEmpleadoLog);
+    const lunes = getLunesSeleccionado() || new Date();
+    fechaMesActual = new Date(lunes.getFullYear(), lunes.getMonth(), 1);
+    renderCalendarioMes();
+    mostrarCalendario();
+  } else {
+    ocultarCalendario();
+  }
+});
+btnMesPrev?.addEventListener("click", () => { fechaMesActual.setMonth(fechaMesActual.getMonth()-1); renderCalendarioMes(); });
+btnMesNext?.addEventListener("click", () => { fechaMesActual.setMonth(fechaMesActual.getMonth()+1); renderCalendarioMes(); });
+
+/* === INTEGRACIÓN: actualizar cabecera al cargar/semanas === */
+const _oldRenderTabla = renderizarTabla;
+renderizarTabla = function(){ _oldRenderTabla(); actualizarLabelDia(); };
+window.addEventListener("DOMContentLoaded", () => {
+  actualizarLabelDia();
+});
