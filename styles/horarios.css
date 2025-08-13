@@ -576,7 +576,7 @@ tr.dragging { filter: drop-shadow(0 6px 14px rgba(0,0,0,.35)); }
 }
 .cal-cell:hover{ filter:brightness(1.05); }
 .cal-cell.mes-externo{ opacity:.35; }
-.cal-cell.hoy{ outline:2px solid rgba(59,130,246,.45); outline-offset:2px; }
+.cal-cell.hoy{ outline:2px solid rgba(255, 41, 41, 0.726); outline-offset:2px; }
 .container {
     display: flex
 ;
