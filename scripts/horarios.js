@@ -1292,10 +1292,10 @@ function renderCalendarioMes(){
     const estado = mapaEstadoDias.get(key); // "trabajo" | "libre" | undefined
 if (estado) {
   if (estado === "trabajo") {
-    cell.style.backgroundColor = "#3b82f6"; // azul
+    cell.style.backgroundColor = "#3b83f69c"; // azul
     cell.style.color = "#fff"; // texto blanco para contraste
   } else if (estado === "libre") {
-    cell.style.backgroundColor = "#22c55e"; // verde
+    cell.style.backgroundColor = "#22c55e8c"; // verde
     cell.style.color = "#fff";
   }
 }
