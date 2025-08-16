@@ -5,22 +5,23 @@ const bienvenida = document.getElementById("bienvenida");
 const loginSection = document.getElementById("loginSection");
 const appContent = document.getElementById("appContent");
 
-let usuarios = {};
-let usuariosCargados = false;
+let usuarios = null;
 
-// ✅ Cargar usuarios con claves como strings
-db.ref("empleados").once("value", (snap) => {
-  const data = snap.val();
-  if (data) {
-    usuarios = data;
+// Carga usuarios y habilita login
+async function cargarUsuarios() {
+  try {
+    const snap = await db.ref("empleados").once("value");
+    usuarios = snap.val() || {};
+    window.usuarios = usuarios;
+    loginBtn.disabled = false;
     console.log("Usuarios cargados:", usuarios);
-  } else {
-    console.warn("No se encontraron usuarios en Firebase.");
+  } catch (e) {
+    console.error("No se pudieron cargar usuarios:", e);
+    errorMsg.textContent = "⚠️ Error cargando usuarios. Reintenta.";
   }
-});
+}
 
-
-
+// Mensajes
 const mensajesPersonalizados = {
   "Charly": "Hola Yo",
   "Bryant": "¿Aún trabajas aquí pordiosero?",
@@ -31,29 +32,31 @@ const mensajesPersonalizados = {
   "Jefa": "Bienvenida Jefa🫡",
 };
 
-loginBtn.addEventListener("click", () => {
-  console.log("Login button clicked");
+loginBtn.disabled = true;
+cargarUsuarios();
 
-  const codigo = parseInt(codigoInput.value.trim(), 10);
-  console.log("Código introducido:", codigo);
+loginBtn.addEventListener("click", async () => {
+  errorMsg.textContent = "";
 
-  if (!usuarios[codigo]) {
+  if (!usuarios) await cargarUsuarios();
+
+  const codigoStr = String(codigoInput.value.trim());
+  if (!codigoStr) { errorMsg.textContent = "❌ Introduce tu código."; return; }
+
+  if (!usuarios[codigoStr]) {
     errorMsg.textContent = "❌ Código no válido o no asignado.";
-    console.log("Código inválido");
     return;
   }
 
-  const nombre = usuarios[codigo];
-  console.log("Usuario válido:", nombre);
+  const nombre = usuarios[codigoStr];
+  const rol = (codigoStr === "1306") ? "jefa" : "empleado";
 
-  const rol = codigo === 1306 ? "jefa" : "empleado";
-
-  // Guardar sesión
+  // Sesión
   localStorage.setItem("nombre", nombre);
   localStorage.setItem("rol", rol);
-  localStorage.setItem("codigo", codigo);
+  localStorage.setItem("codigo", codigoStr);
 
-  // Mostrar bienvenida
+  // Bienvenida
   loginSection.style.display = "none";
   const mensaje = mensajesPersonalizados[nombre] || `¡Bienvenid@, ${nombre.toUpperCase()}!`;
   bienvenida.textContent = mensaje;
@@ -65,8 +68,6 @@ loginBtn.addEventListener("click", () => {
     appContent.style.pointerEvents = "auto";
   }, 2000);
 });
-
-
 
 codigoInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") loginBtn.click();
@@ -85,4 +86,3 @@ window.addEventListener("DOMContentLoaded", () => {
     appContent.style.pointerEvents = "auto";
   }
 });
-window.usuarios = usuarios;

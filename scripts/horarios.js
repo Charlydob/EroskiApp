@@ -525,7 +525,8 @@ selectorSemana?.addEventListener("change", () => iniciarTemporizadorTurno());
 window.addEventListener("DOMContentLoaded", () => {
   const rol = localStorage.getItem("rol");
   const nombre = localStorage.getItem("nombre");
-  window.esJefa = rol === "jefa" || ["charly","lorena"].includes(nombre?.toLowerCase());
+  // window.esJefa = rol === "jefa" || ["charly","lorena"].includes(nombre?.toLowerCase());
+window.esJefa = (localStorage.getItem("rol") === "jefa");
 
   if (!window.esJefa) {
     document.querySelectorAll(".zona-edicion").forEach(el => el.style.display = "none");
