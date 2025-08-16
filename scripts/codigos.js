@@ -11,7 +11,6 @@ window.contadoresPreviosCache = cargarLS("contadoresPreviosCache", {});
 
 // === DOM Ready ===
 document.addEventListener("DOMContentLoaded", () => {
-  // Restaurar filtros UI
   if (document.getElementById("filtro-categoria")) {
     document.getElementById("filtro-categoria").value = cargarLS("ui:filtro", "");
   }
@@ -19,41 +18,33 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("buscador").value = cargarLS("ui:busqueda", "");
   }
 
-  // 1) Pintar instantáneo desde cache
   const cacheProductos = cargarLS("productosCache", null);
   if (cacheProductos) {
     window.productos = cacheProductos;
     renderizarProductos();
   }
+  cargarProductos(); // UNA llamada inicial
 
-  // 2) Traer versión online (y cachear) — UNA llamada
-  cargarProductos();
-
-  // Botones principales
   document.getElementById("btn-nuevo")?.addEventListener("click", window.mostrarModalNuevo);
 
-  // Mostrar/Ocultos → solo re-render local
   document.getElementById("toggle-ocultos")?.addEventListener("click", () => {
     window.mostrarOcultos = !window.mostrarOcultos;
     guardarLS("mostrarOcultos", window.mostrarOcultos);
     renderizarProductos();
   });
 
-  // Filtro categoría → mantener modo + re-render local
   document.getElementById("filtro-categoria")?.addEventListener("change", () => {
     guardarLS("ui:filtro", document.getElementById("filtro-categoria").value);
     guardarLS("modoEspecial", window.modoEspecial);
     renderizarProductos();
   });
 
-  // Buscador → mantener modo + re-render local
   document.getElementById("buscador")?.addEventListener("input", () => {
     guardarLS("ui:busqueda", document.getElementById("buscador").value);
     guardarLS("modoEspecial", window.modoEspecial);
     renderizarProductos();
   });
 
-  // Modos especiales — sin recargas de Firebase
   const setModo = (modo) => {
     window.modoEspecial = (window.modoEspecial === modo) ? null : modo;
     guardarLS("modoEspecial", window.modoEspecial);
@@ -65,7 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-caja")?.addEventListener("click", () => setModo("caja"));
   document.getElementById("btn-tele")?.addEventListener("click", () => setModo("tele"));
 
-  // --- Modo Previa ---
   const btnSumar = document.getElementById("btn-sumar");
   const btnRestar = document.getElementById("btn-restar");
 
@@ -129,7 +119,7 @@ window.renderizarProductos = function () {
   let lista = Object.entries(window.productos)
     .filter(([_, prod]) => window.mostrarOcultos || !prod.oculto);
 
-  // Modos especiales
+  // Modos especiales (ejemplos)
   if (window.modoEspecial === "merma") {
     lista = lista.filter(([_, p]) => (p.categoria || "").toLowerCase() === "fruta");
   } else if (window.modoEspecial === "envasar") {
@@ -149,12 +139,12 @@ window.renderizarProductos = function () {
     if (filtro) lista = lista.filter(([_, p]) => (p.categoria || "").toLowerCase() === filtro);
   }
 
-  // Siempre aplicar búsqueda por nombre (dentro del modo/filtro actual)
+  // Búsqueda dentro del modo/filtro activo
   if (busqueda) {
     lista = lista.filter(([_, p]) => (p.nombre || "").toLowerCase().includes(busqueda));
   }
 
-  // Ordenar (modo previa: activos arriba; si no, alfabético)
+  // Orden
   lista.sort((a, b) => {
     if (window.modoEspecial === "previa") {
       const aCont = window.contadoresPreviosCache?.[a[0]] || 0;
@@ -172,19 +162,16 @@ window.renderizarProductos = function () {
     tarjeta.className = "tarjeta-producto";
     tarjeta.dataset.id = id;
     if (prod.oculto) tarjeta.classList.add("oculto");
-    if (window.modoEspecial === "merma" && !prod.merma) tarjeta.classList.add("merma-sin-codigo"); // pálido
-
-    // Botón detalle siempre disponible
+    if (window.modoEspecial === "merma" && !prod.merma) tarjeta.classList.add("merma-sin-codigo");
 
     let html = `
       <div class="vista-simple">
-        <img src="${prod.img || ""}" alt="Imagen del producto"
-          onerror="this.style.border='2px solid red'; this.alt='No encontrada'"/>
+        <img src="${prod.img || ""}" alt="Imagen del producto" loading="lazy"
+             onerror="this.style.border='2px solid red'; this.alt='No encontrada'"/>
         <h4>${prod.nombre || "Sin nombre"}</h4>
         ${window.modoEspecial === "merma"
           ? `<p>${prod.merma || "-"}</p>`
           : `<p>${prod.balanza || "-"}</p>`}
-        ${btnDetalle}
         <button class="btn-editar oculto">✏️</button>
       </div>
 
@@ -195,10 +182,9 @@ window.renderizarProductos = function () {
         <span class="cerrar-detalle">✖</span>
       </div>
     `;
-
     tarjeta.innerHTML = html;
 
-    // Long-press para mostrar editar
+    // Long-press → mostrar botón editar
     let lp;
     ["mousedown", "touchstart"].forEach(ev => {
       tarjeta.addEventListener(ev, (e) => {
@@ -211,27 +197,25 @@ window.renderizarProductos = function () {
     });
     tarjeta.addEventListener("mouseleave", () => clearTimeout(lp));
 
-    // Toggle detalles (botón ℹ️ y ✖) — NO interfiere con contadores
+    // Toggle detalles (sin botón de info)
     const toggleDetalle = () => tarjeta.querySelector(".vista-detalles")?.classList.toggle("oculto");
-    tarjeta.querySelector(".btn-detalle")?.addEventListener("click", (e) => { e.stopPropagation(); toggleDetalle(); });
     tarjeta.querySelector(".cerrar-detalle")?.addEventListener("click", (e) => {
       e.stopPropagation();
       tarjeta.querySelector(".vista-detalles")?.classList.add("oculto");
     });
 
-    // Modo PREVIA: contador + click-to-edit
     if (window.modoEspecial === "previa") {
+      // Contador rápida
       const cont = document.createElement("span");
       cont.className = "contador previa-contador";
       const valPrev = window.contadoresPreviosCache?.[id] || 0;
       cont.textContent = valPrev;
       tarjeta.querySelector(".vista-simple").appendChild(cont);
-
       if (valPrev > 0) tarjeta.classList.add("tarjeta-activa");
 
-      // Click en tarjeta = sumar/restar (pero no si es el contador o inputs o los botones)
+      // Click tarjeta = sumar/restar (sin abrir detalle)
       tarjeta.addEventListener("click", (e) => {
-        if (e.target === cont || e.target.closest(".contador-input") || e.target.closest(".btn-detalle")) return;
+        if (e.target === cont || e.target.closest(".contador-input")) return;
         let v = parseInt(cont.textContent || "0", 10);
         if (window.contadorModo === "sumar") v++;
         else if (window.contadorModo === "restar" && v > 0) v--;
@@ -243,7 +227,7 @@ window.renderizarProductos = function () {
         renderizarProductos(); // reordenar
       });
 
-      // Editar cantidad al clicar el contador
+      // Editar cantidad tocando contador
       cont.style.cursor = "number";
       cont.title = "Clica para editar";
       cont.addEventListener("click", (e) => {
@@ -271,7 +255,7 @@ window.renderizarProductos = function () {
           if (v > 0) tarjeta.classList.add("tarjeta-activa"); else tarjeta.classList.remove("tarjeta-activa");
           window.contadoresPreviosCache[id] = v;
           guardarLS("contadoresPreviosCache", window.contadoresPreviosCache);
-          renderizarProductos(); // reordenar tras edición
+          renderizarProductos();
         };
 
         input.addEventListener("blur", commit);
@@ -281,11 +265,8 @@ window.renderizarProductos = function () {
         });
       });
     } else {
-      // Vista normal: click en tarjeta también abre/cierra detalles (sin depender del ℹ️)
-      tarjeta.addEventListener("click", (e) => {
-        if (e.target.closest(".btn-detalle")) return;
-        toggleDetalle();
-      });
+      // En modos no-previa: click en tarjeta abre/cierra detalle
+      tarjeta.addEventListener("click", () => toggleDetalle());
     }
 
     // Editar
@@ -297,7 +278,6 @@ window.renderizarProductos = function () {
     galeria.appendChild(tarjeta);
   });
 
-  // Persistir contadores tras render
   if (window.modoEspecial === "previa") {
     window.contadoresPreviosCache = window.contadoresPreviosCache || {};
     document.querySelectorAll(".tarjeta-producto").forEach(t => {
@@ -338,7 +318,6 @@ window.editarProducto = function (id) {
   btnVisible.onclick = () => {
     const nuevo = !window.productos[id].oculto;
     window.productos[id].oculto = nuevo;
-    // Update remoto pero SIN recargar todo
     dbRef.child(id).update({ oculto: nuevo }).catch(console.error);
     guardarLS("productosCache", window.productos);
     cerrarModalEdicion();
@@ -378,7 +357,6 @@ window.guardarEdicion = function (id) {
   const ref = id ? dbRef.child(id) : dbRef.push();
   ref.set(nuevoProd)
     .then(() => {
-      // Actualizar cache local SIN recargar de Firebase
       const key = id || ref.key;
       window.productos[key] = { ...nuevoProd };
       guardarLS("productosCache", window.productos);
@@ -388,7 +366,7 @@ window.guardarEdicion = function (id) {
     .catch(err => console.error("❌ Error al guardar producto:", err));
 };
 
-// === Cloudinary (expuesto en window) ===
+// === Cloudinary ===
 function subirImagenProducto(event) {
   const archivo = event.target.files?.[0];
   if (!archivo) return;
@@ -437,7 +415,6 @@ window.eliminarProducto = function (id) {
 
   dbRef.child(id).remove()
     .then(() => {
-      // Actualizar cache local SIN recargar
       delete window.productos[id];
       guardarLS("productosCache", window.productos);
       cerrarModalEdicion();
