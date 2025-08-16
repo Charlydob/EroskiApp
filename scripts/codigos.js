@@ -26,56 +26,44 @@ document.addEventListener("DOMContentLoaded", () => {
     renderizarProductos();
   }
 
-  // 2) Traer versión online (y cachear)
+  // 2) Traer versión online (y cachear) — UNA llamada
   cargarProductos();
 
   // Botones principales
-  document.getElementById("btn-nuevo").addEventListener("click", window.mostrarModalNuevo);
+  document.getElementById("btn-nuevo")?.addEventListener("click", window.mostrarModalNuevo);
 
+  // Mostrar/Ocultos → solo re-render local
   document.getElementById("toggle-ocultos")?.addEventListener("click", () => {
     window.mostrarOcultos = !window.mostrarOcultos;
     guardarLS("mostrarOcultos", window.mostrarOcultos);
-    cargarProductos();
+    renderizarProductos();
   });
 
+  // Filtro categoría → mantener modo + re-render local
   document.getElementById("filtro-categoria")?.addEventListener("change", () => {
-    if (window.modoEspecial !== "previa") window.modoEspecial = null;
     guardarLS("ui:filtro", document.getElementById("filtro-categoria").value);
     guardarLS("modoEspecial", window.modoEspecial);
-    cargarProductos();
+    renderizarProductos();
   });
 
+  // Buscador → mantener modo + re-render local
   document.getElementById("buscador")?.addEventListener("input", () => {
-    if (window.modoEspecial !== "previa") window.modoEspecial = null;
     guardarLS("ui:busqueda", document.getElementById("buscador").value);
     guardarLS("modoEspecial", window.modoEspecial);
-    cargarProductos();
+    renderizarProductos();
   });
 
-  // Modos especiales
-  document.getElementById("btn-merma")?.addEventListener("click", () => {
-    window.modoEspecial = (window.modoEspecial === "merma") ? null : "merma";
+  // Modos especiales — sin recargas de Firebase
+  const setModo = (modo) => {
+    window.modoEspecial = (window.modoEspecial === modo) ? null : modo;
     guardarLS("modoEspecial", window.modoEspecial);
-    cargarProductos();
-  });
+    renderizarProductos();
+  };
 
-  document.getElementById("btn-envasar")?.addEventListener("click", () => {
-    window.modoEspecial = (window.modoEspecial === "envasar") ? null : "envasar";
-    guardarLS("modoEspecial", window.modoEspecial);
-    cargarProductos();
-  });
-
-  document.getElementById("btn-caja")?.addEventListener("click", () => {
-    window.modoEspecial = (window.modoEspecial === "caja") ? null : "caja";
-    guardarLS("modoEspecial", window.modoEspecial);
-    cargarProductos();
-  });
-
-  document.getElementById("btn-tele")?.addEventListener("click", () => {
-    window.modoEspecial = (window.modoEspecial === "tele") ? null : "tele";
-    guardarLS("modoEspecial", window.modoEspecial);
-    cargarProductos();
-  });
+  document.getElementById("btn-merma")?.addEventListener("click", () => setModo("merma"));
+  document.getElementById("btn-envasar")?.addEventListener("click", () => setModo("envasar"));
+  document.getElementById("btn-caja")?.addEventListener("click", () => setModo("caja"));
+  document.getElementById("btn-tele")?.addEventListener("click", () => setModo("tele"));
 
   // --- Modo Previa ---
   const btnSumar = document.getElementById("btn-sumar");
@@ -114,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    cargarProductos();
+    renderizarProductos();
   });
 });
 
@@ -143,7 +131,6 @@ window.renderizarProductos = function () {
 
   // Modos especiales
   if (window.modoEspecial === "merma") {
-    // Mostrar TODA la fruta; las que no tengan código merma se verán pálidas
     lista = lista.filter(([_, p]) => (p.categoria || "").toLowerCase() === "fruta");
   } else if (window.modoEspecial === "envasar") {
     lista = lista.filter(([_, p]) => (p.categoria || "").toLowerCase() === "bolleria");
@@ -160,7 +147,11 @@ window.renderizarProductos = function () {
     });
   } else {
     if (filtro) lista = lista.filter(([_, p]) => (p.categoria || "").toLowerCase() === filtro);
-    if (busqueda) lista = lista.filter(([_, p]) => (p.nombre || "").toLowerCase().includes(busqueda));
+  }
+
+  // Siempre aplicar búsqueda por nombre (dentro del modo/filtro actual)
+  if (busqueda) {
+    lista = lista.filter(([_, p]) => (p.nombre || "").toLowerCase().includes(busqueda));
   }
 
   // Ordenar (modo previa: activos arriba; si no, alfabético)
@@ -183,6 +174,9 @@ window.renderizarProductos = function () {
     if (prod.oculto) tarjeta.classList.add("oculto");
     if (window.modoEspecial === "merma" && !prod.merma) tarjeta.classList.add("merma-sin-codigo"); // pálido
 
+    // Botón detalle siempre disponible
+    const btnDetalle = `<button class="btn-detalle" title="Ver detalles">ℹ️</button>`;
+
     let html = `
       <div class="vista-simple">
         <img src="${prod.img || ""}" alt="Imagen del producto"
@@ -191,24 +185,21 @@ window.renderizarProductos = function () {
         ${window.modoEspecial === "merma"
           ? `<p>${prod.merma || "-"}</p>`
           : `<p>${prod.balanza || "-"}</p>`}
+        ${btnDetalle}
         <button class="btn-editar oculto">✏️</button>
+      </div>
+
+      <div class="vista-detalles oculto">
+        <p><strong>Merma:</strong> ${prod.merma || "-"}</p>
+        <p><strong>Ref:</strong> ${prod.ref || "-"}</p>
+        <p><strong>Cat:</strong> ${prod.categoria || "-"}</p>
+        <span class="cerrar-detalle">✖</span>
       </div>
     `;
 
-    if (!window.modoEspecial) {
-      html += `
-        <div class="vista-detalles oculto">
-          <p><strong>Merma:</strong> ${prod.merma || "-"}</p>
-          <p><strong>Ref:</strong> ${prod.ref || "-"}</p>
-          <p><strong>Cat:</strong> ${prod.categoria || "-"}</p>
-          <span class="cerrar-detalle">✖</span>
-        </div>
-      `;
-    }
-
     tarjeta.innerHTML = html;
 
-    // Long-press para editar
+    // Long-press para mostrar editar
     let lp;
     ["mousedown", "touchstart"].forEach(ev => {
       tarjeta.addEventListener(ev, (e) => {
@@ -221,6 +212,14 @@ window.renderizarProductos = function () {
     });
     tarjeta.addEventListener("mouseleave", () => clearTimeout(lp));
 
+    // Toggle detalles (botón ℹ️ y ✖) — NO interfiere con contadores
+    const toggleDetalle = () => tarjeta.querySelector(".vista-detalles")?.classList.toggle("oculto");
+    tarjeta.querySelector(".btn-detalle")?.addEventListener("click", (e) => { e.stopPropagation(); toggleDetalle(); });
+    tarjeta.querySelector(".cerrar-detalle")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      tarjeta.querySelector(".vista-detalles")?.classList.add("oculto");
+    });
+
     // Modo PREVIA: contador + click-to-edit
     if (window.modoEspecial === "previa") {
       const cont = document.createElement("span");
@@ -231,9 +230,9 @@ window.renderizarProductos = function () {
 
       if (valPrev > 0) tarjeta.classList.add("tarjeta-activa");
 
-      // Click en tarjeta = sumar/restar
+      // Click en tarjeta = sumar/restar (pero no si es el contador o inputs o los botones)
       tarjeta.addEventListener("click", (e) => {
-        if (e.target === cont || e.target.closest(".contador-input")) return; // no interferir con edición directa
+        if (e.target === cont || e.target.closest(".contador-input") || e.target.closest(".btn-detalle")) return;
         let v = parseInt(cont.textContent || "0", 10);
         if (window.contadorModo === "sumar") v++;
         else if (window.contadorModo === "restar" && v > 0) v--;
@@ -245,7 +244,7 @@ window.renderizarProductos = function () {
         renderizarProductos(); // reordenar
       });
 
-      // >>> NUEVO: editar cantidad al clicar el contador <<<
+      // Editar cantidad al clicar el contador
       cont.style.cursor = "number";
       cont.title = "Clica para editar";
       cont.addEventListener("click", (e) => {
@@ -254,8 +253,8 @@ window.renderizarProductos = function () {
 
         const input = document.createElement("input");
         input.type = "number";
-        input.inputMode = "numeric";  // ← fuerza teclado numérico en móviles
-input.pattern = "[0-9]*"; 
+        input.inputMode = "numeric";
+        input.pattern = "[0-9]*";
         input.min = "0";
         input.className = "contador-input";
         input.value = cont.textContent || "0";
@@ -283,16 +282,14 @@ input.pattern = "[0-9]*";
         });
       });
     } else {
-      // Vista normal
-      tarjeta.addEventListener("click", () => {
-        tarjeta.querySelector(".vista-detalles")?.classList.toggle("oculto");
-      });
-      tarjeta.querySelector(".cerrar-detalle")?.addEventListener("click", (e) => {
-        e.stopPropagation();
-        tarjeta.querySelector(".vista-detalles").classList.add("oculto");
+      // Vista normal: click en tarjeta también abre/cierra detalles (sin depender del ℹ️)
+      tarjeta.addEventListener("click", (e) => {
+        if (e.target.closest(".btn-detalle")) return;
+        toggleDetalle();
       });
     }
 
+    // Editar
     tarjeta.querySelector(".btn-editar").addEventListener("click", (e) => {
       e.stopPropagation();
       editarProducto(id);
@@ -340,9 +337,13 @@ window.editarProducto = function (id) {
   btnVisible.classList.remove("oculto");
   btnVisible.textContent = p.oculto ? "👁️ Mostrar" : "🙈 Ocultar";
   btnVisible.onclick = () => {
-    window.productos[id].oculto = !window.productos[id].oculto;
-    dbRef.child(id).update({ oculto: window.productos[id].oculto }).then(() => cargarProductos());
+    const nuevo = !window.productos[id].oculto;
+    window.productos[id].oculto = nuevo;
+    // Update remoto pero SIN recargar todo
+    dbRef.child(id).update({ oculto: nuevo }).catch(console.error);
+    guardarLS("productosCache", window.productos);
     cerrarModalEdicion();
+    renderizarProductos();
   };
 
   document.getElementById("guardar-edicion").onclick = () => guardarEdicion(id);
@@ -359,7 +360,11 @@ window.guardarEdicion = function (id) {
     .replace(/\s+/g, "_");
 
   const cloudinaryUrl = document.getElementById("preview-imagen-producto")?.dataset?.url;
-  const imgFinal = cloudinaryUrl || `recursos/img/codigos/${categoria}/${nombreArchivo}.png`;
+  const imgPrev = window.productos[id]?.img || "";
+  const imgFinal =
+    cloudinaryUrl ||
+    imgPrev ||
+    (nombre && categoria ? `recursos/img/codigos/${categoria}/${nombreArchivo}.png` : "");
 
   const nuevoProd = {
     nombre,
@@ -374,13 +379,17 @@ window.guardarEdicion = function (id) {
   const ref = id ? dbRef.child(id) : dbRef.push();
   ref.set(nuevoProd)
     .then(() => {
+      // Actualizar cache local SIN recargar de Firebase
+      const key = id || ref.key;
+      window.productos[key] = { ...nuevoProd };
+      guardarLS("productosCache", window.productos);
       cerrarModalEdicion();
-      cargarProductos();
+      renderizarProductos();
     })
     .catch(err => console.error("❌ Error al guardar producto:", err));
 };
 
-// === Cloudinary (FIX: exponer en window + flujo simplificado) ===
+// === Cloudinary (expuesto en window) ===
 function subirImagenProducto(event) {
   const archivo = event.target.files?.[0];
   if (!archivo) return;
@@ -390,7 +399,7 @@ function subirImagenProducto(event) {
 
   const formData = new FormData();
   formData.append("file", archivo);
-  formData.append("upload_preset", "publico"); // Asegúrate de que exista en tu Cloudinary
+  formData.append("upload_preset", "publico"); // Debe existir en tu Cloudinary
 
   fetch("https://api.cloudinary.com/v1_1/dgdavibcx/image/upload", {
     method: "POST",
@@ -399,14 +408,14 @@ function subirImagenProducto(event) {
     .then(res => res.json())
     .then(data => {
       const url = data.secure_url;
-      if (preview) {
+      if (url && preview) {
         preview.src = url;
         preview.dataset.url = url; // usado en guardarEdicion
       }
     })
     .catch(err => console.error("❌ Error al subir imagen:", err));
 }
-window.subirImagenProducto = subirImagenProducto; // << necesario si el HTML usa onchange="subirImagenProducto(event)"
+window.subirImagenProducto = subirImagenProducto;
 
 // === Utilidades Modal ===
 window.cerrarModalEdicion = function () {
@@ -429,8 +438,11 @@ window.eliminarProducto = function (id) {
 
   dbRef.child(id).remove()
     .then(() => {
+      // Actualizar cache local SIN recargar
+      delete window.productos[id];
+      guardarLS("productosCache", window.productos);
       cerrarModalEdicion();
-      cargarProductos();
+      renderizarProductos();
     })
     .catch(err => console.error("❌ Error al eliminar producto:", err));
 };
@@ -445,4 +457,3 @@ function cargarLS(clave, defecto = null) {
     return v == null ? defecto : JSON.parse(v);
   } catch { return defecto; }
 }
-
