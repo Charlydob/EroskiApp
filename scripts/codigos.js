@@ -175,7 +175,6 @@ window.renderizarProductos = function () {
     if (window.modoEspecial === "merma" && !prod.merma) tarjeta.classList.add("merma-sin-codigo"); // pálido
 
     // Botón detalle siempre disponible
-    const btnDetalle = `<button class="btn-detalle" title="Ver detalles">ℹ️</button>`;
 
     let html = `
       <div class="vista-simple">
