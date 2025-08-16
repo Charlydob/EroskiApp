@@ -291,6 +291,7 @@ function cargarSemanasExistentes() {
     semanaActual = selectorSemana.value;
     renderizarTabla();
     renderizarResumenEmpleado();
+      iniciarTemporizadorTurno?.()
   });
 }
 
@@ -327,6 +328,198 @@ function eliminarSemanaActual() {
     alert("Semana eliminada correctamente.");
   });
 }
+/* ====== TEMPORIZADOR DE TURNO (hoy, usuario logueado) ====== */
+// Helpers
+function _pad(n){ return String(n).padStart(2,"0"); }
+function _formatHMS(totalSeg){
+  if (totalSeg < 0) totalSeg = 0;
+  const h = Math.floor(totalSeg/3600);
+  const m = Math.floor((totalSeg%3600)/60);
+  const s = Math.floor(totalSeg%60);
+  return `${_pad(h)}:${_pad(m)}:${_pad(s)}`;
+}
+function _dec2hm(d){
+  const hrs = Math.floor(d);
+  const mins = Math.round((d - hrs) * 60);
+  return `${_pad(hrs)}:${_pad(mins)}`;
+}
+
+// Calcula turno de HOY para un empleado leyendo las celdas 1 / 0.5
+async function calcularTurnoHoy(nombreEmpleado){
+  try{
+    // Semana seleccionada ya apunta por defecto a la semana actual al cargar. :contentReference[oaicite:4]{index=4}
+    if (!semanaActual) return null;
+
+    // Día real de HOY (no el selector visual)
+    const _dias = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+    const diaHoy = _dias[new Date().getDay()];
+
+    const snap = await db.ref(`${semanaActual}/${diaHoy}`).once("value");
+    const celdas = snap.val() || {};
+
+    // Recorremos bloques horarios definidos en 'horas' tipo "13-14"… :contentReference[oaicite:5]{index=5}
+    const bloques = [];
+    for (const h of horas){
+      const v = celdas[`${nombreEmpleado}_${h}`];
+      if (v === "1" || v === "0.5"){
+        bloques.push({ hora: h, peso: parseFloat(v) });
+      }
+    }
+    if (!bloques.length) return null;
+
+    const inicioHora = parseInt(bloques[0].hora.split("-")[0], 10);
+    const finHora    = parseInt(bloques[bloques.length-1].hora.split("-")[1], 10);
+
+    const tInicio = inicioHora + (bloques[0].peso === 0.5 ? 0.5 : 0);
+    // si el último bloque es 0.5, terminamos media hora antes del fin del bloque
+    const lastPeso = bloques[bloques.length-1].peso;
+    const tFin = finHora - (lastPeso === 0.5 ? 0.5 : 0);
+
+    if (tFin <= tInicio) return null;
+
+    return { dia: diaHoy, inicio: tInicio, fin: tFin };
+  } catch(e){
+    console.warn("Temporizador: error calculando turno:", e);
+    return null;
+  }
+}
+
+let __timerInt = null;
+async function iniciarTemporizadorTurno(){
+  const box = document.getElementById("temporizadorTurno");
+  const big = document.getElementById("timerBig");
+  const sub = document.getElementById("timerSub");
+  if (!box || !big || !sub) return;
+
+  // Usuario logueado: se usa el nombre del LS y no el selector. :contentReference[oaicite:6]{index=6}
+  const nombre = (localStorage.getItem("nombre") || "").trim();
+  if (!nombre){ box.hidden = true; return; }
+
+  const turno = await calcularTurnoHoy(nombre);
+  if (!turno){ box.hidden = true; if (__timerInt) clearInterval(__timerInt); return; }
+
+  box.hidden = false;
+  box.classList.remove("finalizado");
+
+  // Subtítulo: “Hoy 13:30–22:00”
+  const hIniTxt = _dec2hm(turno.inicio);
+  const hFinTxt = _dec2hm(turno.fin);
+  sub.textContent = `Hoy ${hIniTxt}–${hFinTxt}`;
+
+  function _tick(){
+    const now = new Date();
+    const decNow = now.getHours() + (now.getMinutes()/60) + (now.getSeconds()/3600);
+
+    const durTotalSeg = Math.round((turno.fin - turno.inicio) * 3600);
+
+    if (decNow < turno.inicio){
+      // Antes de empezar: muestra duración total (estático)
+      big.textContent = _formatHMS(durTotalSeg);
+    } else if (decNow >= turno.inicio && decNow < turno.fin){
+      // En curso: cuenta atrás hasta fin
+      const restSeg = Math.round((turno.fin - decNow) * 3600);
+      big.textContent = _formatHMS(restSeg);
+    } else {
+      // Después del fin
+      big.textContent = "00:00:00";
+      box.classList.add("finalizado");
+    }
+  }
+
+  if (__timerInt) clearInterval(__timerInt);
+  _tick();
+  __timerInt = setInterval(_tick, 1000);
+}
+
+// Re-inicializa al cambiar de semana o al cargar
+selectorSemana?.addEventListener("change", () => iniciarTemporizadorTurno());
+/* ====== Temporizador de turno (inyecta UI + lógica) ====== */
+(function(){
+  // UI: crea el bloque si no existe (debajo del H2 "Horarios")
+  function ensureTimerUI(){
+    if (document.getElementById("temporizadorTurno")) return;
+    const h2 = [...document.querySelectorAll("#pagina-horarios h2")].find(el => el.textContent.includes("Horarios"));
+    if (!h2) return;
+    const wrap = document.createElement("div");
+    wrap.id = "temporizadorTurno";
+    wrap.hidden = true;
+    wrap.innerHTML = `<div id="timerBig">--:--:--</div><div id="timerSub">—</div>`;
+    h2.insertAdjacentElement("afterend", wrap);
+  }
+
+  const _dias = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+  const pad  = n => String(n).padStart(2,"0");
+  const fmtH = d => `${pad(Math.floor(d))}:${pad(Math.round((d%1)*60))}`;
+  const fmtS = s => { s=Math.max(0, s|0); const h=pad(s/3600|0), m=pad((s%3600)/60|0), ss=pad(s%60); return `${h}:${m}:${ss}`; };
+
+  async function calcularTurnoHoy(nombreEmpleado){
+    if (!window.semanaActual) return null;
+    const diaHoy = _dias[new Date().getDay()];
+    const snap = await db.ref(`${semanaActual}/${diaHoy}`).once("value");
+    const celdas = snap.val() || {};
+
+    // Usa tu array global `horas` con formato "13-14"
+    const bloques = [];
+    for (const h of (window.horas||[])){
+      const v = celdas[`${nombreEmpleado}_${h}`];
+      if (v==="1"||v==="0.5") bloques.push({ hora:h, peso: parseFloat(v) });
+    }
+    if (!bloques.length) return null;
+
+    const hIni = parseInt(bloques[0].hora.split("-")[0],10);
+    const hFin = parseInt(bloques.at(-1).hora.split("-")[1],10);
+    const inicio = hIni + (bloques[0].peso===0.5?0.5:0);
+    const fin    = hFin - (bloques.at(-1).peso===0.5?0.5:0);
+    if (fin<=inicio) return null;
+    return { inicio, fin, dia: diaHoy };
+  }
+
+  let tInt=null;
+  async function iniciarTemporizadorTurno(){
+    ensureTimerUI();
+    const box = document.getElementById("temporizadorTurno");
+    const big = document.getElementById("timerBig");
+    const sub = document.getElementById("timerSub");
+    if (!box||!big||!sub) return;
+
+    const nombre = (localStorage.getItem("nombre")||"").trim();
+    if (!nombre) { box.hidden=true; return; }
+
+    const turno = await calcularTurnoHoy(nombre);
+    if (!turno) { box.hidden=true; if(tInt) clearInterval(tInt); return; }
+
+    box.hidden=false; box.classList.remove("finalizado");
+    sub.textContent = `Hoy ${fmtH(turno.inicio)}–${fmtH(turno.fin)}`;
+
+    function tick(){
+      const now = new Date();
+      const dec = now.getHours() + now.getMinutes()/60 + now.getSeconds()/3600;
+      const totalSeg = Math.round((turno.fin - turno.inicio)*3600);
+
+      if (dec < turno.inicio) {
+        // Antes de empezar: duración total (estático)
+        big.textContent = fmtS(totalSeg);
+      } else if (dec < turno.fin) {
+        // En curso: cuenta atrás
+        big.textContent = fmtS(Math.round((turno.fin - dec)*3600));
+      } else {
+        big.textContent = "00:00:00";
+        box.classList.add("finalizado");
+      }
+    }
+    if (tInt) clearInterval(tInt);
+    tick(); tInt = setInterval(tick, 1000);
+  }
+
+  // Hooks: reintenta al cargar semanas o al cambiar de semana/día
+  document.addEventListener("DOMContentLoaded", () => {
+    ensureTimerUI();
+    // si tu app ya decide `semanaActual` en cargarSemanasExistentes(), esperamos un poco y arrancamos
+    setTimeout(iniciarTemporizadorTurno, 300);
+  });
+  window.addEventListener("focus", iniciarTemporizadorTurno);
+  (window.selectorSemana||document).addEventListener?.("change", iniciarTemporizadorTurno);
+})();
 
 /* ====== DOM READY ====== */
 window.addEventListener("DOMContentLoaded", () => {
@@ -346,6 +539,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
   cargarSemanasExistentes();
   cargarSelectorEmpleado();
+  iniciarTemporizadorTurno();
+
 
   const btnCrear = document.getElementById("crearSemanaBtn");
   const inputFecha = document.getElementById("fechaLunes");

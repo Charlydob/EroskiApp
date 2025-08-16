@@ -79,12 +79,18 @@
     <!-- horarios.html -->
     <section id="pagina-horarios" class="pagina-app" style="padding-bottom: env(safe-area-inset-bottom);">
       <h2>🕒 Horarios</h2>
+<!-- TEMPORIZADOR DE TURNO (hoy, usuario logueado) -->
+<div id="temporizadorTurno" hidden>
+  <div id="timerBig">--:--:--</div>
+  <div id="timerSub">—</div>
+</div>
 
 <div id="controles-superiores">
-  <select id="selectorSemana"></select>
+
 
   <!-- Solo jefa -->
   <div class="zona-edicion">
+      <select id="selectorSemana"></select>
     <button id="crearSemanaBtn">➕ Crear semana</button>
     <div id="modalFecha" role="dialog" aria-modal="true" aria-labelledby="tituloModalFecha" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border:2px solid #ccc; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2); z-index:1000;">
       <h3 id="tituloModalFecha" style="margin-top:0">Nueva semana</h3>

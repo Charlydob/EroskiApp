@@ -594,3 +594,32 @@ tr.dragging { filter: drop-shadow(0 6px 14px rgba(0,0,0,.35)); }
   pointer-events:none;
 }
 .cal-badge.T{ top:1.1rem; } /* T debajo de M */
+/* ====== Temporizador de turno (banner superior) ====== */
+#temporizadorTurno{
+  display:flex; flex-direction:column; align-items:flex-start; gap:.15rem;
+  margin:.35rem 0 .5rem; padding:.5rem .75rem;
+  border:1px solid var(--opal-border); border-radius:.5rem;
+  background:linear-gradient(135deg, rgba(59,130,246,.18), rgba(139,92,246,.12));
+  box-shadow:var(--shadow-1);
+}
+#timerBig{
+  font-weight:900; font-size:2rem; letter-spacing:.02em;
+  line-height:1; color:#fff; text-shadow:0 1px 0 rgba(0,0,0,.25);
+}
+#timerSub{
+  font-size:.9rem; color:var(--opal-text-dim);
+}
+#temporizadorTurno.finalizado{
+  background:linear-gradient(135deg, rgba(34,197,94,.18), rgba(16,185,129,.12));
+}
+/* ====== Temporizador turno ====== */
+#temporizadorTurno{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.15rem;
+  width:100%; margin:.5rem 0 .75rem; padding:.6rem .9rem;
+  border:1px solid var(--opal-border); border-radius:.6rem;
+  background:linear-gradient(135deg, rgba(59,130,246,.18), rgba(139,92,246,.12));
+  box-shadow:var(--shadow-1);
+}
+#timerBig{ font-weight:900; font-size:2.1rem; letter-spacing:.02em; line-height:1; color:#fff; text-align:center; }
+#timerSub{ font-size:.95rem; color:var(--opal-text-dim); text-align:center; }
+#temporizadorTurno.finalizado{ background:linear-gradient(135deg, rgba(34,197,94,.18), rgba(16,185,129,.12)); }
