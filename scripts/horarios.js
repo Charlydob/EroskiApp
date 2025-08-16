@@ -48,6 +48,37 @@ const diaActualNombre = diasSemana[hoy.getDay()];
 selectorDia.value = diaActualNombre;
 diaActual = diaActualNombre;
 
+const OCULTOS_PATH = "empleados_ocultos";
+window.empleadosOcultos = new Set();
+
+async function cargarEmpleadosOcultos() {
+  const mapa = (await db.ref(OCULTOS_PATH).once("value")).val() || {};
+  window.empleadosOcultos = new Set(
+    Object.entries(mapa).filter(([,v])=>!!v).map(([k])=>String(k))
+  );
+}
+
+function codigoPorNombre(nombre) {
+  nombre = (nombre||"").trim().toLowerCase();
+  for (const [cod, nom] of Object.entries(window.usuarios||{})) {
+    if ((nom||"").trim().toLowerCase() === nombre) return String(cod);
+  }
+  return null;
+}
+function esEmpleadoOcultoPorNombre(nombre){
+  const cod = codigoPorNombre(nombre);
+  return cod ? window.empleadosOcultos.has(cod) : false;
+}
+
+// API para ocultar/mostrar desde consola o UI
+window.setEmpleadoOculto = async function(codigo, oculto=true){
+  await db.ref(`${OCULTOS_PATH}/${String(codigo)}`).set(!!oculto);
+  await cargarEmpleadosOcultos();
+  // refrescar UI
+  try { await window.cargarSelectorEmpleado?.(); } catch {}
+  try { await window.renderizarTabla?.(); } catch {}
+};
+
 window.cambiosPendientes = {};
 window.timeoutAutoGuardar = null;
 
@@ -525,23 +556,34 @@ selectorSemana?.addEventListener("change", () => iniciarTemporizadorTurno());
 window.addEventListener("DOMContentLoaded", () => {
   const rol = localStorage.getItem("rol");
   const nombre = localStorage.getItem("nombre");
-  // window.esJefa = rol === "jefa" || ["charly","lorena"].includes(nombre?.toLowerCase());
-window.esJefa = (localStorage.getItem("rol") === "jefa");
+
+  // Solo jefa si el rol es "jefa" (p.ej. código 1306 en login)
+  window.esJefa = (rol === "jefa");
 
   if (!window.esJefa) {
     document.querySelectorAll(".zona-edicion").forEach(el => el.style.display = "none");
-    const modo = document.getElementById("modoSeleccion"); if (modo) modo.style.display = "none";
-    modoSeleccion = null;
+    const modo = document.getElementById("modoSeleccion");
+    if (modo) modo.style.display = "none";
+    if (typeof window.modoSeleccion !== "undefined") window.modoSeleccion = null;
   }
+
   ["selectorEmpleado","resumenEmpleado","miniTurnoEmpleado"].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.hidden = false; el.style.removeProperty("display"); }
   });
 
-  cargarSemanasExistentes();
-  cargarSelectorEmpleado();
-  iniciarTemporizadorTurno();
+  // Inicializaciones
+  if (typeof cargarSemanasExistentes === "function") cargarSemanasExistentes();
+  if (typeof cargarSelectorEmpleado === "function") cargarSelectorEmpleado();
+  if (typeof iniciarTemporizadorTurno === "function") iniciarTemporizadorTurno();
 
+  // Ocultar empleado por código al arrancar (seguro si las funciones no existen)
+  (async () => {
+    try {
+      if (typeof cargarEmpleadosOcultos === "function") await cargarEmpleadosOcultos();
+      if (typeof setEmpleadoOculto === "function") await setEmpleadoOculto(1306, true);
+    } catch (e) { console.warn("setEmpleadoOculto:", e); }
+  })();
 
   const btnCrear = document.getElementById("crearSemanaBtn");
   const inputFecha = document.getElementById("fechaLunes");
@@ -550,6 +592,7 @@ window.esJefa = (localStorage.getItem("rol") === "jefa");
   const lockScroll = (on) => { document.body.style.overflow = on ? "hidden" : ""; };
 
   document.addEventListener("click", (e) => {
+    if (!modalFecha) return;
     if (modalFecha.style.display === "block" && !modalFecha.contains(e.target) && e.target !== btnCrear) {
       modalFecha.style.display = "none"; lockScroll(false);
     }
@@ -566,7 +609,7 @@ window.esJefa = (localStorage.getItem("rol") === "jefa");
     const fechaFormateada = `${dd}/${mm}/${yyyy}`;
     const clave = `horario_semana_${dd}-${mm}-${yyyy}`;
     db.ref(clave).set({ _fecha: fechaFormateada })
-      .then(() => { alert("✅ Semana creada."); inputFecha.value=""; modalFecha.style.display="none"; lockScroll(false); cargarSemanasExistentes(); })
+      .then(() => { alert("✅ Semana creada."); inputFecha.value=""; modalFecha.style.display="none"; lockScroll(false); if (typeof cargarSemanasExistentes==="function") cargarSemanasExistentes(); })
       .catch((err) => { console.error("❌ Crear semana:", err); alert("Error al crear la semana."); });
   });
 
@@ -575,17 +618,22 @@ window.esJefa = (localStorage.getItem("rol") === "jefa");
   btnAnterior?.addEventListener("click", () => cambiarDia(-1));
   btnSiguiente?.addEventListener("click", () => cambiarDia(1));
 
-  // Color inicial
-  if (colorWrapperMain && colorPicker) colorWrapperMain.style.backgroundColor = colorPicker.value;
+  // Color inicial (evita ReferenceError si no existen)
+  if (window.colorWrapperMain && window.colorPicker) {
+    window.colorWrapperMain.style.backgroundColor = window.colorPicker.value;
+  }
 
   // Modal empleados scroll lock
   const modalEmp = document.getElementById("modalEmpleado");
-  const obs = new MutationObserver(() => {
-    if (getComputedStyle(modalEmp).display === "block") document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
-  });
-  modalEmp && obs.observe(modalEmp, { attributes:true, attributeFilter:["style","class"] });
+  if (modalEmp) {
+    const obs = new MutationObserver(() => {
+      if (getComputedStyle(modalEmp).display === "block") document.body.style.overflow = "hidden";
+      else document.body.style.overflow = "";
+    });
+    obs.observe(modalEmp, { attributes:true, attributeFilter:["style","class"] });
+  }
 });
+
 
 /* ====== SELECTOR EMPLEADO + RESÚMENES ====== */
 const selectorEmpleado = document.getElementById("selectorEmpleado");
@@ -1606,3 +1654,35 @@ renderizarTabla = function(){ _oldRenderTabla(); actualizarLabelDia(); };
 window.addEventListener("DOMContentLoaded", () => {
   actualizarLabelDia();
 });
+// --- Filtra selector(es) de empleados (selectorEmpleado, empleadoOrigen, empleadoDestino)
+(function(){
+  const filtrarSelect = (id)=>{
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    [...sel.options].forEach(opt=>{
+      const nombre = opt.value || opt.textContent || "";
+      if (esEmpleadoOcultoPorNombre(nombre)) opt.remove();
+    });
+  };
+
+  const origCargarSelector = window.cargarSelectorEmpleado;
+  window.cargarSelectorEmpleado = async function(){
+    await cargarEmpleadosOcultos();
+    await origCargarSelector?.();
+    filtrarSelect("selectorEmpleado");
+    filtrarSelect("empleadoOrigen");
+    filtrarSelect("empleadoDestino");
+  };
+})();
+
+// --- Filtra la tabla de horario (usa empleados filtrados durante el render)
+(function(){
+  const origRender = window.renderizarTabla;
+  window.renderizarTabla = async function(){
+    await cargarEmpleadosOcultos();
+    const backup = Array.isArray(window.empleados) ? [...window.empleados] : null;
+    if (backup) window.empleados = backup.filter(n => !esEmpleadoOcultoPorNombre(n));
+    try { return await origRender?.(); }
+    finally { if (backup) window.empleados = backup; }
+  };
+})();
