@@ -50,7 +50,7 @@
         <a href="tpv.html"><img src="recursos/img/tpv.png" alt="tpv" class="icon" /></a>
         <a href="horarios.html"><img src="recursos/img/calendario.png" alt="Horarios" class="icon" /></a>
     </nav>
-  <section id="pedido-app" class="panel">
+ <section id="pedido-app" class="panel">
     <header class="topbar">
       <h1>Pedido de Pan — Jefa</h1>
       <div class="bar-actions">
@@ -79,12 +79,15 @@
     <div id="warn-no-fb" class="warn" style="display:none">
       ⚠️ Falta Firebase inicializado (igual que en tus otras páginas).
     </div>
-
-    <!-- PEDIDO -->
-    <section id="tab-pedido" class="tabpage active">
-      <div class="hint">Edita <b>Stock</b> y mira <b>Sugerido</b>. Al cambiar stock (con días de diferencia), se genera <b>consumo estimado</b> (amarillo en “Consumo”).</div>
-      <div id="pedido-list" class="cards"></div>
-    </section>
+<!-- PEDIDO -->
+<section id="tab-pedido" class="tabpage active">
+  <div class="hint">
+    Basado en <b>plan de 4 semanas × (Mar/Jue/Sáb)</b>. Edita <b>Cajas</b> del
+    <b>próximo camión</b> (según semana auto) y verás <b>lo que sobrará</b>.
+    El <b>plan</b> es editable y se guarda.
+  </div>
+  <div id="pedido-list" class="cards"></div>
+</section>
 
     <!-- CATÁLOGO -->
     <section id="tab-catalogo" class="tabpage">
@@ -95,7 +98,7 @@
       <table class="table">
         <thead>
           <tr>
-            <th>Producto</th><th>u/caja</th><th>Estado</th><th>ref.</th><th>Stock</th>
+            <th>Producto</th><th>u/caja</th><th>Estado</th><th>ref.</th><th>Stock</th><th></th>
           </tr>
         </thead>
         <tbody id="tb-catalogo"></tbody>
@@ -104,11 +107,11 @@
 
     <!-- MEDIANAS -->
     <section id="tab-medianas" class="tabpage">
-      <div class="hint">Medianas por día (L→D) usadas para el cálculo.</div>
+      <div class="hint">Medianas por día (L→D) usadas en el cálculo.</div>
       <table class="table">
         <thead>
           <tr>
-            <th>Producto</th><th>L</th><th>M</th><th>X</th><th>J</th><th>V</th><th>S</th><th>D</th>
+            <th>Producto</th><th>L</th><th>M</th><th>X</th><th>J</th><th>V</th><th>S</th><th>D</th><th></th>
           </tr>
         </thead>
         <tbody id="tb-medianas"></tbody>
@@ -145,7 +148,7 @@
 
     <!-- RITMOS -->
     <section id="tab-ritmos" class="tabpage">
-      <div class="hint">Resumen tipo Excel: unidades/mes (mediana), cajas/mes, cajas/semana, días/caja.</div>
+      <div class="hint">Resumen: U/mes (estimado), Cajas/mes, Cajas/sem, Días/caja (dinámico con medianas).</div>
       <table class="table">
         <thead>
           <tr><th>Producto</th><th>U/mes</th><th>Cajas/mes</th><th>Cajas/sem</th><th>Días/caja</th></tr>
@@ -154,6 +157,81 @@
       </table>
     </section>
   </section>
+
+  <!-- MODAL EDICIÓN / ELIMINACIÓN -->
+  <div id="edit-modal" class="modal" aria-hidden="true">
+    <div class="modal__box">
+      <header class="modal__head">
+        <h3 id="modal-title">Editar producto</h3>
+        <button class="btn icon" id="modal-close" aria-label="Cerrar">✕</button>
+      </header>
+      <div class="modal__body">
+        <form id="modal-form">
+          <input type="hidden" id="m-id">
+          <div class="grid2">
+            <label>Nombre
+              <input type="text" id="m-name" required>
+            </label>
+            <label>u/caja
+              <input type="number" id="m-ucaja" min="1" required>
+            </label>
+            <label>Estado
+              <select id="m-estado">
+                <option>HAY</option>
+                <option>NO HAY</option>
+              </select>
+            </label>
+            <label>Ref.
+              <input type="text" id="m-ref">
+            </label>
+            <label>Stock (uds)
+              <input type="number" id="m-stock" min="0" required>
+            </label>
+          </div>
+
+<fieldset class="fieldset">
+  <legend>Plan semanal (cajas) — 4 semanas × Mar/Jue/Sáb</legend>
+  <div style="overflow:auto">
+    <table class="table">
+      <thead>
+        <tr><th></th><th>Martes</th><th>Jueves</th><th>Sábado</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Semana 1</td>
+          <td><input type="number" min="0" id="m-plan-1-martes"></td>
+          <td><input type="number" min="0" id="m-plan-1-jueves"></td>
+          <td><input type="number" min="0" id="m-plan-1-sabado"></td>
+        </tr>
+        <tr><td>Semana 2</td>
+          <td><input type="number" min="0" id="m-plan-2-martes"></td>
+          <td><input type="number" min="0" id="m-plan-2-jueves"></td>
+          <td><input type="number" min="0" id="m-plan-2-sabado"></td>
+        </tr>
+        <tr><td>Semana 3</td>
+          <td><input type="number" min="0" id="m-plan-3-martes"></td>
+          <td><input type="number" min="0" id="m-plan-3-jueves"></td>
+          <td><input type="number" min="0" id="m-plan-3-sabado"></td>
+        </tr>
+        <tr><td>Semana 4</td>
+          <td><input type="number" min="0" id="m-plan-4-martes"></td>
+          <td><input type="number" min="0" id="m-plan-4-jueves"></td>
+          <td><input type="number" min="0" id="m-plan-4-sabado"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</fieldset>
+
+        </form>
+      </div>
+      <footer class="modal__foot">
+        <button id="modal-delete" class="btn danger">Eliminar</button>
+        <div style="flex:1"></div>
+        <button id="modal-cancel" class="btn">Cancelar</button>
+        <button id="modal-save" class="btn primary">Guardar</button>
+      </footer>
+    </div>
+  </div>
 
   <script src="scripts/pedido-pan.js"></script>
 </body>
