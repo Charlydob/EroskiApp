@@ -82,3 +82,10 @@ body {
 .pill{ background:var(--opal-chip); border:1px solid var(--opal-border-soft); color:var(--opal-text-dim);
   padding:4px 10px; border-radius:999px; font-size:.85rem; }
 .in-mini{ width:100px; }
+.table--compact { border-spacing:0 4px; }
+.table--compact thead th { font-size:.8rem; padding:4px 6px; }
+.table--compact tbody td { padding:6px 6px; }
+.table--compact input { width:80px; text-align:center; }
+.badge.thin { padding:2px 8px; }
+
+.hide { display:none !important; }

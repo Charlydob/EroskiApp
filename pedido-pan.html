@@ -80,14 +80,44 @@
       ⚠️ Falta Firebase inicializado (igual que en tus otras páginas).
     </div>
 <!-- PEDIDO -->
+<!-- PEDIDO -->
 <section id="tab-pedido" class="tabpage active">
   <div class="hint">
-    Basado en <b>plan de 4 semanas × (Mar/Jue/Sáb)</b>. Edita <b>Cajas</b> del
-    <b>próximo camión</b> (según semana auto) y verás <b>lo que sobrará</b>.
-    El <b>plan</b> es editable y se guarda.
+    Plan editable 8 semanas × (Mar/Jue/Sáb). Cambia “Cajas” y se guarda en Firebase como
+    códigos <b>MS1</b>/<b>JS1</b>/<b>SS1</b>… <b>Sobrará ≈</b> se calcula dinámicamente.
   </div>
-  <div id="pedido-list" class="cards"></div>
+
+  <div class="bar-actions" style="gap:6px">
+    <label class="chip">Vista
+      <select id="view-select">
+        <option value="semana" selected>Por semana</option>
+        <option value="dia">Por día</option>
+      </select>
+    </label>
+
+    <label class="chip">Semana
+      <select id="week-select">
+        <option value="1">S1</option><option value="2">S2</option>
+        <option value="3">S3</option><option value="4">S4</option>
+        <option value="5">S5</option><option value="6">S6</option>
+        <option value="7">S7</option><option value="8">S8</option>
+      </select>
+    </label>
+
+    <label class="chip" id="chip-dia" style="display:none">Día
+      <select id="day-select">
+        <option value="martes">Martes</option>
+        <option value="jueves">Jueves</option>
+        <option value="sabado">Sábado</option>
+      </select>
+    </label>
+  </div>
+
+  <table class="table table--compact" id="pedido-grid">
+    <!-- se pinta por JS -->
+  </table>
 </section>
+
 
     <!-- CATÁLOGO -->
     <section id="tab-catalogo" class="tabpage">
