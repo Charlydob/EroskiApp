@@ -1,40 +1,47 @@
-body {
-    margin-top: 50px;
-}
+/* ===== BASE ===== */
+body{ margin-top:50px; }
 :root{
-  --opal-bg:#0c0d10;
-  --opal-surface:#13141a;
-  --opal-surface-2:#171922;
-  --opal-chip:#181b25;
-  --opal-border:#222431;
-  --opal-border-soft:#1d2030;
-  --opal-text:#e7e9ee;
-  --opal-text-dim:#9aa1b3;
-  --opal-accent:#7c5cff;
-  --radius:16px; --radius-sm:10px;
-  --shadow-1: 0 6px 16px rgba(0,0,0,.35);
+  --opal-bg:#0c0d10; --opal-surface:#13141a; --opal-surface-2:#171922;
+  --opal-chip:#181b25; --opal-border:#222431; --opal-border-soft:#1d2030;
+  --opal-text:#e7e9ee; --opal-text-dim:#9aa1b3; --opal-accent:#7c5cff;
+  --radius:16px; --radius-sm:10px; --shadow-1:0 6px 16px rgba(0,0,0,.35);
 }
-#pedido-app{ padding:12px; max-width:760px; margin:0 auto; }
+
+/* ===== SCOPE & RESET (anula globales que rompen) ===== */
+#pedido-app{ max-width:420px; padding:12px; margin:0 auto; }
+#pedido-app, #pedido-app *{
+  box-sizing:border-box;
+  max-width:none !important;
+  -webkit-user-select:text; user-select:text;
+  white-space:normal; overflow:visible; text-overflow:clip;
+}
+
+/* ===== LAYOUT GENERAL ===== */
 .topbar{ display:flex; flex-direction:column; gap:10px; margin-bottom:12px; }
 .topbar h1{ margin:0; font-size:1.1rem; color:var(--opal-text); }
 .bar-actions{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-.chip{ background:var(--opal-chip); border:1px solid var(--opal-border-soft); padding:6px 10px; border-radius:999px; color:var(--opal-text-dim); }
+
+.chip{ background:var(--opal-chip); border:1px solid var(--opal-border-soft);
+  padding:6px 10px; border-radius:999px; color:var(--opal-text-dim); }
 .chip select,.chip input{ background:transparent; border:none; color:var(--opal-text); outline:none; margin-left:6px; }
-.btn{ padding:8px 12px; border-radius:var(--radius-sm); border:1px solid var(--opal-border); background:var(--opal-surface); color:var(--opal-text); box-shadow:var(--shadow-1); cursor:pointer; }
+
+.btn{ padding:8px 12px; border-radius:var(--radius-sm); border:1px solid var(--opal-border);
+  background:var(--opal-surface); color:var(--opal-text); box-shadow:var(--shadow-1); cursor:pointer; }
 .btn.primary{ background:var(--opal-accent); border-color:transparent; color:#fff; }
 .btn.ghost{ background:transparent; border-style:dashed; }
 .btn.icon{ border:none; background:transparent; padding:4px 6px; font-size:18px; }
 .btn.danger{ background:#792323; border-color:#9a2b2b; color:#fff; }
 
-.tabs{ display:flex; gap:6px; margin-top:6px; }
-.tab{ flex:1; padding:10px; border-radius:999px; border:1px solid var(--opal-border); background:var(--opal-surface); color:var(--opal-text-dim); cursor:pointer; }
+.tabs{ display:flex; gap:8px; flex-wrap:wrap; }
+.tab{ flex:1 1 calc(50% - 8px); min-width:140px; padding:10px; border-radius:999px;
+  border:1px solid var(--opal-border); background:var(--opal-surface);
+  color:var(--opal-text-dim); cursor:pointer; }
 .tab.active{ background:linear-gradient(180deg,#2a2f44,#1b1f2f); color:#fff; border-color:transparent; }
 
 .warn{ background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:#fbbf24; padding:8px 10px; border-radius:var(--radius-sm); }
 .hint{ color:var(--opal-text-dim); margin:6px 2px 10px; font-size:.92rem; }
 
-.tabpage{ display:none; }
-.tabpage.active{ display:block; }
+.tabpage{ display:none; } .tabpage.active{ display:block; }
 
 .cards{ display:flex; flex-direction:column; gap:10px; }
 .card{ background:var(--opal-surface); border:1px solid var(--opal-border-soft); border-radius:var(--radius); padding:12px; box-shadow:var(--shadow-1); }
@@ -52,22 +59,77 @@ body {
 .badge.warn{ border-color:rgba(245,158,11,0.4); }
 .badge.alert{ border-color:rgba(239,68,68,0.4); }
 .badge.provisional{ background:#3a3300; color:#ffd24d; border-color:#5b4a00; }
-
+.badge.thin{ padding:2px 8px; }
 .icon-btn{ margin-left:6px; font-size:14px; opacity:.85; }
+.hide{ display:none !important; }
 
-.table{ width:100%; border-collapse:separate; border-spacing:0 8px; }
-.table thead th{ text-align:left; font-size:.85rem; color:#c8ccdb; padding:6px 8px; }
-.table tbody tr{ background:var(--opal-surface); box-shadow:var(--shadow-1); }
-.table tbody td{ padding:10px 8px; border-top:1px solid var(--opal-border-soft); border-bottom:1px solid var(--opal-border-soft); }
-.table tbody td:first-child{ border-left:1px solid var(--opal-border-soft); border-top-left-radius:12px; border-bottom-left-radius:12px; }
-.table tbody td:last-child{ border-right:1px solid var(--opal-border-soft); border-top-right-radius:12px; border-bottom-right-radius:12px; }
+/* ===== TABLAS (base) ===== */
+#pedido-app .table{ width:100%; border-collapse:separate; border-spacing:0 8px; table-layout:auto; }
+#pedido-app .table thead th{ text-align:left; font-size:.85rem; color:#c8ccdb; padding:6px 8px; }
+#pedido-app .table tbody tr{ background:var(--opal-surface); box-shadow:var(--shadow-1); }
+#pedido-app .table tbody td{ padding:10px 8px; border-top:1px solid var(--opal-border-soft); border-bottom:1px solid var(--opal-border-soft); }
+#pedido-app .table tbody td:first-child{ border-left:1px solid var(--opal-border-soft); border-top-left-radius:12px; border-bottom-left-radius:12px; }
+#pedido-app .table tbody td:last-child{ border-right:1px solid var(--opal-border-soft); border-top-right-radius:12px; border-bottom-right-radius:12px; }
+#pedido-app .table input, #pedido-app .table select{
+  width:100%; background:var(--opal-surface-2); border:1px solid var(--opal-border);
+  border-radius:10px; padding:8px; color:var(--opal-text);
+  font-variant-numeric:tabular-nums;
+}
 
-.table input, .table select{ width:100%; background:var(--opal-surface-2); border:1px solid var(--opal-border); border-radius:10px; padding:8px; color:var(--opal-text); }
+/* ====== PEDIDO (id: tab-pedido) ====== */
+/* Solo aquí usamos layout fijo y elipsis */
+#tab-pedido .table{ table-layout:fixed; }
+#tab-pedido .table thead th, #tab-pedido .table tbody td{
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+/* Inputs controlados para que NO se salgan */
+#tab-pedido .table input{ width:clamp(72px,22vw,110px); min-width:72px; text-align:center; }
+#tab-pedido .table select{ width:clamp(88px,26vw,130px); }
 
-/* MODAL */
+/* ====== MEDIANAS (id: tab-medianas) ====== */
+/* Móvil: cada fila → tarjeta con 2 líneas: nombre arriba, 7 inputs debajo a todo el ancho */
+@media (max-width:640px){
+  #tab-medianas thead{ display:none; }
+  #tab-medianas .table{ table-layout:auto !important; }
+  #tab-medianas .table tbody{ display:flex; flex-direction:column; gap:10px; }
+  #tab-medianas .table tbody tr{
+    display:grid;
+    grid-template-columns:repeat(7, minmax(0,1fr));
+    gap:8px;
+    padding:10px;
+    border:1px solid var(--opal-border-soft);
+    border-radius:12px;
+    background:var(--opal-surface);
+    box-shadow:var(--shadow-1);
+    width:100%;
+  }
+  #tab-medianas .table tbody td{ padding:0; border:none; background:transparent; }
+  #tab-medianas .table tbody td:first-child{
+    grid-column:1 / -1;
+    padding:0 0 2px 0;
+    font-weight:600; color:var(--opal-text);
+  }
+  #tab-medianas .table input.in-md{
+    width:100%; min-width:0; height:44px;
+    text-align:center; font-size:1rem; padding:0;
+    background:var(--opal-surface-2); border:1px solid var(--opal-border); border-radius:12px;
+  }
+}
+
+/* ====== OTRAS PESTAÑAS (evitar recortes en móvil) ====== */
+@media (max-width:640px){
+  #tab-catalogo .table th, #tab-catalogo .table td,
+  #tab-ventas .table th,   #tab-ventas .table td,
+  #tab-consumo .table th,  #tab-consumo .table td,
+  #tab-ritmos .table th,   #tab-ritmos .table td{
+    white-space:normal; overflow:visible; text-overflow:clip;
+  }
+}
+
+/* ====== MODAL ====== */
 .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:9999; }
 .modal.show{ display:flex; }
-.modal__box{ width:min(720px, 94vw); background:var(--opal-surface); border:1px solid var(--opal-border); border-radius:16px; box-shadow:var(--shadow-1); overflow:hidden; }
+.modal__box{ width:min(720px,94vw); background:var(--opal-surface); border:1px solid var(--opal-border); border-radius:16px; box-shadow:var(--shadow-1); overflow:hidden; }
 .modal__head{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-bottom:1px solid var(--opal-border-soft); }
 .modal__head h3{ margin:0; color:#fff; font-size:1rem; }
 .modal__body{ padding:12px; }
@@ -79,121 +141,8 @@ body {
 .fieldset legend{ color:var(--opal-text-dim); padding:0 6px; }
 .modal input, .modal select{ width:100%; background:var(--opal-surface-2); border:1px solid var(--opal-border); color:var(--opal-text); padding:8px; border-radius:10px; }
 .kpis{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-.pill{ background:var(--opal-chip); border:1px solid var(--opal-border-soft); color:var(--opal-text-dim);
-  padding:4px 10px; border-radius:999px; font-size:.85rem; }
-.in-mini{ width:10px; }
-.table--compact { border-spacing:0 4px; }
-.table--compact thead th { font-size:.8rem; padding:4px 6px; }
-.table--compact tbody td { padding:6px 6px; }
-.table--compact input { width:80px; text-align:center; }
-.badge.thin { padding:2px 8px; }
+.pill{ background:var(--opal-chip); border:1px solid var(--opal-border-soft); color:var(--opal-text-dim); padding:4px 10px; border-radius:999px; font-size:.85rem; }
 
-.hide { display:none !important; }
-/* —— GLOBAL —— */
-*,*::before,*::after{ box-sizing:border-box; }
-#pedido-app{ max-width:420px !important; padding:10px; }
-.tabs{ flex-wrap:wrap; gap:8px; }
-.tab{ flex:1 1 calc(50% - 8px); min-width:140px; }
-
-/* —— TABLAS: evita recortes —— */
-.table{ table-layout:fixed; width:100%; }
-.table thead th,.table tbody td{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-
-/* —— PEDIDO: inputs demasiado anchos → tamaño fijo legible —— */
-.table.pedido input,
-.pedido input,
-.table input[data-scope="pedido"]{
-  width:clamp(72px,22vw,110px) !important;
-  min-width:72px;
-  text-align:center;
-}
-.table.pedido select{ width:clamp(88px,26vw,130px) !important; }
-
-/* —— MEDIANAS: nombre en 1ª línea, datos en 2ª; números visibles —— */
-@media (max-width: 600px){
-  /* deja que el texto y números fluyan */
-  .table--compact thead th,
-  .table--compact tbody td{
-    white-space:normal; overflow:visible; text-overflow:clip;
-  }
-
-  /* Cada fila = tarjeta con 2 filas usando grid */
-  .table--compact tbody tr{
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(62px,1fr));
-    grid-row-gap:8px; grid-column-gap:8px;
-    padding:10px;
-    border:1px solid var(--opal-border-soft);
-    border-radius:12px;
-    background:var(--opal-surface);
-  }
-
-  /* 1ª celda (nombre pan) ocupa todo el ancho en la 1ª línea */
-  .table--compact tbody td:first-child{
-    grid-column:1 / -1;
-    padding:0;
-    font-weight:600; color:var(--opal-text);
-  }
-
-  /* resto de celdas (datos) van abajo */
-  .table--compact tbody td{ padding:0; border:none; background:transparent; }
-
-  /* Inputs de medianas: más anchos y legibles */
-  .table--compact input{
-    width:100% !important;   /* anula el width:80px base */
-    min-width:0;
-    font-size:1rem;
-    padding:10px;
-    text-align:center;
-    font-variant-numeric:tabular-nums;
-  }
-}
-
-/* Ajustes finos */
-.chip select,.chip input{ max-width:45vw; }
-.badge.thin{ padding:2px 8px; }
-  
-/* ——— FIX GLOBAL ——— */
-*,*::before,*::after{ box-sizing:border-box; }
-input,select{ max-width:100%; }
-
-/* Fuerza look móvil siempre */
-#pedido-app{ max-width:420px; padding:10px; }
-
-/* Evita desbordes en tablas */
-.table{ table-layout:fixed; width:100%; }
-.table thead th,.table tbody td{
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-}
-
-/* ——— PESTAÑAS A DOS LÍNEAS ——— */
-.tabs{ display:flex; flex-wrap:wrap; gap:6px; }
-.tab{ flex:1 1 calc(50% - 6px); min-width:140px; }
-
-/* ——— INPUTS PEDIDOS: ajustar (eran demasiado anchos) ——— */
-/* Usa la clase que tengas para la vista pedido; si no, aplica a inputs de tabla por defecto */
-.table.pedido input,
-.pedido input,
-.table input[data-scope="pedido"]{
-  width:clamp(72px,22vw,110px);
-  text-align:center;
-}
-
-/* ——— INPUTS MEDIANAS: ampliar (eran demasiado estrechos) ——— */
-.table--compact input{
-  width:clamp(90px,28vw,140px);
-  font-size:.95rem;
-  padding:8px 10px;
-  text-align:center;
-}
-
-/* ——— PEQUEÑOS AJUSTES ——— */
-.input input{ max-width:100%; }
-.chip select,.chip input{ max-width:45vw; }
-.table input{ font-variant-numeric:tabular-nums; }
-
-/* Respuesta fina para móviles pequeños */
 @media (max-width:360px){
   .tab{ min-width:125px; }
 }
-
