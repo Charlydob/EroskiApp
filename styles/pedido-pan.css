@@ -152,3 +152,98 @@ body {
 /* Ajustes finos */
 .chip select,.chip input{ max-width:45vw; }
 .badge.thin{ padding:2px 8px; }
+
+/* ==== ANULAR GLOBALES QUE INTERFIEREN (solo dentro de #pedido-app) ==== */
+#pedido-app, #pedido-app *{
+  max-width: unset !important;
+  touch-action: auto !important;
+  overscroll-behavior: auto !important;
+  -webkit-user-select: text !important;
+  user-select: text !important;
+}
+
+/* Forzar ancho móvil real */
+#pedido-app{ max-width: 420px !important; padding:10px !important; }
+
+/* Tabs en dos líneas sí o sí */
+#pedido-app .tabs{ display:flex; flex-wrap:wrap !important; gap:8px; }
+#pedido-app .tab{ flex:1 1 calc(50% - 8px) !important; min-width:140px; }
+
+/* Evitar el recorte impuesto por .table {nowrap/ellipsis} en TODAS las tablas del app */
+#pedido-app .table thead th,
+#pedido-app .table tbody td{
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* ===== MEDIANAS EN DOS LÍNEAS (nombre arriba, datos abajo) ===== */
+/* Convierte la tabla compacta en “lista de tarjetas” solo en móvil */
+@media (max-width: 640px){
+  #pedido-app .table--compact{
+    display:block !important;
+    width:100% !important;
+    border-spacing:0 !important;
+  }
+  #pedido-app .table--compact thead{ display:none !important; }
+
+  #pedido-app .table--compact tbody{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:10px !important;
+  }
+
+  #pedido-app .table--compact tbody tr{
+    display:grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(64px, 1fr)) !important;
+    gap:8px !important;
+    padding:10px !important;
+    border:1px solid var(--opal-border-soft) !important;
+    border-radius:12px !important;
+    background:var(--opal-surface) !important;
+    box-shadow:var(--shadow-1) !important;
+  }
+
+  /* Nombre ocupa toda la primera fila */
+  #pedido-app .table--compact tbody td:first-child{
+    grid-column:1 / -1 !important;
+    padding:0 !important;
+    font-weight:600 !important;
+    color:var(--opal-text) !important;
+  }
+
+  /* Celdas de datos (segunda línea) */
+  #pedido-app .table--compact tbody td{
+    padding:0 !important;
+    border:none !important;
+    background:transparent !important;
+  }
+
+  /* Inputs de medianas bien visibles */
+  #pedido-app .table--compact input{
+    width:100% !important;
+    min-width:0 !important;
+    font-size:1rem !important;
+    padding:10px !important;
+    text-align:center !important;
+    font-variant-numeric:tabular-nums !important;
+    background:var(--opal-surface-2) !important;
+    border:1px solid var(--opal-border) !important;
+    border-radius:10px !important;
+  }
+}
+
+/* ===== PEDIDO: inputs que se salían ===== */
+#pedido-app .table.pedido input,
+#pedido-app .pedido input,
+#pedido-app .table input[data-scope="pedido"]{
+  width:clamp(72px, 22vw, 110px) !important;
+  min-width:72px !important;
+  text-align:center !important;
+}
+#pedido-app .table.pedido select{ width:clamp(88px,26vw,130px) !important; }
+
+/* Seguridad extra frente a reglas globales tipo “* { max-width:100vw }” */
+#pedido-app .card, 
+#pedido-app .table,
+#pedido-app .table *{ max-width: none !important; }
