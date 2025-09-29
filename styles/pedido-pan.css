@@ -89,3 +89,66 @@ body {
 .badge.thin { padding:2px 8px; }
 
 .hide { display:none !important; }
+/* —— GLOBAL —— */
+*,*::before,*::after{ box-sizing:border-box; }
+#pedido-app{ max-width:420px !important; padding:10px; }
+.tabs{ flex-wrap:wrap; gap:8px; }
+.tab{ flex:1 1 calc(50% - 8px); min-width:140px; }
+
+/* —— TABLAS: evita recortes —— */
+.table{ table-layout:fixed; width:100%; }
+.table thead th,.table tbody td{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* —— PEDIDO: inputs demasiado anchos → tamaño fijo legible —— */
+.table.pedido input,
+.pedido input,
+.table input[data-scope="pedido"]{
+  width:clamp(72px,22vw,110px) !important;
+  min-width:72px;
+  text-align:center;
+}
+.table.pedido select{ width:clamp(88px,26vw,130px) !important; }
+
+/* —— MEDIANAS: nombre en 1ª línea, datos en 2ª; números visibles —— */
+@media (max-width: 600px){
+  /* deja que el texto y números fluyan */
+  .table--compact thead th,
+  .table--compact tbody td{
+    white-space:normal; overflow:visible; text-overflow:clip;
+  }
+
+  /* Cada fila = tarjeta con 2 filas usando grid */
+  .table--compact tbody tr{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(62px,1fr));
+    grid-row-gap:8px; grid-column-gap:8px;
+    padding:10px;
+    border:1px solid var(--opal-border-soft);
+    border-radius:12px;
+    background:var(--opal-surface);
+  }
+
+  /* 1ª celda (nombre pan) ocupa todo el ancho en la 1ª línea */
+  .table--compact tbody td:first-child{
+    grid-column:1 / -1;
+    padding:0;
+    font-weight:600; color:var(--opal-text);
+  }
+
+  /* resto de celdas (datos) van abajo */
+  .table--compact tbody td{ padding:0; border:none; background:transparent; }
+
+  /* Inputs de medianas: más anchos y legibles */
+  .table--compact input{
+    width:100% !important;   /* anula el width:80px base */
+    min-width:0;
+    font-size:1rem;
+    padding:10px;
+    text-align:center;
+    font-variant-numeric:tabular-nums;
+  }
+}
+
+/* Ajustes finos */
+.chip select,.chip input{ max-width:45vw; }
+.badge.thin{ padding:2px 8px; }
