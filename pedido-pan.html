@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pedido</title>
+  <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" href="styles/calendario.css">
+  <link rel="stylesheet" href="styles/pedido-pan.css">
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDN8KAiad5vmKNwhtfd9EUzVgTt2uUapno",
+    authDomain: "eroskiapp.firebaseapp.com",
+    databaseURL: "https://eroskiapp-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "eroskiapp",
+    storageBucket: "eroskiapp.appspot.com",
+    messagingSenderId: "1033463841470",
+    appId: "1:1033463841470:web:ec92569dd7dabe8a93d4ef"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+   // TEST DE CONEXIÓN
+  db.ref().once("value")
+    .then(snapshot => {
+      console.log("🔥 Firebase raíz:", snapshot.val());
+    })
+    .catch(err => {
+      console.error("❌ Error al conectar con Firebase:", err);
+    });
+</script>
+
+    <script src="navbar.js"></script>
+
+  <script src="scripts/proteccion.js"></script>
+
+  <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+</head>
+
+
+<body>
+    <nav class="sidebar">
+        <a href="index.html"><img src="recursos/img/iniciologo.png" alt="Inicio" class="icon" /></a>
+        <a href="balanza.html"><img src="recursos/img/balanzalogo.png" alt="Balanza" class="icon" /></a>
+        <a href="calendario.html"><img src="recursos/img/imagenes.png" alt="Calendario" class="icon" /></a>
+        <a href="codigos.html"><img src="recursos/img/codigos.png" alt="Códigos" class="icon" /></a>
+        <a href="tpv.html"><img src="recursos/img/tpv.png" alt="tpv" class="icon" /></a>
+        <a href="horarios.html"><img src="recursos/img/calendario.png" alt="Horarios" class="icon" /></a>
+    </nav>
+  <section id="pedido-app" class="panel">
+    <header class="topbar">
+      <h1>Pedido de Pan — Jefa</h1>
+      <div class="bar-actions">
+        <label class="chip">
+          Entrega:
+          <select id="deliver-select">
+            <option value="martes">Martes</option>
+            <option value="jueves">Jueves</option>
+            <option value="sabado">Sábado</option>
+          </select>
+        </label>
+        <button id="btn-save-order" class="btn primary">Guardar pedido</button>
+        <button id="btn-seed" class="btn ghost">Cargar catálogo (si falta)</button>
+      </div>
+
+      <nav class="tabs">
+        <button data-tab="tab-pedido" class="tab active">Pedido</button>
+        <button data-tab="tab-catalogo" class="tab">Catálogo</button>
+        <button data-tab="tab-medianas" class="tab">Medianas</button>
+        <button data-tab="tab-ventas" class="tab">Ventas</button>
+        <button data-tab="tab-consumo" class="tab">Consumo</button>
+        <button data-tab="tab-ritmos" class="tab">Ritmos</button>
+      </nav>
+    </header>
+
+    <div id="warn-no-fb" class="warn" style="display:none">
+      ⚠️ Falta Firebase inicializado (igual que en tus otras páginas).
+    </div>
+
+    <!-- PEDIDO -->
+    <section id="tab-pedido" class="tabpage active">
+      <div class="hint">Edita <b>Stock</b> y mira <b>Sugerido</b>. Al cambiar stock (con días de diferencia), se genera <b>consumo estimado</b> (amarillo en “Consumo”).</div>
+      <div id="pedido-list" class="cards"></div>
+    </section>
+
+    <!-- CATÁLOGO -->
+    <section id="tab-catalogo" class="tabpage">
+      <div class="toolbar">
+        <button id="btn-add-product" class="btn">Añadir producto</button>
+        <button id="btn-save-stock" class="btn">Guardar stock</button>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Producto</th><th>u/caja</th><th>Estado</th><th>ref.</th><th>Stock</th>
+          </tr>
+        </thead>
+        <tbody id="tb-catalogo"></tbody>
+      </table>
+    </section>
+
+    <!-- MEDIANAS -->
+    <section id="tab-medianas" class="tabpage">
+      <div class="hint">Medianas por día (L→D) usadas para el cálculo.</div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Producto</th><th>L</th><th>M</th><th>X</th><th>J</th><th>V</th><th>S</th><th>D</th>
+          </tr>
+        </thead>
+        <tbody id="tb-medianas"></tbody>
+      </table>
+    </section>
+
+    <!-- VENTAS -->
+    <section id="tab-ventas" class="tabpage">
+      <div class="toolbar">
+        <label class="chip">Fecha <input id="ventas-date" type="date"></label>
+        <button id="btn-save-sales" class="btn">Guardar ventas</button>
+      </div>
+      <table class="table">
+        <thead><tr><th>Producto</th><th>Unidades</th></tr></thead>
+        <tbody id="tb-ventas"></tbody>
+      </table>
+    </section>
+
+    <!-- CONSUMO -->
+    <section id="tab-consumo" class="tabpage">
+      <div class="hint">Filas <span class="badge provisional">amarillas</span> = consumo estimado por cambios de stock.</div>
+      <div class="toolbar">
+        <label class="chip">Fecha <input id="consumo-date" type="date"></label>
+        <button id="btn-add-consumo" class="btn">Añadir consumo manual</button>
+        <button id="btn-save-consumo" class="btn">Guardar consumo</button>
+      </div>
+      <table class="table">
+        <thead>
+          <tr><th>Fecha</th><th>Producto</th><th>Δ Unid.</th><th>Días</th><th>u/día</th><th>Tipo</th></tr>
+        </thead>
+        <tbody id="tb-consumo"></tbody>
+      </table>
+    </section>
+
+    <!-- RITMOS -->
+    <section id="tab-ritmos" class="tabpage">
+      <div class="hint">Resumen tipo Excel: unidades/mes (mediana), cajas/mes, cajas/semana, días/caja.</div>
+      <table class="table">
+        <thead>
+          <tr><th>Producto</th><th>U/mes</th><th>Cajas/mes</th><th>Cajas/sem</th><th>Días/caja</th></tr>
+        </thead>
+        <tbody id="tb-ritmos"></tbody>
+      </table>
+    </section>
+  </section>
+
+  <script src="scripts/pedido-pan.js"></script>
+</body>
+</html>

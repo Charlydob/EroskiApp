@@ -159,12 +159,14 @@ function aplicarModo(td, celdaID) {
   celdasTocadas.add(celdaID);
 }
 
-function aplicarModoFilaCompleta(fila, empleado) {
-  const celdas = fila.querySelectorAll("td:not(:first-child)");
-  celdas.forEach((td, index) => {
-    const celdaID = `${empleado}_${index}`;
-    if (!celdasTocadas.has(celdaID)) aplicarModo(td, celdaID);
-  });
+async function aplicarModoFilaCompleta(nombreEmpleado, valor) {
+  if (!semanaActual || !diaActual) return;
+  const updates = {};
+  for (const h of (window.horas||[])) {
+    updates[`${semanaActual}/${diaActual}/${nombreEmpleado}_${h}`] = valor;
+  }
+  await db.ref().update(updates);
+  renderizarTabla?.();
 }
 
 /* ====== CREAR SEMANA ====== */
