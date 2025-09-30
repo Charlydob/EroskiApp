@@ -146,3 +146,9 @@ body{ margin-top:50px; }
 @media (max-width:360px){
   .tab{ min-width:125px; }
 }
+
+/* ====== RESALTAR FILAS CON PEDIDO ====== */
+#tab-pedido .table tbody tr.has-order{
+  background:rgba(255, 220, 100, 0.15) !important;
+  border:1px solid rgba(255, 220, 100, 0.5) !important;
+}
