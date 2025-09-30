@@ -86,82 +86,89 @@
   }
 
   // ==== UI Pedido ====
-  function renderPedido(list){
-    const view = $('#view-select').value;       // 'semana' | 'dia'
-    const week = +$('#week-select').value;      // 1..8
-    const daySel = $('#day-select').value;      // martes/jueves/sabado
-    $('#chip-dia').style.display = (view==='dia')?'':'none';
+function renderPedido(list){
+  const view = $('#view-select').value;       // 'semana' | 'dia'
+  const week = +$('#week-select').value;      // 1..8
+  const daySel = $('#day-select').value;      // martes/jueves/sabado
+  $('#chip-dia').style.display = (view==='dia')?'':'none';
 
-    const grid = $('#pedido-grid');
-    if(view==='semana'){
-      grid.innerHTML = `
-        <thead><tr>
-          <th>Producto</th><th>Ref</th>
-          <th>M (cjs)</th><th>J (cjs)</th><th>S (cjs)</th>
-        </tr></thead><tbody></tbody>`;
-      const tb = grid.querySelector('tbody');
-      for(const p of list){
-        const cM = codeFor('martes',week), cJ = codeFor('jueves',week), cS = codeFor('sabado',week);
-        const vM = getPlanCode(p.id, cM), vJ = getPlanCode(p.id, cJ), vS = getPlanCode(p.id, cS);
-        const tr=document.createElement('tr'); tr.dataset.pid=p.id;
-        tr.innerHTML = `
-          <td>${p.name}</td><td>${p.ref||''}</td>
-          <td><input type="number" min="0" class="in-cajas" data-code="${cM}" value="${vM}"></td>
-          <td><input type="number" min="0" class="in-cajas" data-code="${cJ}" value="${vJ}"></td>
-          <td><input type="number" min="0" class="in-cajas" data-code="${cS}" value="${vS}"></td>`;
-        tb.appendChild(tr);
-      }
-    } else {
-      // Por día: mostrar Sobrará ≈
-      grid.innerHTML = `
-        <thead><tr>
-          <th>Producto</th><th>Ref</th><th>Cajas</th><th>Sobrará ≈</th>
-        </tr></thead><tbody></tbody>`;
-      const tb = grid.querySelector('tbody');
-      const dateNext = nextDateFor(daySel, today0());
-      const daysDiff = Math.max(0, Math.round((dateNext - today0())/86400000));
-      for(const p of list){
-        const code = codeFor(daySel,week);
-        const boxes = getPlanCode(p.id, code);
-        const inbound = (+p.uCaja||1) * boxes;
-        const willLeft = Math.max(0, Math.round((+p.stockActual||0) - dailyRate(p)*daysDiff + inbound));
-        const tr=document.createElement('tr'); tr.dataset.pid=p.id;
-        tr.innerHTML = `
-          <td>${p.name}</td><td>${p.ref||''}</td>
-          <td><input type="number" min="0" class="in-cajas" data-code="${code}" value="${boxes}"></td>
-          <td><span class="badge thin">${willLeft} uds</span></td>`;
-        tb.appendChild(tr);
-      }
+  const grid = $('#pedido-grid');
+  if(view==='semana'){
+    grid.innerHTML = `
+      <thead><tr>
+        <th>Producto</th><th>Ref</th>
+        <th>M (cjs)</th><th>J (cjs)</th><th>S (cjs)</th>
+      </tr></thead><tbody></tbody>`;
+    const tb = grid.querySelector('tbody');
+    for(const p of list){
+      const cM = codeFor('martes',week), cJ = codeFor('jueves',week), cS = codeFor('sabado',week);
+      const vM = getPlanCode(p.id, cM), vJ = getPlanCode(p.id, cJ), vS = getPlanCode(p.id, cS);
+      const tr=document.createElement('tr'); tr.dataset.pid=p.id;
+      tr.innerHTML = `
+        <td>${p.name}</td><td>${p.ref||''}</td>
+        <td><input type="number" min="0" class="in-cajas" data-code="${cM}" value="${vM}"></td>
+        <td><input type="number" min="0" class="in-cajas" data-code="${cJ}" value="${vJ}"></td>
+        <td><input type="number" min="0" class="in-cajas" data-code="${cS}" value="${vS}"></td>`;
+      if ((vM|0)>0 || (vJ|0)>0 || (vS|0)>0) tr.classList.add('has-order');
+      tb.appendChild(tr);
     }
-
-    // Guardado inmediato sin “volver a 0”
-    grid.addEventListener('input', onChangeBoxes, { once:true });
-  }
-
-  async function onChangeBoxes(e){
-    const inp = e.target;
-    if(!inp.classList.contains('in-cajas')) return;
-    const tr = inp.closest('tr');
-    const pid = tr.dataset.pid;
-    const code = inp.dataset.code;
-    const val = Math.max(0,Math.round(+inp.value||0));
-    inp.value = val;               // fija lo que ves
-    await setPlanCode(pid, code, val); // guarda y actualiza cache
-    // recalc solo si vista "dia" (muestra Sobrará)
-    if($('#view-select').value==='dia'){
-      const p = CURRENT.find(x=>x.id===pid);
-      const daySel = $('#day-select').value;
-      const week = +$('#week-select').value;
-      const dateNext = nextDateFor(daySel, today0());
-      const daysDiff = Math.max(0, Math.round((dateNext - today0())/86400000));
-      const inbound = (+p.uCaja||1) * val;
+  } else {
+    // Por día: mostrar Sobrará ≈
+    grid.innerHTML = `
+      <thead><tr>
+        <th>Producto</th><th>Ref</th><th>Cajas</th><th>Sobrará ≈</th>
+      </tr></thead><tbody></tbody>`;
+    const tb = grid.querySelector('tbody');
+    const dateNext = nextDateFor(daySel, today0());
+    const daysDiff = Math.max(0, Math.round((dateNext - today0())/86400000));
+    for(const p of list){
+      const code = codeFor(daySel,week);
+      const boxes = getPlanCode(p.id, code);
+      const inbound = (+p.uCaja||1) * boxes;
       const willLeft = Math.max(0, Math.round((+p.stockActual||0) - dailyRate(p)*daysDiff + inbound));
-      tr.querySelector('td:last-child .badge').textContent = `${willLeft} uds`;
+      const tr=document.createElement('tr'); tr.dataset.pid=p.id;
+      tr.innerHTML = `
+        <td>${p.name}</td><td>${p.ref||''}</td>
+        <td><input type="number" min="0" class="in-cajas" data-code="${code}" value="${boxes}"></td>
+        <td><span class="badge thin">${willLeft} uds</span></td>`;
+      if ((boxes|0)>0) tr.classList.add('has-order');
+      tb.appendChild(tr);
     }
-    // volver a enganchar para siguientes inputs
-    $('#pedido-grid').addEventListener('input', onChangeBoxes, { once:true });
   }
 
+  // Guardado inmediato sin “volver a 0”
+  grid.addEventListener('input', onChangeBoxes, { once:true });
+}
+
+// ==== onChangeBoxes: toggle resaltado y recálculo ====
+async function onChangeBoxes(e){
+  const inp = e.target;
+  if(!inp.classList.contains('in-cajas')) return;
+  const tr = inp.closest('tr');
+  const pid = tr.dataset.pid;
+  const code = inp.dataset.code;
+  const val = Math.max(0,Math.round(+inp.value||0));
+  inp.value = val;
+  await setPlanCode(pid, code, val);
+
+  if($('#view-select').value==='semana'){
+    const any = [...tr.querySelectorAll('.in-cajas')].some(i => (+i.value||0)>0);
+    tr.classList.toggle('has-order', any);
+  }else{
+    tr.classList.toggle('has-order', val>0);
+    // Recalcula "Sobrará ≈"
+    const p = CURRENT.find(x=>x.id===pid);
+    const daySel = $('#day-select').value;
+    const week = +$('#week-select').value;
+    const dateNext = nextDateFor(daySel, today0());
+    const daysDiff = Math.max(0, Math.round((dateNext - today0())/86400000));
+    const inbound = (+p.uCaja||1) * val;
+    const willLeft = Math.max(0, Math.round((+p.stockActual||0) - dailyRate(p)*daysDiff + inbound));
+    tr.querySelector('td:last-child .badge').textContent = `${willLeft} uds`;
+  }
+
+  $('#pedido-grid').addEventListener('input', onChangeBoxes, { once:true });
+}
   // ==== Guardar pedido del próximo camión (usa “Entrega” arriba) ====
   async function saveOrder(list){
     const dayUI = $('#view-select').value==='dia' ? $('#day-select').value : $('#deliver-select').value;
