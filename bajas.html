@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <title>Bajas del día</title>
+  <link rel="stylesheet" href="styles/login.css" />
+  <link rel="apple-touch-icon" href="recursos/img/eroski.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+</head>
+
+<body>
+  <div id="appContent" class="blur">
+    <header style="padding: 1rem; display: flex; align-items: center; gap: .5rem;">
+      <a href="index.html" style="text-decoration:none;font-size:1.4rem;">⟵</a>
+      <h2 style="margin:0;">Bajas del día</h2>
+    </header>
+
+    <main style="padding: 1rem;">
+      <p id="fechaHoy" style="margin-top:0; opacity:0.8;"></p>
+
+      <form id="bajaForm" style="display:flex; flex-direction:column; gap:.5rem; margin-bottom:1rem;">
+        <input
+          type="text"
+          id="productoInput"
+          placeholder="Producto a dar de baja"
+          required
+          autocomplete="off"
+        />
+        <input
+          type="number"
+          id="cantidadInput"
+          placeholder="Cantidad (opcional)"
+          min="1"
+          step="1"
+        />
+        <button type="submit">Añadir a la lista</button>
+      </form>
+
+      <h3 style="margin-top:0.5rem;">Listado de hoy</h3>
+      <ul id="listaBajas" style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.5rem;">
+        <!-- aquí se pinta lo que hay en Firebase -->
+      </ul>
+
+      <p style="margin-top:1rem; font-size:.8rem; opacity:.7;">
+        La lista se guarda en la nube. Cualquier móvil con la app verá lo mismo.
+      </p>
+    </main>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN8KAiad5vmKNwhtfd9EUzVgTt2uUapno",
+      authDomain: "eroskiapp.firebaseapp.com",
+      databaseURL: "https://eroskiapp-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "eroskiapp",
+      storageBucket: "eroskiapp.appspot.com",
+      messagingSenderId: "1033463841470",
+      appId: "1:1033463841470:web:ec92569dd7dabe8a93d4ef"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
+
+  <script src="scripts/bajas.js"></script>
+</body>
+</html>
